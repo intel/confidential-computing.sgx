@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Intel Corporation. All rights reserved.
+ * Copyright (C) 2011-2019 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,8 +73,11 @@ typedef enum _quote3_error_t {
                                                                      ///< because the QE doesn't support this feature there is an enclave compatibility issue.
                                                                      ///< Please call again with the p_qe_report_info to NULL. 
     SGX_QL_KEY_CERTIFCATION_ERROR = SGX_QL_MK_ERROR(0x0018),         ///< Caused when the provider library returns an invalid TCB (too high).
+    SGX_QL_NETWORK_ERROR = SGX_QL_MK_ERROR(0x0019),                  ///< Network error when retrieving PCK certs
+    SGX_QL_MESSAGE_ERROR = SGX_QL_MK_ERROR(0x001a),                  ///< Message error when retrieving PCK certs
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 } quote3_error_t;
+
 
 #pragma pack(push, 1)
 /**  */

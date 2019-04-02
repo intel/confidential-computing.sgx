@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Intel Corporation. All rights reserved.
+ * Copyright (C) 2011-2019 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 /* User defined types */
 #ifndef _SGX_QL_QUOTE_H_
 #define _SGX_QL_QUOTE_H_
+#include <stddef.h>
 #include "sgx_ql_lib_common.h"
 #include "sgx_quote.h"
 #include "sgx_quote_3.h"
