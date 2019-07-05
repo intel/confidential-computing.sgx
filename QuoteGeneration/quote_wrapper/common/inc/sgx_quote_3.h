@@ -99,8 +99,9 @@ typedef struct _sgx_ql_att_key_id_t {
 typedef struct _sgx_att_key_id_ext_t {
     sgx_ql_att_key_id_t base;
     uint8_t             spid[16];                ///< Service Provider ID, should be 0s for ECDSA quote
-    uint16_t            att_key_type;            ///< For ECDSA quote, it equals to sgx_ql_attestation_algorithm_id_t
+    uint16_t            att_key_type;            ///< For non-EPID quote, it should be 0 
                                                  ///< For EPID quote, it equals to sgx_quote_sign_type_t
+    uint8_t             reserved[80];            ///< It should have the same size of sgx_att_key_id_t
 }sgx_att_key_id_ext_t;
 
 /** This is the data structure of the CERTIFICATION_INFO_DATA in the Quote when the certification type is
