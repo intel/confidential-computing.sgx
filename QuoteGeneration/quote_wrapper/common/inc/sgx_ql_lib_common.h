@@ -64,17 +64,18 @@ typedef enum _quote3_error_t {
     SGX_QL_ATT_KEY_NOT_INITIALIZED = SGX_QL_MK_ERROR(0x000f),        ///< The attestation key doesn't exist or has not been certified.
     SGX_QL_ATT_KEY_CERT_DATA_INVALID = SGX_QL_MK_ERROR(0x0010),      ///< The certification data retrieved from the platform library is invalid.
     SGX_QL_NO_PLATFORM_CERT_DATA = SGX_QL_MK_ERROR(0x0011),          ///< The platform library doesn't have any platfrom cert data.
-    SGX_QL_OUT_OF_EPC = SGX_QL_MK_ERROR(0x0012),                     ///< Not enough memory in the EPC to load the enclave. 
+    SGX_QL_OUT_OF_EPC = SGX_QL_MK_ERROR(0x0012),                     ///< Not enough memory in the EPC to load the enclave.
     SGX_QL_ERROR_REPORT = SGX_QL_MK_ERROR(0x0013),                   ///< There was a problem verifying an SGX REPORT.
     SGX_QL_ENCLAVE_LOST = SGX_QL_MK_ERROR(0x0014),                   ///< Interfacing to the enclave failed due to a power transition.
     SGX_QL_INVALID_REPORT = SGX_QL_MK_ERROR(0x0015),                 ///< Error verifying the application enclave's report.
     SGX_QL_ENCLAVE_LOAD_ERROR = SGX_QL_MK_ERROR(0x0016),             ///< Unable to load the enclaves.  Could be due to file I/O error, loading infrastructure error.
     SGX_QL_UNABLE_TO_GENERATE_QE_REPORT = SGX_QL_MK_ERROR(0x0017),   ///< The QE was unable to generate its own report targeting the application enclave either
                                                                      ///< because the QE doesn't support this feature there is an enclave compatibility issue.
-                                                                     ///< Please call again with the p_qe_report_info to NULL. 
+                                                                     ///< Please call again with the p_qe_report_info to NULL.
     SGX_QL_KEY_CERTIFCATION_ERROR = SGX_QL_MK_ERROR(0x0018),         ///< Caused when the provider library returns an invalid TCB (too high).
     SGX_QL_NETWORK_ERROR = SGX_QL_MK_ERROR(0x0019),                  ///< Network error when retrieving PCK certs
     SGX_QL_MESSAGE_ERROR = SGX_QL_MK_ERROR(0x001a),                  ///< Message error when retrieving PCK certs
+    SGX_QL_ERROR_INVALID_PRIVILEGE = SGX_QL_MK_ERROR(0x001b),        ///< No enough privilege to perform the operation
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 } quote3_error_t;
 
@@ -111,7 +112,7 @@ typedef struct _sgx_ql_config_t
     sgx_cpu_svn_t cert_cpu_svn;            ///< The CPUSVN used to generate the PCK Signature used to certify the attestation key.
     sgx_isv_svn_t cert_pce_isv_svn;        ///< The PCE ISVSVN used to generate the PCK Signature used to certify the attestation key.
     uint32_t cert_data_size;               ///< The size of the buffer pointed to by p_cert_data
-    uint8_t* p_cert_data;                  ///< The certificaton data used for the quote.  
+    uint8_t* p_cert_data;                  ///< The certificaton data used for the quote.
                                            ///todo: It is the assumed to be the PCK Cert Chain.  May want to change to support other cert types.
 }sgx_ql_config_t;
 

@@ -48,29 +48,33 @@
 /** Describes the algorithm parameters needed to generate the given algorithm's signature.  Used for quote generation
  *  APIs. */
 typedef struct _sgx_ql_att_key_id_param_t {
-    uint32_t    algorithm_param_size;         ///< Size of additional attestation key information.  0 is valid.
+    uint32_t    algorithm_param_size;               ///< Size of additional attestation key information.  0 is valid.
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning ( disable:4200 )
 #endif
-    uint8_t     algorithm_param[];            ///< Additional attestation algorithm information.For example, SigRL for EPID.
+    uint8_t     algorithm_param[];                  ///< Additional attestation algorithm information.For example, SigRL for EPID.
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif  
+#endif
 }sgx_ql_att_key_id_param_t;
 
 /** The full data structure passed to the platform by the verifier. It will list all of the attestation algorithms and
  *  QE's supported by the verifier */
 typedef struct _sgx_ql_att_id_list_t {
-    sgx_ql_att_key_id_list_header_t   header;      ///< Header for the attestation key ID list provided by the quote verifier.
+    sgx_ql_att_key_id_list_header_t   header;       ///< Header for the attestation key ID list provided by the quote verifier.
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning ( disable:4200 )
 #endif
-    sgx_ql_att_key_id_t                id_list[];  ///< Place holder for the attestation ID list.
+#ifdef AESM_ECDSA_BUNDLE
+    sgx_att_key_id_ext_t              ext_id_list[];///< Place holder for the extended attestation ID list.
+#else
+    sgx_ql_att_key_id_t               id_list[];    ///< Place holder for the attestation ID list.
+#endif
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif  
+#endif
 }sgx_ql_att_key_id_list_t;
 
 typedef struct _sgx_ql_qe_report_info_t {

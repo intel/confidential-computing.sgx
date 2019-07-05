@@ -56,12 +56,12 @@ typedef enum {
 
 /** Enumerates the different certification data types used to describe the signer of the attestation key */
 typedef enum {
-    PPID_CLEARTEXT = 1,         ///< Clear PPID + CPU_SVN, PvE_SVN, PCE_SVN, PCE_ID 
+    PPID_CLEARTEXT = 1,         ///< Clear PPID + CPU_SVN, PvE_SVN, PCE_SVN, PCE_ID
     PPID_RSA2048_ENCRYPTED = 2, ///< RSA-2048-OAEP Encrypted PPID + CPU_SVN, PvE_SVN, PCE_SVN, PCE_ID
     PPID_RSA3072_ENCRYPTED = 3, ///< RSA-3072-OAEP Encrypted PPID + CPU_SVN, PvE_SVN, PCE_SVN, PCE_ID
-    PCK_CLEARTEXT = 4,          ///< Clear PCK Leaf Cert 
+    PCK_CLEARTEXT = 4,          ///< Clear PCK Leaf Cert
     PCK_CERT_CHAIN = 5,         ///< Full PCK Cert chain (trustedRootCaCert||intermediateCa||pckCert)
-    ECDSA_SIG_AUX_DATA = 6,     ///< Indicates the contents of the CERTIFICATION_INFO_DATA contains the ECDSA_SIG_AUX_DATA of another Quote.  
+    ECDSA_SIG_AUX_DATA = 6,     ///< Indicates the contents of the CERTIFICATION_INFO_DATA contains the ECDSA_SIG_AUX_DATA of another Quote.
 } sgx_ql_cert_key_type_t;
 
 #pragma pack(push, 1)
@@ -86,7 +86,7 @@ typedef struct _sgx_ql_att_key_id_t {
     uint16_t    id;                              ///< Structure ID
     uint16_t    version;                         ///< Structure version
     uint16_t    mrsigner_length;                 ///< Number of valid bytes in MRSIGNER.
-    uint8_t     mrsigner[48];                    ///< SHA256 or SHA384 hash of the Public key that signed the QE. 
+    uint8_t     mrsigner[48];                    ///< SHA256 or SHA384 hash of the Public key that signed the QE.
                                                  ///< The lower bytes contain MRSIGNER.  Bytes beyond mrsigner_length '0'
     uint32_t    prod_id;                         ///< Legacy Product ID of the QE
     uint8_t     extended_prod_id[16];            ///< Extended Product ID or the QE. All 0's for legacy format enclaves.
@@ -94,6 +94,14 @@ typedef struct _sgx_ql_att_key_id_t {
     uint8_t     family_id[16];                   ///< Family ID of the QE.
     uint32_t    algorithm_id;                    ///< Identity of the attestation key algorithm.
 }sgx_ql_att_key_id_t;
+
+/** Describes an extended attestation key.  Contains sgx_ql_att_key_id_t, spid and quote_type */
+typedef struct _sgx_att_key_id_ext_t {
+    sgx_ql_att_key_id_t base;
+    uint8_t             spid[16];                ///< Service Provider ID, should be 0s for ECDSA quote
+    uint16_t            att_key_type;            ///< For ECDSA quote, it equals to sgx_ql_attestation_algorithm_id_t
+                                                 ///< For EPID quote, it equals to sgx_quote_sign_type_t
+}sgx_att_key_id_ext_t;
 
 /** This is the data structure of the CERTIFICATION_INFO_DATA in the Quote when the certification type is
  *  PPID_CLEARTTEXT. It identifies the PCK Cert required to verify the certification signature. */
@@ -138,7 +146,7 @@ typedef struct _sgx_ql_auth_data_t {
     uint8_t auth_data[];   ///< Additional data provided by Att key owner to be signed by the certification key
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif  
+#endif
 } sgx_ql_auth_data_t;
 
 /** Data that will be signed by the ECDSA described in the CERTIFICATION_* fields.
@@ -147,13 +155,13 @@ typedef struct _sgx_ql_auth_data_t {
 typedef struct _sgx_ql_certification_data_t {
     uint16_t cert_key_type;  ///< The type of certification key used to sign the QE3 Report and Att key hash (ECDSA_ID+Authentication Data).
     uint32_t size;  ///< Size of the data structure for the cert_key_type information.
-#ifdef _MSC_VER 
-#pragma warning(push) 
-#pragma warning ( disable:4200 ) 
-#endif 
-    uint8_t certification_data[];  ///< Certification data associated with the cert_key_type 
-#ifdef _MSC_VER 
-#pragma warning(pop) 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning ( disable:4200 )
+#endif
+    uint8_t certification_data[];  ///< Certification data associated with the cert_key_type
+#ifdef _MSC_VER
+#pragma warning(pop)
 #endif
 } sgx_ql_certification_data_t;
 
@@ -171,12 +179,12 @@ typedef struct _sgx_ql_ecdsa_sig_data_t {
     uint8_t               auth_certification_data[];               ///< Place holder for both the auth_data_t and certification_data_t.  Concatenated in that order.
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif 
+#endif
 } sgx_ql_ecdsa_sig_data_t;
 
 /** The quote header.  It is designed to compatible with earlier versions of the quote. */
 typedef struct _sgx_quote_header_t {
-    uint16_t            version;             ///< 0:  The version this quote structure.  
+    uint16_t            version;             ///< 0:  The version this quote structure.
     uint16_t            att_key_type;        ///< 2:  sgx_attestation_algorithm_id_t.  Describes the type of signature in the signature_data[] field.
     uint32_t            att_key_data_0;      ///< 4:  Optionally stores additional data associated with the att_key_type.
     sgx_isv_svn_t       qe_svn;              ///< 8:  The ISV_SVN of the Quoting Enclave when the quote was generated.
@@ -198,7 +206,7 @@ typedef struct _sgx_quote3_t {
     uint8_t             signature_data[];    ///< 436: Contains the variable length containing the quote signature and support data for the signature.
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif 
+#endif
 } sgx_quote3_t;
 
 #pragma pack(pop)
