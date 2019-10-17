@@ -85,6 +85,7 @@ typedef struct _sgx_ql_qe_report_info_t {
 
 #pragma pack(pop)
 
+#ifdef __cplusplus
 /** Describes the generic Quoting API used by all attestation keys/algorithms.  A particular quoting implementer will implement this interface.
     Application can use this interface to remain agnostic to the attestation key used to generate a quote. */
 class IQuote {
@@ -108,5 +109,5 @@ public:
                                      sgx_quote3_t *p_quote,
                                      uint32_t quote_size) = 0;
 };
-
+#endif //#ifdef __cplusplus
 #endif //_SGX_QL_QUOTE_H_

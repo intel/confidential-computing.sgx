@@ -62,6 +62,7 @@ typedef enum {
     PCK_CLEARTEXT = 4,          ///< Clear PCK Leaf Cert
     PCK_CERT_CHAIN = 5,         ///< Full PCK Cert chain (trustedRootCaCert||intermediateCa||pckCert)
     ECDSA_SIG_AUX_DATA = 6,     ///< Indicates the contents of the CERTIFICATION_INFO_DATA contains the ECDSA_SIG_AUX_DATA of another Quote.
+    QL_CERT_KEY_TYPE_MAX = 16,
 } sgx_ql_cert_key_type_t;
 
 #pragma pack(push, 1)
@@ -99,7 +100,7 @@ typedef struct _sgx_ql_att_key_id_t {
 typedef struct _sgx_att_key_id_ext_t {
     sgx_ql_att_key_id_t base;
     uint8_t             spid[16];                ///< Service Provider ID, should be 0s for ECDSA quote
-    uint16_t            att_key_type;            ///< For non-EPID quote, it should be 0 
+    uint16_t            att_key_type;            ///< For non-EPID quote, it should be 0
                                                  ///< For EPID quote, it equals to sgx_quote_sign_type_t
     uint8_t             reserved[80];            ///< It should have the same size of sgx_att_key_id_t
 }sgx_att_key_id_ext_t;
@@ -191,7 +192,7 @@ typedef struct _sgx_quote_header_t {
     sgx_isv_svn_t       qe_svn;              ///< 8:  The ISV_SVN of the Quoting Enclave when the quote was generated.
     sgx_isv_svn_t       pce_svn;             ///< 10: The ISV_SVN of the PCE when the quote was generated.
     uint8_t             vendor_id[16];       ///< 12: Unique identifier of QE Vendor.
-    uint8_t             user_data[20];       ///< 16: Custom attestation key owner data.
+    uint8_t             user_data[20];       ///< 28: Custom attestation key owner data.
 } sgx_quote_header_t;
 
 /** The generic quote data structure.  This is the common part of the quote.  The signature_data[] contains the signature and supporting

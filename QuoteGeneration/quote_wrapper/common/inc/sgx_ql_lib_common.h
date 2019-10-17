@@ -75,8 +75,39 @@ typedef enum _quote3_error_t {
     SGX_QL_KEY_CERTIFCATION_ERROR = SGX_QL_MK_ERROR(0x0018),         ///< Caused when the provider library returns an invalid TCB (too high).
     SGX_QL_NETWORK_ERROR = SGX_QL_MK_ERROR(0x0019),                  ///< Network error when retrieving PCK certs
     SGX_QL_MESSAGE_ERROR = SGX_QL_MK_ERROR(0x001a),                  ///< Message error when retrieving PCK certs
-    SGX_QL_ERROR_INVALID_PRIVILEGE = SGX_QL_MK_ERROR(0x001b),        ///< No enough privilege to perform the operation
+    SGX_QL_NO_QUOTE_COLLATERAL_DATA = SGX_QL_MK_ERROR(0x001b),       ///< The platform does not have the quote verification collateral data available.
+    SGX_QL_QUOTE_CERTIFICATION_DATA_UNSUPPORTED = SGX_QL_MK_ERROR(0x001c),
+    SGX_QL_QUOTE_FORMAT_UNSUPPORTED = SGX_QL_MK_ERROR(0x001d),
+    SGX_QL_UNABLE_TO_GENERATE_REPORT = SGX_QL_MK_ERROR(0x001e),
+    SGX_QL_QE_REPORT_INVALID_SIGNATURE = SGX_QL_MK_ERROR(0x001f),
+    SGX_QL_QE_REPORT_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0020),
+    SGX_QL_PCK_CERT_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0021),
+    SGX_QL_PCK_CERT_CHAIN_ERROR = SGX_QL_MK_ERROR(0x0022),
+    SGX_QL_TCBINFO_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0023),
+    SGX_QL_TCBINFO_MISMATCH = SGX_QL_MK_ERROR(0x0024),
+    SGX_QL_QEIDENTITY_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0025),
+    SGX_QL_QEIDENTITY_MISMATCH = SGX_QL_MK_ERROR(0x0026),
+    SGX_QL_TCB_OUT_OF_DATE = SGX_QL_MK_ERROR(0x0027),
+    SGX_QL_TCB_OUT_OF_DATE_CONFIGURATION_NEEDED = SGX_QL_MK_ERROR(0x0028),
+    SGX_QL_SGX_ENCLAVE_IDENTITY_OUT_OF_DATE = SGX_QL_MK_ERROR(0x0029),
+    SGX_QL_SGX_ENCLAVE_REPORT_ISVSVN_OUT_OF_DATE = SGX_QL_MK_ERROR(0x002a),
+    SGX_QL_QE_IDENTITY_OUT_OF_DATE = SGX_QL_MK_ERROR(0x002b),
+    SGX_QL_SGX_TCB_INFO_EXPIRED = SGX_QL_MK_ERROR(0x002c),
+    SGX_QL_SGX_PCK_CERT_CHAIN_EXPIRED = SGX_QL_MK_ERROR(0x002d),
+    SGX_QL_SGX_CRL_EXPIRED = SGX_QL_MK_ERROR(0x002e),
+    SGX_QL_SGX_SIGNING_CERT_CHAIN_EXPIRED = SGX_QL_MK_ERROR(0x002f),
+    SGX_QL_SGX_ENCLAVE_IDENTITY_EXPIRED = SGX_QL_MK_ERROR(0x0030),
+    SGX_QL_PCK_REVOKED = SGX_QL_MK_ERROR(0x0031),
+    SGX_QL_TCB_REVOKED = SGX_QL_MK_ERROR(0x0032),
+    SGX_QL_TCB_CONFIGURATION_NEEDED = SGX_QL_MK_ERROR(0x0033),
+    SGX_QL_UNABLE_TO_GET_COLLATERAL = SGX_QL_MK_ERROR(0x0034),
+    SGX_QL_ERROR_INVALID_PRIVILEGE = SGX_QL_MK_ERROR(0x0035),        ///< No enough privilege to perform the operation
+    SGX_QL_NO_QVE_IDENTITY_DATA = SGX_QL_MK_ERROR(0x0037),           ///< The platform does not have the QVE identity data available.
+    SGX_QL_CRL_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0038),
+    SGX_QL_QEIDENTITY_CHAIN_ERROR = SGX_QL_MK_ERROR(0x0039),
+    SGX_QL_TCBINFO_CHAIN_ERROR = SGX_QL_MK_ERROR(0x003a),
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
+
 } quote3_error_t;
 
 
@@ -115,8 +146,30 @@ typedef struct _sgx_ql_config_t
     uint8_t* p_cert_data;                  ///< The certificaton data used for the quote.
                                            ///todo: It is the assumed to be the PCK Cert Chain.  May want to change to support other cert types.
 }sgx_ql_config_t;
-
 #pragma pack(pop)
+
+#ifndef __sgx_ql_qve_collateral_t          // The __sgx_ql_qve_collateral_t can also be defined in QvE _t/_u.h
+#define __sgx_ql_qve_collateral_t
+typedef struct _sgx_ql_qve_collateral_t
+{
+    uint32_t version;                      /// version = 1.  PCK Cert chain is in the Quote.
+    char *pck_crl_issuer_chain;
+    uint32_t pck_crl_issuer_chain_size;
+    char *root_ca_crl;                     /// Root CA CRL
+    uint32_t root_ca_crl_size;
+    char *pck_crl;                         /// PCK Cert CRL
+    uint32_t pck_crl_size;
+    char *tcb_info_issuer_chain;
+    uint32_t tcb_info_issuer_chain_size;
+    char *tcb_info;                        /// TCB Info structure
+    uint32_t tcb_info_size;
+    char *qe_identity_issuer_chain;
+    uint32_t qe_identity_issuer_chain_size;
+    char *qe_identity;                     /// QE Identity Structure
+    uint32_t qe_identity_size;
+} sgx_ql_qve_collateral_t;
+#endif  //__sgx_ql_qve_collateral_t
+
 
 #endif //_SGX_QL_LIB_COMMON_H_
 
