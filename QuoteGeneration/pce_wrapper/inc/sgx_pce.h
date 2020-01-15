@@ -57,7 +57,7 @@ typedef enum _sgx_pce_error_t
 
 
 /* PCE ID for the PCE in this library */
-#define PCE_ID = 0;
+#define PCE_ID 0
 
 /* Crypto_suite */
 #define PCE_ALG_RSA_OAEP_3072 1
