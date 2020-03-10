@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Intel Corporation. All rights reserved.
+ * Copyright (C) 2011-2020 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +114,8 @@ sgx_pce_error_t sgx_pce_sign_report(
                               uint8_t *p_signature,
                               uint32_t signature_buf_size,
                               uint32_t *p_signature_out_size);
+
+sgx_pce_error_t sgx_get_pce_info_without_ppid(sgx_isv_svn_t* p_pce_isvsvn, uint16_t* p_pce_id);
 
 #if defined(__cplusplus)
 }
