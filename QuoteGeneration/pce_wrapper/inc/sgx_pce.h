@@ -67,7 +67,7 @@ typedef enum _sgx_pce_error_t
 
 
 //TODO: in qe pce common header
-/** Typedef enum _sgx_ql_request_policy */ 
+/** Typedef enum _sgx_ql_request_policy */
 typedef enum _sgx_ql_request_policy
 {
     SGX_QL_PERSISTENT, ///< QE is initialized on first use and reused until process ends.
@@ -97,7 +97,7 @@ sgx_pce_error_t sgx_pce_get_target(
 
 sgx_pce_error_t sgx_get_pce_info(
                               const sgx_report_t* p_report,
-                              const uint8_t *p_public_key, 
+                              const uint8_t *p_public_key,
                               uint32_t key_size,
                               uint8_t crypto_suite,
                               uint8_t *p_encrypted_ppid,
@@ -115,8 +115,12 @@ sgx_pce_error_t sgx_pce_sign_report(
                               uint32_t signature_buf_size,
                               uint32_t *p_signature_out_size);
 
-sgx_pce_error_t sgx_get_pce_info_without_ppid(sgx_isv_svn_t* p_pce_isvsvn, uint16_t* p_pce_id);
+sgx_pce_error_t sgx_get_pce_info_without_ppid(
+                             sgx_isv_svn_t* p_pce_isvsvn,
+                             uint16_t* p_pce_id);
 
+sgx_pce_error_t sgx_set_pce_path(
+                             const char* p_path);
 #if defined(__cplusplus)
 }
 #endif

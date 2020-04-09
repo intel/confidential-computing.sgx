@@ -109,6 +109,20 @@ typedef enum _quote3_error_t {
     SGX_QL_ERROR_QVL_QVE_MISMATCH = SGX_QL_MK_ERROR(0x003b),          ///< QvE returned supplemental data version mismatched between QVL and QvE
     SGX_QL_TCB_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003c),         ///< TCB up to date but SW Hardening needed
     SGX_QL_TCB_CONFIGURATION_AND_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003d),        ///< TCB up to date but Configuration and SW Hardening needed
+
+    SGX_QL_UNSUPPORTED_MODE = SGX_QL_MK_ERROR(0x003e),
+
+    SGX_QL_NO_DEVICE = SGX_QL_MK_ERROR(0x003f),
+    SGX_QL_SERVICE_UNAVAILABLE = SGX_QL_MK_ERROR(0x0040),
+    SGX_QL_NETWORK_FAILURE = SGX_QL_MK_ERROR(0x0041),
+    SGX_QL_SERVICE_TIMEOUT = SGX_QL_MK_ERROR(0x0042),
+    SGX_QL_ERROR_BUSY = SGX_QL_MK_ERROR(0x0043),
+    
+    SGX_QL_UNKNOWN_MESSAGE_RESPONSE  = SGX_QL_MK_ERROR(0x0044),      /// Unexpected error from the cache service
+    SGX_QL_PERSISTENT_STORAGE_ERROR  = SGX_QL_MK_ERROR(0x0045),      /// Error storing the retrieved cached data in persistent memory
+    SGX_QL_ERROR_MESSAGE_PARSING_ERROR   = SGX_QL_MK_ERROR(0x0046),  /// Message parsing error
+    SGX_QL_PLATFORM_UNKNOWN  = SGX_QL_MK_ERROR(0x0047),              /// Platform was not found in the cache
+
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 
 } quote3_error_t;

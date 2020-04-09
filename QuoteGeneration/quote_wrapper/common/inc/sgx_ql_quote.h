@@ -67,11 +67,7 @@ typedef struct _sgx_ql_att_id_list_t {
 #pragma warning(push)
 #pragma warning ( disable:4200 )
 #endif
-#ifdef AESM_ECDSA_BUNDLE
     sgx_att_key_id_ext_t              ext_id_list[];///< Place holder for the extended attestation ID list.
-#else
-    sgx_ql_att_key_id_t               id_list[];    ///< Place holder for the attestation ID list.
-#endif
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
