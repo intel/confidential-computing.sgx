@@ -68,7 +68,7 @@ typedef enum _quote3_error_t {
     SGX_QL_ERROR_REPORT = SGX_QL_MK_ERROR(0x0013),                   ///< There was a problem verifying an SGX REPORT.
     SGX_QL_ENCLAVE_LOST = SGX_QL_MK_ERROR(0x0014),                   ///< Interfacing to the enclave failed due to a power transition.
     SGX_QL_INVALID_REPORT = SGX_QL_MK_ERROR(0x0015),                 ///< Error verifying the application enclave's report.
-    SGX_QL_ENCLAVE_LOAD_ERROR = SGX_QL_MK_ERROR(0x0016),             ///< Unable to load the enclaves.  Could be due to file I/O error, loading infrastructure error.
+    SGX_QL_ENCLAVE_LOAD_ERROR = SGX_QL_MK_ERROR(0x0016),             ///< Unable to load the enclaves. Could be due to file I/O error, loading infrastructure error, or non-SGX capable system
     SGX_QL_UNABLE_TO_GENERATE_QE_REPORT = SGX_QL_MK_ERROR(0x0017),   ///< The QE was unable to generate its own report targeting the application enclave either
                                                                      ///< because the QE doesn't support this feature there is an enclave compatibility issue.
                                                                      ///< Please call again with the p_qe_report_info to NULL.
@@ -125,6 +125,7 @@ typedef enum _quote3_error_t {
 
     SGX_QL_QVEIDENTITY_MISMATCH = SGX_QL_MK_ERROR(0x0050),          ///< QvE Identity is NOT match to Intel signed QvE identity
     SGX_QL_QVE_OUT_OF_DATE = SGX_QL_MK_ERROR(0x0051),               ///< QvE ISVSVN is smaller then the ISVSVN threshold
+    SGX_QL_PSW_NOT_AVAILABLE = SGX_QL_MK_ERROR(0x0052),             ///< SGX PSW library cannot be loaded, could be due to file I/O error
 
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 
