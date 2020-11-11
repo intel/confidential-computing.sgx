@@ -115,7 +115,7 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         }
 
         //verify QvE report data
-        //report_data = SHA256([nonce || quote || expiration_check_date || expiration_status || verification_result || supplemental_data] || 32 - 0x00)
+        //report_data = SHA256([nonce || quote || expiration_check_date || expiration_status || verification_result || supplemental_data]) || 32 - 0x00
         //
         sgx_ret = sgx_sha256_init(&sha_handle);
         SGX_ERR_BREAK(sgx_ret);
@@ -194,6 +194,7 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
                 std::back_inserter(attributeReport));
 
             if (applyMask(attributeReport, attribute_mask) != attribute) {
+                 ret = SGX_QL_QVEIDENTITY_MISMATCH;
                  break;
             }
 
