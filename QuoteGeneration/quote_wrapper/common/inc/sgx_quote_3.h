@@ -60,7 +60,7 @@ typedef enum {
     PPID_RSA2048_ENCRYPTED = 2, ///< RSA-2048-OAEP Encrypted PPID + CPU_SVN, PvE_SVN, PCE_SVN, PCE_ID
     PPID_RSA3072_ENCRYPTED = 3, ///< RSA-3072-OAEP Encrypted PPID + CPU_SVN, PvE_SVN, PCE_SVN, PCE_ID
     PCK_CLEARTEXT = 4,          ///< Clear PCK Leaf Cert
-    PCK_CERT_CHAIN = 5,         ///< Full PCK Cert chain (trustedRootCaCert||intermediateCa||pckCert)
+    PCK_CERT_CHAIN = 5,         ///< Full PCK Cert chain (PCK Leaf Cert|| Intermediate CA Cert || Root CA Cert)
     ECDSA_SIG_AUX_DATA = 6,     ///< Indicates the contents of the CERTIFICATION_INFO_DATA contains the ECDSA_SIG_AUX_DATA of another Quote.
     QL_CERT_KEY_TYPE_MAX = 16,
 } sgx_ql_cert_key_type_t;
