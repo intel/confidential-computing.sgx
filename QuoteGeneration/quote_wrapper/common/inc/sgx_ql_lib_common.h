@@ -175,7 +175,9 @@ typedef struct _sgx_ql_config_t
 #define __sgx_ql_qve_collateral_t
 typedef struct _sgx_ql_qve_collateral_t
 {
-    uint32_t version;                      /// version = 1.  PCK Cert chain is in the Quote.
+    uint32_t version;                      /// The version of PCCS/PCS API used to retrieve verification collateral.
+                                           /// For V1 and V2 APIs, the ‘version’ field with have a value of 1.
+                                           /// For V3 APIs, the ‘version’ field will have the value of 3
     char *pck_crl_issuer_chain;
     uint32_t pck_crl_issuer_chain_size;
     char *root_ca_crl;                     /// Root CA CRL
@@ -191,6 +193,15 @@ typedef struct _sgx_ql_qve_collateral_t
     char *qe_identity;                     /// QE Identity Structure
     uint32_t qe_identity_size;
 } sgx_ql_qve_collateral_t;
+
+typedef enum _sgx_ql_log_level_t
+{
+    SGX_QL_LOG_ERROR,
+    SGX_QL_LOG_INFO
+} sgx_ql_log_level_t;
+
+typedef void (*sgx_ql_logging_callback_t)(sgx_ql_log_level_t level, const char* message);
+
 #endif  //__sgx_ql_qve_collateral_t
 
 
