@@ -101,13 +101,13 @@ typedef enum _quote3_error_t {
     SGX_QL_TCB_REVOKED = SGX_QL_MK_ERROR(0x0032),
     SGX_QL_TCB_CONFIGURATION_NEEDED = SGX_QL_MK_ERROR(0x0033),
     SGX_QL_UNABLE_TO_GET_COLLATERAL = SGX_QL_MK_ERROR(0x0034),
-    SGX_QL_ERROR_INVALID_PRIVILEGE = SGX_QL_MK_ERROR(0x0035),        ///< No enough privilege to perform the operation
-    SGX_QL_NO_QVE_IDENTITY_DATA = SGX_QL_MK_ERROR(0x0037),           ///< The platform does not have the QVE identity data available.
+    SGX_QL_ERROR_INVALID_PRIVILEGE = SGX_QL_MK_ERROR(0x0035),           ///< No enough privilege to perform the operation
+    SGX_QL_NO_QVE_IDENTITY_DATA = SGX_QL_MK_ERROR(0x0037),              ///< The platform does not have the QVE identity data available.
     SGX_QL_CRL_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0038),
     SGX_QL_QEIDENTITY_CHAIN_ERROR = SGX_QL_MK_ERROR(0x0039),
     SGX_QL_TCBINFO_CHAIN_ERROR = SGX_QL_MK_ERROR(0x003a),
-    SGX_QL_ERROR_QVL_QVE_MISMATCH = SGX_QL_MK_ERROR(0x003b),          ///< QvE returned supplemental data version mismatched between QVL and QvE
-    SGX_QL_TCB_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003c),         ///< TCB up to date but SW Hardening needed
+    SGX_QL_ERROR_QVL_QVE_MISMATCH = SGX_QL_MK_ERROR(0x003b),            ///< QvE returned supplemental data version mismatched between QVL and QvE
+    SGX_QL_TCB_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003c),           ///< TCB up to date but SW Hardening needed
     SGX_QL_TCB_CONFIGURATION_AND_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003d),        ///< TCB up to date but Configuration and SW Hardening needed
 
     SGX_QL_UNSUPPORTED_MODE = SGX_QL_MK_ERROR(0x003e),
@@ -118,18 +118,19 @@ typedef enum _quote3_error_t {
     SGX_QL_SERVICE_TIMEOUT = SGX_QL_MK_ERROR(0x0042),
     SGX_QL_ERROR_BUSY = SGX_QL_MK_ERROR(0x0043),
 
-    SGX_QL_UNKNOWN_MESSAGE_RESPONSE  = SGX_QL_MK_ERROR(0x0044),      /// Unexpected error from the cache service
-    SGX_QL_PERSISTENT_STORAGE_ERROR  = SGX_QL_MK_ERROR(0x0045),      /// Error storing the retrieved cached data in persistent memory
-    SGX_QL_ERROR_MESSAGE_PARSING_ERROR   = SGX_QL_MK_ERROR(0x0046),  /// Message parsing error
-    SGX_QL_PLATFORM_UNKNOWN  = SGX_QL_MK_ERROR(0x0047),              /// Platform was not found in the cache
-    SGX_QL_UNKNOWN_API_VERSION  = SGX_QL_MK_ERROR(0x0048),           /// The current PCS API version configured is unknown
-    SGX_QL_CERTS_UNAVAILABLE  = SGX_QL_MK_ERROR(0x0049),             /// Certificates are not available for this platform
+    SGX_QL_UNKNOWN_MESSAGE_RESPONSE  = SGX_QL_MK_ERROR(0x0044),         /// Unexpected error from the cache service
+    SGX_QL_PERSISTENT_STORAGE_ERROR  = SGX_QL_MK_ERROR(0x0045),         /// Error storing the retrieved cached data in persistent memory
+    SGX_QL_ERROR_MESSAGE_PARSING_ERROR   = SGX_QL_MK_ERROR(0x0046),     /// Message parsing error
+    SGX_QL_PLATFORM_UNKNOWN  = SGX_QL_MK_ERROR(0x0047),                 /// Platform was not found in the cache
+    SGX_QL_UNKNOWN_API_VERSION  = SGX_QL_MK_ERROR(0x0048),              /// The current PCS API version configured is unknown
+    SGX_QL_CERTS_UNAVAILABLE  = SGX_QL_MK_ERROR(0x0049),                /// Certificates are not available for this platform
 
-    SGX_QL_QVEIDENTITY_MISMATCH = SGX_QL_MK_ERROR(0x0050),          ///< QvE Identity is NOT match to Intel signed QvE identity
-    SGX_QL_QVE_OUT_OF_DATE = SGX_QL_MK_ERROR(0x0051),               ///< QvE ISVSVN is smaller then the ISVSVN threshold
-    SGX_QL_PSW_NOT_AVAILABLE = SGX_QL_MK_ERROR(0x0052),             ///< SGX PSW library cannot be loaded, could be due to file I/O error
+    SGX_QL_QVEIDENTITY_MISMATCH = SGX_QL_MK_ERROR(0x0050),              ///< QvE Identity is NOT match to Intel signed QvE identity
+    SGX_QL_QVE_OUT_OF_DATE = SGX_QL_MK_ERROR(0x0051),                   ///< QvE ISVSVN is smaller then the ISVSVN threshold
+    SGX_QL_PSW_NOT_AVAILABLE = SGX_QL_MK_ERROR(0x0052),                 ///< SGX PSW library cannot be loaded, could be due to file I/O error
+    SGX_QL_COLLATERAL_VERSION_NOT_SUPPORTED = SGX_QL_MK_ERROR(0x0053),  ///< SGX quote verification collateral version not supported by QVL/QvE
 
-    SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
+    SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                         ///< Indicate max error to allow better translation.
 
 } quote3_error_t;
 
