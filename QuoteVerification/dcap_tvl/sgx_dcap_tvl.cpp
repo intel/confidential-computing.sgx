@@ -47,7 +47,7 @@
 //Hardcode Intel signed QvE Identity below
 //You can get such info from latest QvE Identity JSON file
 //e.g. Get the QvE Identity JSON file from
-//https://api.trustedservices.intel.com/sgx/certification/v2/qve/identity
+//https://api.trustedservices.intel.com/sgx/certification/v3/qve/identity
 //
 const std::string QVE_MISC_SELECT = "00000000";
 const std::string QVE_MISC_SELECT_MASK = "FFFFFFFF";
@@ -61,7 +61,7 @@ const std::string QVE_MRSIGNER = "8C4F5775D796503E96137F77C68A829A0056AC8DED7014
 const sgx_prod_id_t QVE_PRODID = 2;
 
 //Defense in depth, threshold must be greater or equal to least QvE ISV SVN
-const sgx_isv_svn_t LEAST_QVE_ISVSVN = 3;
+const sgx_isv_svn_t LEAST_QVE_ISVSVN = 5;
 
 
 quote3_error_t sgx_tvl_verify_qve_report_and_identity(
@@ -96,10 +96,10 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         }
     }
 
-    //Defense in depth, threshold must be greater or equal to 3
+    //Defense in depth, threshold must be greater or equal to 5
     //
     if (qve_isvsvn_threshold < LEAST_QVE_ISVSVN)
-        return SGX_QL_ERROR_INVALID_PARAMETER;
+        return SGX_QL_QVE_OUT_OF_DATE;
 
 
 

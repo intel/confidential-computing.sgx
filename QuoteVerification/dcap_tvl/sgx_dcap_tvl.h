@@ -29,7 +29,7 @@
  *
  */
 /**
- * File: sgx_dcap_tqvl.h
+ * File: sgx_dcap_tvl.h
  *
  * Description: Trusted library for app enclave to verify QvE Report and Identity
  *
