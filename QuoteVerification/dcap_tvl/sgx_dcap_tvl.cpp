@@ -45,7 +45,7 @@
 #define SGX_ERR_BREAK(x) {if (x != SGX_SUCCESS) break;}
 
 //Hardcode Intel signed QvE Identity below
-//You can get such info from latest QvE Identity JSON file
+//You can get such info from QvE Identity JSON file
 //e.g. Get the QvE Identity JSON file from
 //https://api.trustedservices.intel.com/sgx/certification/v3/qve/identity
 //
@@ -60,9 +60,8 @@ const std::string QVE_MRSIGNER = "8C4F5775D796503E96137F77C68A829A0056AC8DED7014
 
 const sgx_prod_id_t QVE_PRODID = 2;
 
-//Defense in depth, threshold must be greater or equal to least QvE ISV SVN
-const sgx_isv_svn_t LEAST_QVE_ISVSVN = 5;
-
+//Defense in depth, QvE ISV SVN in report must be greater or equal to hardcode QvE ISV SVN
+const sgx_isv_svn_t LEAST_QVE_ISVSVN = 6;
 
 quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         const uint8_t *p_quote,
@@ -95,13 +94,6 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
             return SGX_QL_ERROR_INVALID_PARAMETER;
         }
     }
-
-    //Defense in depth, threshold must be greater or equal to 5
-    //
-    if (qve_isvsvn_threshold < LEAST_QVE_ISVSVN)
-        return SGX_QL_QVE_OUT_OF_DATE;
-
-
 
     const sgx_report_t *p_qve_report = &(p_qve_report_info->qe_report);
 
@@ -227,8 +219,15 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
                  break;
             }
 
+            //Check QvE ISV SVN in QvE report meets the minimum requires SVN when the TVL was built.
+            //
+            if (p_qve_report->body.isv_svn < LEAST_QVE_ISVSVN) {
+                 ret = SGX_QL_QVE_OUT_OF_DATE;
+                 break;
+            }
 
-            //Check QvE ISV SVN in QvE report
+            //Check if there has been a TCB Recovery on the QVE used to verify the report.
+            //Warning: The function may return erroneous result if QvE ISV SVN has been modified maliciously.
             //
             if (p_qve_report->body.isv_svn < qve_isvsvn_threshold) {
                  ret = SGX_QL_QVE_OUT_OF_DATE;

@@ -64,7 +64,9 @@ extern "C" {
  * @param quote_verification_result[IN] - The output of API "sgx_qv_verify_quote" about quote verification result
  * @param p_supplemental_data[IN] - The output of API "sgx_qv_verify_quote", the pointer to supplemental data
  * @param supplemental_data_size[IN] - Size of the buffer pointed to by p_quote (in bytes)
- * @param qve_isvsvn_threshold [IN] - The threshold of QvE ISVSVN, the ISVSVN of QvE used to verify quote must be greater or equal to this threshold. You can get latest QvE ISVSVN in QvE Identity (JSON) from Intel PCS.
+ * @param qve_isvsvn_threshold [IN] - The threshold of QvE ISVSVN, the ISVSVN of QvE used to verify quote must be greater or equal to this threshold.
+ * @You can get latest QvE ISVSVN from QvE configuration file (Github) or QvE Identity (JSON) from Intel PCS.
+ * @Warning: The function may return erroneous result if QvE ISV SVN has been modified maliciously.
  *
  * @return Status code of the operation, one of:
  *   - SGX_QL_SUCCESS

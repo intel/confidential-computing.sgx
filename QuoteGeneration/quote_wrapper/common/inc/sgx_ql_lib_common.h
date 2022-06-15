@@ -165,12 +165,13 @@ typedef enum _sgx_ql_config_version_t
 typedef struct _sgx_ql_config_t
 {
     sgx_ql_config_version_t version;
-    sgx_cpu_svn_t cert_cpu_svn;            ///< The CPUSVN used to generate the PCK Signature used to certify the attestation key.
-    sgx_isv_svn_t cert_pce_isv_svn;        ///< The PCE ISVSVN used to generate the PCK Signature used to certify the attestation key.
-    uint32_t cert_data_size;               ///< The size of the buffer pointed to by p_cert_data
-    uint8_t* p_cert_data;                  ///< The certificaton data used for the quote.
-                                           ///todo: It is the assumed to be the PCK Cert Chain.  May want to change to support other cert types.
-}sgx_ql_config_t;
+    sgx_cpu_svn_t cert_cpu_svn;     ///< The CPUSVN used to generate the PCK Signature used to certify the attestation key.
+    sgx_isv_svn_t cert_pce_isv_svn; ///< The PCE ISVSVN used to generate the PCK Signature used to certify the attestation key.
+    uint32_t cert_data_size;        ///< The size of the buffer pointed to by p_cert_data
+    uint8_t *p_cert_data;           ///< The certificaton data used for the quote.
+                                    ///todo: It is the assumed to be the PCK Cert Chain.  May want to change to support other cert types.
+} sgx_ql_config_t;
+
 #pragma pack(pop)
 
 #define MAX_PARAM_STRING_SIZE (256)
@@ -198,7 +199,6 @@ typedef struct _sgx_ql_qve_collateral_t
                                     ///< in Base16 encoded DER.  A minor version of 1 indicates the CRL’s are formatted in raw binary DER.
         };
     };
-
     uint32_t tee_type;                     ///<  0x00000000: SGX or 0x00000081: TDX
     char *pck_crl_issuer_chain;
     uint32_t pck_crl_issuer_chain_size;
@@ -228,6 +228,15 @@ typedef enum _sgx_ql_log_level_t
 } sgx_ql_log_level_t;
 
 typedef void (*sgx_ql_logging_callback_t)(sgx_ql_log_level_t level, const char* message);
+
+#ifndef tdx_ql_qve_collateral_t
+typedef sgx_ql_qve_collateral_t tdx_ql_qve_collateral_t;
+#endif
+
+typedef enum _sgx_prod_type_t {
+    SGX_PROD_TYPE_SGX = 0,
+    SGX_PROD_TYPE_TDX = 1,
+} sgx_prod_type_t;
 
 #ifndef tdx_ql_qve_collateral_t
 typedef sgx_ql_qve_collateral_t tdx_ql_qve_collateral_t;
