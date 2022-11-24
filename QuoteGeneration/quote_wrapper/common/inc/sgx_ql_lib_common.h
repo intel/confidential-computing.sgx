@@ -131,6 +131,14 @@ typedef enum _quote3_error_t {
     SGX_QL_COLLATERAL_VERSION_NOT_SUPPORTED = SGX_QL_MK_ERROR(0x0053),  ///< SGX quote verification collateral version not supported by QVL/QvE
     SGX_QL_TDX_MODULE_MISMATCH = SGX_QL_MK_ERROR(0x0060),            ///< TDX SEAM module identity is NOT match to Intel signed TDX SEAM module
 
+    SGX_QL_QEIDENTITY_NOT_FOUND = SGX_QL_MK_ERROR(0x0061),            ///< QE identity was not found 
+    SGX_QL_TCBINFO_NOT_FOUND = SGX_QL_MK_ERROR(0x0062),               ///< TCB Info was not found 
+    SGX_QL_INTERNAL_SERVER_ERROR = SGX_QL_MK_ERROR(0x0063),           ///< Internal server error
+
+    SGX_QL_SUPPLEMENTAL_DATA_VERSION_NOT_SUPPORTED = SGX_QL_MK_ERROR(0x0064),       ///< The supplemental data version is not supported
+
+    SGX_QL_ROOT_CA_UNTRUSTED = SGX_QL_MK_ERROR(0x0065),              ///< The certificate used to establish SSL session is untrusted
+
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 
 } quote3_error_t;

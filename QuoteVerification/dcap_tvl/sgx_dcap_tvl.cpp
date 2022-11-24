@@ -61,7 +61,7 @@ const std::string QVE_MRSIGNER = "8C4F5775D796503E96137F77C68A829A0056AC8DED7014
 const sgx_prod_id_t QVE_PRODID = 2;
 
 //Defense in depth, QvE ISV SVN in report must be greater or equal to hardcode QvE ISV SVN
-const sgx_isv_svn_t LEAST_QVE_ISVSVN = 6;
+const sgx_isv_svn_t LEAST_QVE_ISVSVN = 7;
 
 quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         const uint8_t *p_quote,

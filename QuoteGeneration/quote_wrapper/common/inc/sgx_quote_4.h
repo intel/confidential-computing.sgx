@@ -41,6 +41,7 @@
 
 #include "sgx_quote_3.h"
 #include "sgx_report2.h"
+#include "sgx_quote.h"
 
 
 #pragma pack(push, 1)
@@ -150,6 +151,8 @@ typedef struct _sgx_quote4_t {
 #pragma warning(pop)
 #endif
 } sgx_quote4_t;
+
+typedef sgx_att_key_id_ext_t tee_att_att_key_id_t;
 
 #pragma pack(pop)
 
