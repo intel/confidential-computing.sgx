@@ -139,6 +139,8 @@ typedef enum _quote3_error_t {
 
     SGX_QL_ROOT_CA_UNTRUSTED = SGX_QL_MK_ERROR(0x0065),              ///< The certificate used to establish SSL session is untrusted
 
+    SGX_QL_TCB_NOT_SUPPORTED = SGX_QL_MK_ERROR(0x0066),              ///< Current TCB level cannot be found in platform/enclave TCB info
+
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 
 } quote3_error_t;
@@ -236,10 +238,6 @@ typedef enum _sgx_ql_log_level_t
 } sgx_ql_log_level_t;
 
 typedef void (*sgx_ql_logging_callback_t)(sgx_ql_log_level_t level, const char* message);
-
-#ifndef tdx_ql_qve_collateral_t
-typedef sgx_ql_qve_collateral_t tdx_ql_qve_collateral_t;
-#endif
 
 typedef enum _sgx_prod_type_t {
     SGX_PROD_TYPE_SGX = 0,
