@@ -59,7 +59,7 @@ typedef enum _quote3_error_t {
     SGX_QL_ATT_KEY_BLOB_ERROR = SGX_QL_MK_ERROR(0x000a),             ///< There is a problem with the attestation key blob.
     SGX_QL_UNSUPPORTED_ATT_KEY_ID = SGX_QL_MK_ERROR(0x000b),         ///< Unsupported attestation key ID.
     SGX_QL_UNSUPPORTED_LOADING_POLICY = SGX_QL_MK_ERROR(0x000c),     ///< Unsupported enclave loading policy.
-    SGX_QL_INTERFACE_UNAVAILABLE = SGX_QL_MK_ERROR(0x000d),          ///< Unable to load the QE enclave
+    SGX_QL_INTERFACE_UNAVAILABLE = SGX_QL_MK_ERROR(0x000d),          ///< Unable to load the PCE enclave
     SGX_QL_PLATFORM_LIB_UNAVAILABLE = SGX_QL_MK_ERROR(0x000e),       ///< Unable to find the platform library with the dependent APIs.  Not fatal.
     SGX_QL_ATT_KEY_NOT_INITIALIZED = SGX_QL_MK_ERROR(0x000f),        ///< The attestation key doesn't exist or has not been certified.
     SGX_QL_ATT_KEY_CERT_DATA_INVALID = SGX_QL_MK_ERROR(0x0010),      ///< The certification data retrieved from the platform library is invalid.
@@ -141,6 +141,8 @@ typedef enum _quote3_error_t {
 
     SGX_QL_TCB_NOT_SUPPORTED = SGX_QL_MK_ERROR(0x0066),              ///< Current TCB level cannot be found in platform/enclave TCB info
 
+    SGX_QL_CONFIG_INVALID_JSON = SGX_QL_MK_ERROR(0x0067),            ///< The QPL's config file is in JSON format but has a format error
+
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 
 } quote3_error_t;
@@ -159,7 +161,7 @@ typedef struct _sgx_ql_pck_cert_id_t
     uint32_t qe3_id_size;                  ///< The Size of hte QE_ID (currenlty 16 bytes)
     sgx_cpu_svn_t *p_platform_cpu_svn;     ///< Pointer to the platform's raw CPUSVN
     sgx_isv_svn_t *p_platform_pce_isv_svn; ///< Pointer to the platform's raw PCE ISVSVN
-    uint8_t *p_encrypted_ppid;             ///< Pointer to the enccrypted PPID (Optional)
+    uint8_t *p_encrypted_ppid;             ///< Pointer to the encrypted PPID (Optional)
     uint32_t encrypted_ppid_size;          ///< Size of encrytped PPID.
     uint8_t crypto_suite;                  ///< Crypto algorithm used to encrypt the PPID
     uint16_t pce_id;                       ///< Identifies the PCE-Version used to generate the encrypted PPID.
@@ -178,7 +180,7 @@ typedef struct _sgx_ql_config_t
     sgx_cpu_svn_t cert_cpu_svn;     ///< The CPUSVN used to generate the PCK Signature used to certify the attestation key.
     sgx_isv_svn_t cert_pce_isv_svn; ///< The PCE ISVSVN used to generate the PCK Signature used to certify the attestation key.
     uint32_t cert_data_size;        ///< The size of the buffer pointed to by p_cert_data
-    uint8_t *p_cert_data;           ///< The certificaton data used for the quote.
+    uint8_t *p_cert_data;           ///< The certification data used for the quote.
                                     ///todo: It is the assumed to be the PCK Cert Chain.  May want to change to support other cert types.
 } sgx_ql_config_t;
 
@@ -244,8 +246,17 @@ typedef enum _sgx_prod_type_t {
     SGX_PROD_TYPE_TDX = 1,
 } sgx_prod_type_t;
 
+typedef enum _sgx_qpl_cache_type_t {
+    SGX_QPL_CACHE_CERTIFICATE = 1 << 0,
+    SGX_QPL_CACHE_QV_COLLATERAL = 1 << 1,
+    SGX_QPL_CACHE_MULTICERTS = 1 << 2,
+} sgx_qpl_cache_type_t;
+
 #ifndef tdx_ql_qve_collateral_t
 typedef sgx_ql_qve_collateral_t tdx_ql_qve_collateral_t;
+
+// Deprecate structure name tdx_ql_qve_collateral_t
+typedef tdx_ql_qve_collateral_t tdx_ql_qv_collateral_t;
 #endif
 
 #endif //_SGX_QL_LIB_COMMON_H_
