@@ -73,6 +73,9 @@ typedef enum _sgx_ql_request_policy
     SGX_QL_PERSISTENT, ///< QE is initialized on first use and reused until process ends.
     SGX_QL_EPHEMERAL,  ///< QE is initialized and terminated on every quote.
                        ///< If a previous QE exists, it is stopped & restarted before quoting.
+    SGX_QL_EPHEMERAL_QVE_MULTI_THREAD,  ///< Only used for quote verification, QvE is loaded per thread and be unloaded before function exit.
+    SGX_QL_PERSISTENT_QVE_MULTI_THREAD, ///< Only used for quote verification, QvE is loaded per thread and be unloaded before thread exit.
+
     SGX_QL_DEFAULT = SGX_QL_PERSISTENT
 } sgx_ql_request_policy_t;
 

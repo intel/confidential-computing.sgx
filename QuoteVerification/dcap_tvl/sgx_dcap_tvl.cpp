@@ -47,7 +47,7 @@
 //Hardcode Intel signed QvE Identity below
 //You can get such info from QvE Identity JSON file
 //e.g. Get the QvE Identity JSON file from
-//https://api.trustedservices.intel.com/sgx/certification/v3/qve/identity
+//https://api.trustedservices.intel.com/sgx/certification/v4/qve/identity
 //
 const std::string QVE_MISC_SELECT = "00000000";
 const std::string QVE_MISC_SELECT_MASK = "FFFFFFFF";
