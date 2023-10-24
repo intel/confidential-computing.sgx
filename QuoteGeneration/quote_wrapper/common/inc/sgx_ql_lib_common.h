@@ -106,7 +106,8 @@ typedef enum _quote3_error_t {
     SGX_QL_CRL_UNSUPPORTED_FORMAT = SGX_QL_MK_ERROR(0x0038),
     SGX_QL_QEIDENTITY_CHAIN_ERROR = SGX_QL_MK_ERROR(0x0039),
     SGX_QL_TCBINFO_CHAIN_ERROR = SGX_QL_MK_ERROR(0x003a),
-    SGX_QL_ERROR_QVL_QVE_MISMATCH = SGX_QL_MK_ERROR(0x003b),          ///< QvE returned supplemental data version mismatched between QVL and QvE
+    SGX_QL_ERROR_QVL_QVE_MISMATCH = SGX_QL_MK_ERROR(0x003b),          ///< Supplemental data size and version mismatched between QVL and QvE
+                                                                      ///< Please make sure to use QVL and QvE from same release package
     SGX_QL_TCB_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003c),         ///< TCB up to date but SW Hardening needed
     SGX_QL_TCB_CONFIGURATION_AND_SW_HARDENING_NEEDED = SGX_QL_MK_ERROR(0x003d),        ///< TCB up to date but Configuration and SW Hardening needed
 
@@ -142,6 +143,8 @@ typedef enum _quote3_error_t {
     SGX_QL_TCB_NOT_SUPPORTED = SGX_QL_MK_ERROR(0x0066),              ///< Current TCB level cannot be found in platform/enclave TCB info
 
     SGX_QL_CONFIG_INVALID_JSON = SGX_QL_MK_ERROR(0x0067),            ///< The QPL's config file is in JSON format but has a format error
+    
+    SGX_QL_RESULT_INVALID_SIGNATURE = SGX_QL_MK_ERROR(0x0068),    ///< Invalid signature during quote verification
 
     SGX_QL_ERROR_MAX = SGX_QL_MK_ERROR(0x00FF),                      ///< Indicate max error to allow better translation.
 
@@ -236,7 +239,9 @@ typedef struct _sgx_ql_qve_collateral_t
 typedef enum _sgx_ql_log_level_t
 {
     SGX_QL_LOG_ERROR,
-    SGX_QL_LOG_INFO
+    SGX_QL_LOG_INFO,
+    SGX_QL_LOG_DEBUG,
+    SGX_QL_LOG_TRACE,
 } sgx_ql_log_level_t;
 
 typedef void (*sgx_ql_logging_callback_t)(sgx_ql_log_level_t level, const char* message);
