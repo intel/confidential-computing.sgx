@@ -146,6 +146,12 @@ typedef enum _quote3_error_t {
     
     SGX_QL_RESULT_INVALID_SIGNATURE = TEE_MK_ERROR(0x0068),  TEE_RESULT_INVALID_SIGNATURE = TEE_MK_ERROR(0x0068),   ///< Invalid signature during quote verification
 
+    // Appraisal specific error codes
+    SGX_QL_QAEIDENTITY_MISMATCH = TEE_MK_ERROR(0x0070),  TEE_QAEIDENTITY_MISMATCH = TEE_MK_ERROR(0x0070),       ///< QaE Identity is NOT match to Intel signed QaE identity
+    SGX_QL_QAE_OUT_OF_DATE = TEE_MK_ERROR(0x0071),   TEE_QAE_OUT_OF_DATE = TEE_MK_ERROR(0x0071),                ///< QaE ISVSVN is smaller than the ISVSVN threshold, or input QaE ISVSVN is too small
+    SGX_QL_QUOTE_HASH_MISMATCH = TEE_MK_ERROR(0x0072), TEE_RESULT_QUOTE_HASH_MISMATCH = TEE_MK_ERROR(0x0072),   ///< Quote hash in the appraisal result is not derived from the input quote
+    SGX_QL_REPORT_DATA_MISMATCH = TEE_MK_ERROR(0x0073), TEE_RESULT_REPORT_DATA_MISMATCH = TEE_MK_ERROR(0x0073),   ///< report data mismatch during qae report and identity verify
+
     SGX_QL_ERROR_MAX = TEE_MK_ERROR(0x00FF), TEE_ERROR_MAX = TEE_MK_ERROR(0x00FF),  ///< Indicate max error to allow better translation.
 
 } quote3_error_t, tee_error_t;

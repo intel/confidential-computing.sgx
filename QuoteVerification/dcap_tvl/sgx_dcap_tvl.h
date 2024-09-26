@@ -40,7 +40,9 @@
 
 #include "sgx_qve_header.h"
 #include "sgx_ql_quote.h"
-
+#ifndef _MSC_VER
+#include "sgx_dcap_qae_tvl.h"
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -87,7 +89,27 @@ SGX_TVL_API quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         const uint8_t *p_supplemental_data,
         uint32_t supplemental_data_size,
         sgx_isv_svn_t qve_isvsvn_threshold);
+#ifndef _MSC_VER
 
+/**
+ * @brief Verifies the QAE report and identity based on the provided policies and the specified mode.
+ *
+ * This API is designed to verify the Quote Appraisal Enclave (QAE)'s report and identity
+ * according to the specified mode: QAE appraisal, strict policy authentication, or policy owner authentication.
+ *
+ * @param input [IN] Pointer to the qae_verification_input_t
+ * @param p_qae_report_info [IN] Pointer to the QAE report information structure.
+ * @param qae_isvsvn_threshold [IN] ISV SVN threshold for QAE.
+ *
+ * @return quote3_error_t Returns an error code on failure, or SGX_QL_SUCCESS on success.
+ *
+**/
+
+SGX_TVL_API quote3_error_t tee_verify_qae_report_and_identity(
+        qae_verification_input_t *input,
+        sgx_ql_qe_report_info_t p_qae_report_info,
+        sgx_isv_svn_t qae_isvsvn_threshold);
+#endif
 #if defined(__cplusplus)
 }
 #endif

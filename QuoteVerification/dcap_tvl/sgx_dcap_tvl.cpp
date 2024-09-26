@@ -40,28 +40,109 @@
 #include "sgx_utils.h"
 #include "sgx_tcrypto.h"
 #include "sgx_trts.h"
+#include "sgx_quote_4.h"
+#include "sgx_dcap_constant_val.h"
 
+#ifndef QE_QUOTE_VERSION
+#define QE_QUOTE_VERSION        4  ///< Version of the quote structure that supports ECDSA (and EPID).  It is a generic form of the Quote.
+#endif
 
 #define SGX_ERR_BREAK(x) {if (x != SGX_SUCCESS) break;}
 
-//Hardcode Intel signed QvE Identity below
-//You can get such info from QvE Identity JSON file
-//e.g. Get the QvE Identity JSON file from
-//https://api.trustedservices.intel.com/sgx/certification/v4/qve/identity
-//
-const std::string QVE_MISC_SELECT = "00000000";
-const std::string QVE_MISC_SELECT_MASK = "FFFFFFFF";
+quote3_error_t enclave_identity_verify(
+    int16_t prodid,
+    uint16_t isv_svn,
+    const sgx_report_t *p_report,
+    sgx_isv_svn_t isvsvn_threshold,
+    bool qae_mode
+)
+{
+    quote3_error_t ret = TEE_ERROR_UNEXPECTED;
+    do {
+        try {
+            //Convert hardcode MiscSelect, MiscSelect Mask to uint32
+            //
+            const auto miscselectMask = BytesToUint32(hexStringToBytes(QAE_QVE_MISC_SELECT_MASK));
+            const auto miscselect = BytesToUint32(hexStringToBytes(QAE_QVE_MISC_SELECT));
 
-const std::string QVE_ATTRIBUTE = "01000000000000000000000000000000";
-const std::string QVE_ATTRIBUTE_MASK = "FBFFFFFFFFFFFFFF0000000000000000";
+            //Check MiscSelect in QaE/QvE report, QaE/QvE share the same misselect info
+            //
+            if ((p_report->body.misc_select & miscselectMask) != miscselect) {
+                 ret = (qae_mode ? TEE_QAEIDENTITY_MISMATCH : TEE_QVEIDENTITY_MISMATCH);
+                 break;
+            }
 
-//MRSIGNER of Intel signed QvE
-const std::string QVE_MRSIGNER = "8C4F5775D796503E96137F77C68A829A0056AC8DED70140B081B094490C57BFF";
 
-const sgx_prod_id_t QVE_PRODID = 2;
+            //Convert hardcode Attribute, Attribute Mask to hex array
+            //
+            const auto attribute_mask = hexStringToBytes(QAE_QVE_ATTRIBUTE_MASK);
+            const auto attribute = hexStringToBytes(QAE_QVE_ATTRIBUTE);
 
-//Defense in depth, QvE ISV SVN in report must be greater or equal to hardcode QvE ISV SVN
-const sgx_isv_svn_t LEAST_QVE_ISVSVN = 7;
+            //Check Attribute in QaE/QvE report
+            //
+            Bytes attributeReport;
+
+            std::copy((uint8_t*) const_cast<sgx_attributes_t*> (&p_report->body.attributes),
+                (uint8_t*) const_cast<sgx_attributes_t*> (&p_report->body.attributes) + sizeof(sgx_attributes_t),
+                std::back_inserter(attributeReport));
+
+            if (applyMask(attributeReport, attribute_mask) != attribute) {
+                 ret = (qae_mode ? TEE_QAEIDENTITY_MISMATCH : TEE_QVEIDENTITY_MISMATCH);
+                 break;
+            }
+
+            //Convert MrSigner to hex array
+            //
+            const auto mrsigner = hexStringToBytes(QAE_QVE_MRSIGNER);
+
+            //Check MrSigner in QaE/QvE report, QaE/QvE share the same mrsigner
+            //
+            Bytes mrsignerReport;
+            std::copy(std::begin(p_report->body.mr_signer.m),
+                    std::end(p_report->body.mr_signer.m),
+                    std::back_inserter(mrsignerReport));
+
+            if (mrsigner.empty() || mrsignerReport.empty()) {
+                 break;
+            }
+
+            if (mrsigner != mrsignerReport) {
+                 ret = (qae_mode ? TEE_QAEIDENTITY_MISMATCH : TEE_QVEIDENTITY_MISMATCH);
+                 break;
+            }
+
+            //Check Prod ID in QaE/QvE report
+            //
+            if (p_report->body.isv_prod_id != prodid) {
+                 ret = (qae_mode ? TEE_QAEIDENTITY_MISMATCH : TEE_QVEIDENTITY_MISMATCH);
+                 break;
+            }
+
+            //Check QaE/QvE ISV SVN in QaE/QvE report meets the minimum requires SVN when the TVL was built.
+            //
+            if (p_report->body.isv_svn < isv_svn) {
+                 ret = (qae_mode ? TEE_QAE_OUT_OF_DATE : TEE_QVE_OUT_OF_DATE);
+                 break;
+            }
+
+            //Check if there has been a TCB Recovery on the QaE/QvE used to verify the report.
+            //Warning: The function may return erroneous result if QaE/QvE ISV SVN has been modified maliciously.
+            //
+            if (p_report->body.isv_svn < isvsvn_threshold) {
+                 ret = (qae_mode ? TEE_QAE_OUT_OF_DATE : TEE_QVE_OUT_OF_DATE);
+                 break;
+            }
+
+            ret = TEE_SUCCESS;
+        }
+
+        catch (...) {
+            break;
+        }
+    } while(0);
+
+    return ret;
+}
 
 quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         const uint8_t *p_quote,
@@ -150,6 +231,7 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
         sgx_ret = sgx_sha256_get_hash(sha_handle, reinterpret_cast<sgx_sha256_hash_t *>(&report_data));
         SGX_ERR_BREAK(sgx_ret);
 
+
         if (memcmp(&p_qve_report->body.report_data, &report_data, sizeof(report_data)) != 0) {
             ret = SGX_QL_ERROR_REPORT;
             break;
@@ -158,91 +240,18 @@ quote3_error_t sgx_tvl_verify_qve_report_and_identity(
 
         //Check QvE Identity
         //
-        try {
-            //Convert hardcode MiscSelect, MiscSelect Mask to uint32
-            //
-            const auto miscselectMask = BytesToUint32(hexStringToBytes(QVE_MISC_SELECT_MASK));
-            const auto miscselect = BytesToUint32(hexStringToBytes(QVE_MISC_SELECT));
-
-            //Check MiscSelect in QvE report
-            //
-            if ((p_qve_report->body.misc_select & miscselectMask) != miscselect) {
-                 ret = SGX_QL_QVEIDENTITY_MISMATCH;
-                 break;
-            }
-
-
-            //Convert hardcode Attribute, Attribute Mask to hex array
-            //
-            const auto attribute_mask = hexStringToBytes(QVE_ATTRIBUTE_MASK);
-            const auto attribute = hexStringToBytes(QVE_ATTRIBUTE);
-
-            //Check Attribute in QvE report
-            //
-            Bytes attributeReport;
-
-            std::copy((uint8_t*) const_cast<sgx_attributes_t*> (&p_qve_report->body.attributes),
-                (uint8_t*) const_cast<sgx_attributes_t*> (&p_qve_report->body.attributes) + sizeof(sgx_attributes_t),
-                std::back_inserter(attributeReport));
-
-            if (applyMask(attributeReport, attribute_mask) != attribute) {
-                 ret = SGX_QL_QVEIDENTITY_MISMATCH;
-                 break;
-            }
-
-
-            //Convert MrSigner to hex array
-            //
-            const auto mrsigner = hexStringToBytes(QVE_MRSIGNER);
-
-            //Check MrSigner in QvE report
-            //
-            Bytes mrsignerReport;
-            std::copy(std::begin(p_qve_report->body.mr_signer.m),
-                    std::end(p_qve_report->body.mr_signer.m),
-                    std::back_inserter(mrsignerReport));
-
-            if (mrsigner.empty() || mrsignerReport.empty()) {
-                 break;
-            }
-
-            if (mrsigner != mrsignerReport) {
-                 ret = SGX_QL_QVEIDENTITY_MISMATCH;
-                 break;
-            }
-
-
-            //Check Prod ID in QvE report
-            //
-            if (p_qve_report->body.isv_prod_id != QVE_PRODID) {
-                 ret = SGX_QL_QVEIDENTITY_MISMATCH;
-                 break;
-            }
-
-            //Check QvE ISV SVN in QvE report meets the minimum requires SVN when the TVL was built.
-            //
-            if (p_qve_report->body.isv_svn < LEAST_QVE_ISVSVN) {
-                 ret = SGX_QL_QVE_OUT_OF_DATE;
-                 break;
-            }
-
-            //Check if there has been a TCB Recovery on the QVE used to verify the report.
-            //Warning: The function may return erroneous result if QvE ISV SVN has been modified maliciously.
-            //
-            if (p_qve_report->body.isv_svn < qve_isvsvn_threshold) {
-                 ret = SGX_QL_QVE_OUT_OF_DATE;
-                 break;
-            }
-
-            ret = SGX_QL_SUCCESS;
-        }
-
-        catch (...) {
-            break;
-        }
+        ret = enclave_identity_verify(
+            QVE_PRODID,
+            LEAST_QVE_ISVSVN,
+            p_qve_report,
+            qve_isvsvn_threshold,
+            false);
 
     } while (0);
-
+    if (sgx_ret != SGX_SUCCESS)
+    {
+        ret = (sgx_ret == SGX_ERROR_OUT_OF_MEMORY) ? TEE_ERROR_OUT_OF_MEMORY : TEE_ERROR_UNEXPECTED;
+    }
     if (sha_handle)
         sgx_sha256_close(sha_handle);
 
