@@ -15,7 +15,7 @@ ENV USER user
 WORKDIR /home/user
 
 #create the shell config
-RUN echo "{ pkgs ? import <nixpkgs> {} }: \n\
+RUN echo "{ pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-22.05.tar.gz") {} }: \n\
 with pkgs; \n\
 \n\
 stdenvNoCC.mkDerivation { \n\
