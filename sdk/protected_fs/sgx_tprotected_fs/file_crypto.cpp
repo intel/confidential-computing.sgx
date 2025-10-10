@@ -120,7 +120,8 @@ bool protected_fs_file::generate_secure_blob_from_user_kdk(bool restore)
 	// SP800-108:
 	// Label - A string that identifies the purpose for the derived keying material, which is encoded as a binary string. 
 	//         The encoding method for the Label is defined in a larger context, for example, in the protocol that uses a KDF.
-	strncpy(buf.label, METADATA_KEY_NAME, strlen(METADATA_KEY_NAME));
+	strncpy(buf.label, METADATA_KEY_NAME, MAX_LABEL_LEN - 1);
+	buf.label[MAX_LABEL_LEN - 1] = '\0';
 
 	// context and nonce
 	// SP800-108: 

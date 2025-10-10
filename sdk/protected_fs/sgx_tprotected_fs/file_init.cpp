@@ -503,6 +503,7 @@ bool protected_fs_file::init_new_file(const char* clean_filename)
 	file_meta_data.plain_part.use_user_kdk_key = use_user_kdk_key;
 
 	strncpy(encrypted_part_plain.clean_filename, clean_filename, FILENAME_MAX_LEN);
+	encrypted_part_plain.clean_filename[FILENAME_MAX_LEN - 1] = '\0';
 
 	if (_RECOVERY_HOOK_(4) || update_meta_data_node() != true)
 	{

@@ -1500,7 +1500,7 @@ int main(int argc, char* argv[])
         memset(exe_path, 0, sizeof(exe_path));
         memset(fips_path, 0, sizeof(fips_path));
         len = readlink("/proc/self/exe", exe_path, PATH_MAX);
-        if(len == -1)
+        if(len == -1 || len >= PATH_MAX)
         {
             se_trace(SE_TRACE_ERROR, OVERALL_ERROR);
             goto clear_return;
@@ -1574,10 +1574,16 @@ clear_return:
     if(pkey)
         EVP_PKEY_free(pkey);
     if(res == -1 && path[OUTPUT])
-        remove(path[OUTPUT]);
+        if (remove(path[OUTPUT])) {
+            se_trace(SE_TRACE_ERROR, OVERALL_ERROR);
+        }
     if(res == -1 && path[DUMPFILE])
-        remove(path[DUMPFILE]);
+        if (remove(path[DUMPFILE])) {
+            se_trace(SE_TRACE_ERROR, OVERALL_ERROR);
+        }
     if(res == -1 && path[CSSFILE])
-        remove(path[CSSFILE]);
+        if (remove(path[CSSFILE])) {
+            se_trace(SE_TRACE_ERROR, OVERALL_ERROR);
+        }
     return res;
 }

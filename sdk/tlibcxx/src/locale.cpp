@@ -491,7 +491,7 @@ locale::__imp::__imp(const __imp& other, facet* f, long id)
     for (unsigned i = 0; i < other.facets_.size(); ++i)
         if (facets_[i])
             facets_[i]->__add_shared();
-    install(hold.get(), id);
+    install(hold.release(), id);
 }
 
 locale::__imp::~__imp()

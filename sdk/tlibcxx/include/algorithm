@@ -4832,7 +4832,6 @@ __stable_sort_move(_RandomAccessIterator __first1, _RandomAccessIterator __last1
         return;
     case 2:
         __destruct_n __d(0);
-        unique_ptr<value_type, __destruct_n&> __h2(__first2, __d);
         if (__comp(*--__last1, *__first1))
         {
             ::new ((void*)__first2) value_type(_VSTD::move(*__last1));
@@ -4847,7 +4846,6 @@ __stable_sort_move(_RandomAccessIterator __first1, _RandomAccessIterator __last1
             ++__first2;
             ::new ((void*)__first2) value_type(_VSTD::move(*__last1));
         }
-        __h2.release();
         return;
     }
     if (__len <= 8)
@@ -4896,17 +4894,11 @@ __stable_sort(_RandomAccessIterator __first, _RandomAccessIterator __last, _Comp
     if (__len <= __buff_size)
     {
         __destruct_n __d(0);
-        unique_ptr<value_type, __destruct_n&> __h2(__buff, __d);
         _VSTD::__stable_sort_move<_Compare>(__first, __m, __comp, __l2, __buff);
         __d.__set(__l2, (value_type*)nullptr);
         _VSTD::__stable_sort_move<_Compare>(__m, __last, __comp, __len - __l2, __buff + __l2);
         __d.__set(__len, (value_type*)nullptr);
         _VSTD::__merge_move_assign<_Compare>(__buff, __buff + __l2, __buff + __l2, __buff + __len, __first, __comp);
-//         _VSTD::__merge<_Compare>(move_iterator<value_type*>(__buff),
-//                                  move_iterator<value_type*>(__buff + __l2),
-//                                  move_iterator<_RandomAccessIterator>(__buff + __l2),
-//                                  move_iterator<_RandomAccessIterator>(__buff + __len),
-//                                  __first, __comp);
         return;
     }
     _VSTD::__stable_sort<_Compare>(__first, __m, __comp, __l2, __buff, __buff_size);

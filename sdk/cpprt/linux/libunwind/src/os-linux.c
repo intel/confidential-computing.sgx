@@ -72,7 +72,7 @@ tdep_get_exe_image_path (char *path)
 #ifndef HAVE_SGX
   strcpy(path, "/proc/self/exe");
 #else
-  strncpy(path, "/proc/self/exe", strlen("/proc/self/exe"));
+  strncpy(path, "/proc/self/exe", sizeof("/proc/self/exe"));
 #endif
 }
 
