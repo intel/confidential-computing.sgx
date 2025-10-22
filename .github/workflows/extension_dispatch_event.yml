@@ -14,7 +14,7 @@ on:
   merge_group:
     types: [checks_requested]
   pull_request_target:
-    types: [ opened, reopened, edited, auto_merge_enabled, synchronize, converted_to_draft, locked, unlocked, ready_for_review, review_requested, review_request_removed, auto_merge_disabled ]
+    types: [ opened, reopened, edited, auto_merge_enabled, synchronize, converted_to_draft, locked, unlocked, ready_for_review, review_requested, review_request_removed, auto_merge_disabled, labeled, unlabeled ]
     branches:
       - '**'
   pull_request_review:
@@ -33,10 +33,21 @@ jobs:
   publish_branch_event_to_extensions:
     name: "On branch action: emit an event for external handler, if any [ignore me, I'm not a real check]"
     runs-on: ${{vars.EXTENSION_RUNNER_ID}}
-    if: ${{ github.repository == vars.EXTENSION_THIS_REPO_NAME && github.actor != 'Copilot' }}
+    # Conditions: only run if in the designated repo and not auto-triggered by Copilot actions
+    #             Reacts on all trigger events listed above ('on:' section), except labeling events, which are filtered to only react to:
+    #             - "skip-" labels (both adding and removing)
+    #             - "refresh-" labels (only adding)
+    if: |
+      github.repository == vars.EXTENSION_THIS_REPO_NAME && github.actor != 'Copilot' && (
+        github.event_name != 'pull_request_target' ||
+        (github.event_name == 'pull_request_target' && github.event.action != 'unlabeled' && github.event.action != 'labeled') || (
+          contains(github.event.label.name, 'skip-') ||
+          (github.event.action == 'labeled' && contains(github.event.label.name, 'refresh-'))
+        )
+      )
     steps:
       - name: Trigger Extension Workflow
-        uses: actions/github-script@v5
+        uses: actions/github-script@v8
         env:
           EXTENSION_DISPATCHER_WORKFLOW_NAME: ${{vars.EXTENSION_DISPATCHER_WORKFLOW_NAME}}
           EXTENSION_BRANCH_NAME: ${{vars.EXTENSION_BRANCH_NAME}}
@@ -53,6 +64,11 @@ jobs:
               triggering_run_id: String(context.runId),
               triggering_run_number: String(context.runNumber) + '-' + String(context.runAttempt || 1)
             };
+            if ( core.isDebug() ) {
+              core.startGroup('Triggering context debug info');
+              console.debug('Workflow dispatch inputs:', JSON.stringify(wf_inputs, null, 4));
+              core.endGroup();
+            }
 
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
@@ -63,4 +79,4 @@ jobs:
             });
 
 run-name: |
-  :outbox_tray: Emit⇗⇗⇗ `${{ github.event.action && format('{0}[{1}]', github.event_name, github.event.action) ||  github.event_name }}` event. Origin: ${{ github.event_name == 'pull_request_target' && format('`{0}`[←`{1}`]', github.ref_name, github.event.pull_request.head.label) || format('`{0}`', github.ref_name) }} - ID: ${{ github.run_number }}-${{ github.run_attempt }}
+  :outbox_tray: Emit⇗⇗⇗ `${{ github.event.action && format('{0}[{1}]', github.event_name, github.event.action) ||  github.event_name }}` event. Origin: ${{ github.event_name == 'pull_request_target' && format('`{0}`[←`{1}`]', github.ref_name, github.event.pull_request.head.label) || format('`{0}`', github.ref_name) }} - ID: ${{ github.run_number }}-${{ github.run_attempt }} - ${{ github.actor != 'Copilot' && format('by `{0}`', github.actor) || 'by `Copilot` (ignored)' }}
