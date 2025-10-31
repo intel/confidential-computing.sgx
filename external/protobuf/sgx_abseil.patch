@@ -644,7 +644,7 @@ diff --git a/absl/crc/internal/non_temporal_memcpy.h b/absl/crc/internal/non_tem
 index b3d94bad..f23c73f6 100644
 --- a/absl/crc/internal/non_temporal_memcpy.h
 +++ b/absl/crc/internal/non_temporal_memcpy.h
-@@ -19,6 +19,13 @@
+@@ -19,6 +19,12 @@
  #include <intrin.h>
  #endif
  
@@ -652,7 +652,6 @@ index b3d94bad..f23c73f6 100644
 +#undef __SSE__
 +#undef __SSE2__
 +#undef __SSE3__
-+#undef __AVX__
 +#endif //PB_ENABLE_SGX
 +
  #ifdef __SSE__
