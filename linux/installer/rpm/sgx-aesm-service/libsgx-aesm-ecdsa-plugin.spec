@@ -26,7 +26,7 @@ ECDSA Quote Plugin for Intel(R) Software Guard Extensions AESM Service
 
 %install
 make DESTDIR=%{?buildroot} install
-OLDDIR=$pwd
+OLDDIR=$(pwd)
 cd %{?buildroot}
 rm -fr $(ls | grep -xv "%{name}")
 install -d %{name}%{_docdir}/%{name}
