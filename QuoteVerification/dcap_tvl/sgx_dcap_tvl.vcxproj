@@ -156,7 +156,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -192,7 +192,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -231,7 +231,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -271,7 +271,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -311,7 +311,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -351,7 +351,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -383,7 +383,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CVE-2020-0551-CF-Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <AdditionalOptions>/d2FH4-</AdditionalOptions>
     </ClCompile>
     <Lib>
@@ -392,7 +392,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CVE-2020-0551-Load-Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)common\inc;$(SolutionDir)common\inc\tlibc;$(SolutionDir)sdk\tlibcxx\include;$(ProjectDir)..\..\ae\QvE\Include;$(ProjectDir)..\..\QuoteGeneration\quote_wrapper\common\inc;$(ProjectDir)..\..\QuoteGeneration\pce_wrapper\inc</AdditionalIncludeDirectories>
       <AdditionalOptions>/d2FH4-</AdditionalOptions>
     </ClCompile>
     <Lib>
