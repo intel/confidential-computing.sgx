@@ -444,6 +444,15 @@ exception_handling_end:
     //instruction triggering the exception will be executed again.
     if(info->do_aex_mitigation == 1)
     {
+        if (info->exception_vector == SGX_EXCEPTION_VECTOR_PF &&
+            thread_data->exception_flag == -1)
+        {
+            // The #PF wasn't handled by EDMM or a custom #PF handler, but
+            // if AEX-Notify is enabled the #PF will still be "handled" by
+            // the AEX-Notify mitigation.
+            thread_data->exception_flag = 0;
+        }
+
         // apply customized mitigation handlers
         // Note that we don't enable AEX-notify for customized mitigation handler
         sgx_apply_mitigations(info);
