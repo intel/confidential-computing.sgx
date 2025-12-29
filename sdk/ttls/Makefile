@@ -44,6 +44,7 @@ else
 endif
 
 SGX_QV_PATH ?= ../../external/dcap_source/QuoteVerification
+SGX_QVE_PATH ?= ../../external/dcap_source/ae/QvE
 PREBUILT_OPENSSL_PATH ?= $(SGX_QV_PATH)/../prebuilt/openssl
 CBOR_PATH ?= $(LINUX_EXTERNAL_DIR)/cbor
 CBOR_RELATIVE_PATH ?= ../../external/cbor
@@ -52,7 +53,7 @@ INCLUDE += -I$(COMMON_DIR)/inc/tlibc    \
            -I$(COMMON_DIR)/inc/internal \
            -I$(COMMON_DIR)/inc          \
            -I$(LINUX_SDK_DIR)/tlibcxx/include \
-           -I$(SGX_QV_PATH)/QvE/Include \
+           -I$(SGX_QVE_PATH)/Include \
            -I$(SGX_QV_PATH)/appraisal/qal \
            -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/common/inc \
            -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/tdx_attest \
