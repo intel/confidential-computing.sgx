@@ -6,7 +6,7 @@
 #ifndef _SE_VERSION_H_
 #define _SE_VERSION_H_
 
-#define STRFILEVER    "2.27.100.0"
+#define STRFILEVER    "2.27.100.1"
 #define SGX_MAJOR_VERSION       2
 #define SGX_MINOR_VERSION       27
 #define SGX_REVISION_VERSION    100

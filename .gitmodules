@@ -1,6 +1,6 @@
 [submodule "external/dcap_source"]
 	path = external/dcap_source
-	url = ../SGXDataCenterAttestationPrimitives
+	url = ../confidential-computing.tee.dcap.git
 	branch = .
 [submodule "openmp"]
 	path = external/openmp/openmp_code
