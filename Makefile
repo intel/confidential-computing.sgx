@@ -60,8 +60,9 @@ preparation:
 		git apply ../0001-bumped-protobuf-to-1.33.0.patch >/dev/null 2>&1 || git apply ../0001-bumped-protobuf-to-1.33.0.patch --check -R && \
 		git submodule update --init --recursive && \
 		cd third_party/abseil-cpp && \
-		git apply ../../../sgx_abseil.patch>/dev/null 2>&1 || git apply ../../../sgx_abseil.patch --check -R && \
-		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch>/dev/null 2>&1 || git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch --check -R
+		git reset --hard && \
+		git apply ../../../sgx_abseil.patch >/dev/null 2>&1 || git apply ../../../sgx_abseil.patch --check -R && \
+		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch >/dev/null 2>&1 || git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch --check -R
 	./external/sgx-emm/create_symlink.sh
 	cd external/cbor && cp -r libcbor sgx_libcbor
 	cd external/cbor/libcbor && git apply ../raw_cbor.patch >/dev/null 2>&1 || git apply ../raw_cbor.patch --check -R
