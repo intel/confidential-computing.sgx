@@ -29,6 +29,9 @@
 #
 #
 
+SGX_SDK ?= /opt/intel/sgxsdk
+Include_Paths := -IInclude -I$(SGX_SDK)/include
+
 App_Objects := App/sample.o App/enclave_entry.o
 
 sample: $(App_Objects)
@@ -36,11 +39,11 @@ sample: $(App_Objects)
 	@echo "LINK =>  $@"
 
 App/%.o: App/%.cpp
-	@$(CXX) -c $< -o $@ -I./Include
+	@$(CXX) -c $< -o $@ $(Include_Paths)
 	@echo "GEN  =>  $@"
 
 App/%.o: App/%.S
-	@$(CC) -c $< -o $@ -I./Include
+	@$(CC) -c $< -o $@ $(Include_Paths)
 	@echo "GEN  =>  $@"
 
 .PHONY: clean
