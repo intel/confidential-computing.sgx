@@ -114,7 +114,7 @@ typedef struct _sgx_ql_qv_supplemental_t
                                           ///< See Intel Security Center Advisories
     uint32_t pck_crl_num;                 ///< CRL Num from PCK Cert CRL
     uint32_t root_ca_crl_num;             ///< CRL Num from Root CA CRL
-    uint32_t tcb_eval_ref_num;            ///< Lower number of the TCBInfo and QEIdentity
+    uint32_t tcb_eval_ref_num;            ///< Use the lower TCB evaluation data number from Platform and QE Identity
     uint8_t root_key_id[ROOT_KEY_ID_SIZE];              ///< ID of the collateral's root signer (hash of Root CA's public key SHA-384)
     sgx_key_128bit_t pck_ppid;            ///< PPID from remote platform.  Can be used for platform ownership checks
     sgx_cpu_svn_t tcb_cpusvn;             ///< CPUSVN of the remote platform's PCK Cert
@@ -134,9 +134,11 @@ typedef struct _sgx_ql_qv_supplemental_t
     time_t qe_iden_earliest_issue_date;           ///< Earliest issue date of QEIdentity (UTC)
     time_t qe_iden_latest_issue_date;             ///< Latest issue date of QEIdentity (UTC)
     time_t qe_iden_earliest_expiration_date;      ///< Earliest expiration date of QEIdentity (UTC)
-    time_t qe_iden_tcb_level_date_tag;            ///< The SGX TCB of the platform that generated the quote is not vulnerable
-    uint32_t qe_iden_tcb_eval_ref_num;            ///< Lower number of the QEIdentity
-    sgx_ql_qv_result_t qe_iden_status;            /// QEIdentity status
+    time_t qe_iden_tcb_level_date_tag;            ///< TCB date for the current QE identity TCB level
+    uint32_t qe_iden_tcb_eval_ref_num;            ///< The TCB evaluation data number of QE Identity
+    sgx_ql_qv_result_t qe_iden_status;            ///< QEIdentity TCB status
+    time_t platform_tcb_level_date_tag;                    ///< TCB date for the current platform TCB level
+
 } sgx_ql_qv_supplemental_t;
 
 #ifdef _MSC_VER
