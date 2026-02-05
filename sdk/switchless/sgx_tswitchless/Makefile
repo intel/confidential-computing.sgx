@@ -83,18 +83,20 @@ GREEN :=\033[1;32m
 NC :=\033[0m
 
 .PHONY: all build_src clean
-all: build_src
+all: build_src $(BUILD_DIR)/$(OUT_LIB)
 
 build_src: $(OUT_LIB)
 
 $(OUT_LIB): $(ALL_OBJS)
 	@$(AR) rcs $@ $^
-	@$(CP) $(OUT_LIB) $(BUILD_DIR)/
 	@echo "$(GREEN)LINK => $@$(NC)"
+
+$(BUILD_DIR)/$(OUT_LIB): $(OUT_LIB) | $(BUILD_DIR)
+	$(CP) $(OUT_LIB) $(BUILD_DIR)/
 
 $(C_OBJS): %.o: %.c sgx_tswitchless_t.h
 	@$(CXX) $(SL_CXXFLAGS) -c $< -o $@
-	@echo "$(CXX) <= $@" 
+	@echo "$(CXX) <= $@"
 
 
 sgx_tswitchless_t.h: $(EDGER8R)
@@ -103,7 +105,7 @@ sgx_tswitchless_t.h: $(EDGER8R)
 $(EDGER8R):
 	$(MAKE) -C $(EDGER8R_DIR)
 
-	
+
 clean:
 	@$(RM) -f $(OUT_LIB) $(ALL_OBJS) $(BUILD_DIR)/$(OUT_LIB) sgx_tswitchless_t.h
 

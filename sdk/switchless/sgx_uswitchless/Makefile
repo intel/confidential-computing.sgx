@@ -49,7 +49,7 @@ C_SRCS := $(wildcard $(SL_DIR_SRCS)/*.c)
 C_OBJS := $(C_SRCS:.c=.o)
 CPP_OBJS := $(CPP_SRCS:.cpp=.o)
 
-ALL_OBJS := $(CPP_OBJS) $(C_OBJS) 
+ALL_OBJS := $(CPP_OBJS) $(C_OBJS)
 
 SL_CXXFLAGS := $(CXXFLAGS)
 SL_CXXFLAGS += -fPIC $(CET_FLAGS)
@@ -77,20 +77,22 @@ GREEN :=\033[1;32m
 NC :=\033[0m
 
 .PHONY: all build_src clean
-all: build_src
+all: build_src $(BUILD_DIR)/$(OUT_LIB)
 
 build_src: $(OUT_LIB)
 
 $(OUT_LIB): $(ALL_OBJS)
 	@$(AR) rcs $@ $^
-	@$(CP) $(OUT_LIB) $(BUILD_DIR)/
 	@echo "$(GREEN)LINK => $@$(NC)"
+
+$(BUILD_DIR)/$(OUT_LIB): $(OUT_LIB) | $(BUILD_DIR)
+	$(CP) $(OUT_LIB) $(BUILD_DIR)/
 
 $(C_OBJS): %.o: %.c sgx_tswitchless_u.h
 	@$(CXX) $(SL_CXXFLAGS) -c $< -o $@
 	@echo "$(CXX) <= $@"
 
-$(CPP_OBJS): %.o: %.cpp 
+$(CPP_OBJS): %.o: %.cpp
 	@$(CXX) $(SL_CXXFLAGS) -c $< -o $@
 	@echo "$(CXX) <= $@"
 
