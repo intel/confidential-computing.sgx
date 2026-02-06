@@ -229,12 +229,20 @@ fi
 # is different from the host uid.
 chmod -R o+w $code_dir
 
-if [ $type_flag = 0 ]; then
-    docker run -v $code_dir:$mount_dir -it --network none --rm sgx.build.env
-else
-    docker run -v $code_dir:$mount_dir -it --network none --rm sgx.build.env /bin/bash -c $mount_dir/cmd.sh
+# Choose whether to allocate a pseudo-TTY for `docker run`.
+# - Interactive terminal runs should use `-it` for a good UX.
+# - Non-interactive environments (CI, nohup, stdout/stderr redirected to a file, cron)
+#   do not have a TTY, and `docker run -t` will fail with:
+#     "the input device is not a TTY"
+DOCKER_RUN_ARGS=()
+if [ -t 0 ] && [ -t 1 ]; then
+  DOCKER_RUN_ARGS+=(-it)
 fi
 
+DOCKER_CMD=(docker run "${DOCKER_RUN_ARGS[@]}" -v "$code_dir:$mount_dir" --network none --rm sgx.build.env)
 
-
-
+if [ $type_flag = 0 ]; then
+  "${DOCKER_CMD[@]}"
+else
+  "${DOCKER_CMD[@]}" /bin/bash -c "$mount_dir/cmd.sh"
+fi
