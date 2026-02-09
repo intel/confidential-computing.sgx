@@ -24,7 +24,7 @@
 #define  QAE_PRODID 3
 
 //Defense in depth, QaE ISV SVN in report must be greater or equal to hardcode QaE ISV SVN
-#define LEAST_QAE_ISVSVN  0xC
+#define LEAST_QAE_ISVSVN  0xD
 
 quote3_error_t enclave_identity_verify(
     int16_t prodid,
