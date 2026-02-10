@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Intel® prebuilt AEs have been signed by Intel which include the [Enclave Signature Structure](https://download.01.org/intel-sgx/sgx-linux/2.27/docs/Intel_SGX_Developer_Reference_Linux_2.27_Open_Source.pdf) to the files. Therefore, it's not easy to verify they are reproducible by comparing the checksums of your AE builds with the ones found in Intel(R) prebuilt AEs.  
+Intel® prebuilt AEs have been signed by Intel which include the [Enclave Signature Structure](https://download.01.org/intel-sgx/latest/linux-latest/docs/Intel_SGX_Developer_Reference_for_Linux_OS.pdf) to the files. Therefore, it's not easy to verify they are reproducible by comparing the checksums of your AE builds with the ones found in Intel(R) prebuilt AEs.  
 This document outlines a process to guarantee Intel(R) prebuilt AEs are:
 
 - Built using the open source codebase and toolchain
