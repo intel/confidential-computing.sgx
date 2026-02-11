@@ -54,7 +54,6 @@ RUN apt-get update && apt-get install  -y \
     libboost-dev \
     libboost-system-dev \
     libboost-thread-dev \
-    lsb-release \
     libsystemd0
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
