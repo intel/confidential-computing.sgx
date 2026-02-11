@@ -38,4 +38,4 @@ docker build --target sample --build-arg https_proxy=$https_proxy \
 
 docker volume create --driver local --opt type=tmpfs --opt device=tmpfs --opt o=rw aesmd-socket
 
-docker-compose --verbose up
+docker compose --verbose up
