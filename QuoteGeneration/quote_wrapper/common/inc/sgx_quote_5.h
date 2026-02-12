@@ -46,7 +46,21 @@
 
 #define QE_QUOTE_VERSION_V5 5
 #define TD_INFO_RESERVED_BYTES_V1_5 64
-typedef struct _tee_info_v1_5_t                 /* 512 bytes */
+#define TD_INFO_RESERVED_BYTES_V1_5_EX 24
+
+typedef struct _tee_td_id_t {
+    uint8_t u[32];
+} tee_td_id_t;
+
+typedef struct _tee_devinfo_t {
+    uint8_t di[48];
+} tee_devinfo_t;
+
+typedef struct _tee_fmspc_t {
+    uint8_t f[12];
+}
+ tee_fmspc_t;
+typedef struct _tee_info_v1_5_t               /* 512 bytes */
 {
     tee_attributes_t     attributes;          /* (  0) TD's attributes */
     tee_attributes_t     xfam;                /* (  8) TD's XFAM */
@@ -60,6 +74,46 @@ typedef struct _tee_info_v1_5_t                 /* 512 bytes */
     uint8_t reserved[TD_INFO_RESERVED_BYTES_V1_5]; /* (448) Reserved, must be zero */
 } tee_info_v1_5_t;
 
+typedef struct _tee_info_v1_5_ex_t                      /* 512 bytes */
+{
+    tee_attributes_t attributes;                        /* (  0) TD's attributes */
+    tee_attributes_t xfam;                              /* (  8) TD's XFAM */
+    tee_measurement_t mr_td;                            /* ( 16) Measurement of the initial contents of the TD */
+    tee_measurement_t mr_config_id;                     /* ( 64) Software defined ID for non-owner-defined configuration on the guest TD. e.g., runtime or OS configuration */
+    tee_measurement_t mr_owner;                         /* (112) Software defined ID for the guest TD's owner */
+    tee_measurement_t mr_owner_config;                  /* (160) Software defined ID for owner-defined configuration of the guest TD, e.g., specific to the workload rather than the runtime or OS */
+    tee_measurement_t rt_mr[4];                         /* (208) Array of 4(TDX1: NUM_RTMRS is 4) runtime extendable measurement registers */
+    tee_measurement_t mr_servicetd;                     /* (400) If is one or more bound or pre-bound service TDs, SERVTD_HASH is the SHA384 hash of the TDINFO_STRUCTs of those service TDs bound.
+                                                            Else, SERVTD_HASH is 0. */
+    tee_td_id_t td_id;                                  /* (448) TD instance statistically unique ID (regenerated on TD relaunch but preserved on TD preserving update and migration)  */
+    uint8_t reserved[TD_INFO_RESERVED_BYTES_V1_5_EX];   /* (480) Must be zero */
+    uint8_t vmid;                                       /* (504) TD's VMID for the component of the TD that requested this report be created.*/
+    uint8_t reserved2[3];                               /* (505) */
+    uint32_t valid;                                     /* (508) VALID field to indicate which fields in this TDINFO have been populated.
+                                                            - Bit 0: Migration/SERVTD_HASH
+                                                            - Bits: 1-7: Reserved for critical
+                                                            - Bit 8: td_id
+                                                            - Bit 9: VMID
+                                                            - Bits 10-31: Reserved for non-critical fields*/
+
+    // Declaring an enum does not add space to the struct
+    // But it lets us scope so we don't have #defines for similarly named fields / structs
+    // Could have used a namespace too I guess.
+    enum attributes_mask {
+        servtd_ext = 0x00020000, /* Bit 17 Indicates that TDREPORT_STRUCT includes a hash of SERVTD_EXT_STRUCT instead of SERVTD_HASH */
+    };
+
+    enum valid_bit_mask {
+        critical_fields = 0x000000FF,
+        migration_servtd_hash_bit = 0x00000001,
+        critical_reserved = (critical_fields & ~migration_servtd_hash_bit),
+
+        non_critical_fields = 0xFFFFFF00,
+        td_id_bit = 0x00000100,
+        vm_id_bit = 0x00000200,
+        non_critical_reserved = (non_critical_fields & ~(td_id_bit | vm_id_bit))
+    };
+} tee_info_v1_5_ex_t;
 
 #define TD_TEE_TCB_INFO_RESERVED_BYTES_V1_5 95
 typedef struct _tee_tcb_info_v1_5_t
@@ -110,6 +164,7 @@ typedef struct _sgx_quote5_t {
                                               ///      1 (SGX Enclave Report)
                                               ///      2 (TD Report for TDX 1.0)
                                               ///      3 (TD Report for TDX 1.5)
+                                              ///      4 (TD Report for TDX 1.5ex)
     uint32_t size;                            ///< 50: Size of Quote Body field.
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -122,10 +177,41 @@ typedef struct _sgx_quote5_t {
                     ///       sgx_report2_body_t + (uint32_t)signature_data_len + signature
                     ///     3 Byte array that contains TD Report for TDX 1.5.
                     ///       sgx_report2_body_v1_5_t + (uint32_t)signature_data_len + signature
+                    ///     4 Byte array that contains TD Report for TDX 1.5ex.
+                    ///       sgx_report2_body_v1_5_ex_t + (uint32_t)signature_data_len + signature
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 } sgx_quote5_t;
+typedef struct _sgx_report2_body_v1_5_ex_t {
+    tee_tcb_svn_t tee_tcb_svn;              ///<  0:  TEE_TCB_SVN Array
+    tee_measurement_t mr_seam;              ///< 16:  Measurement of the SEAM module
+    tee_measurement_t mrsigner_seam;        ///< 64:  Measurement of a 3rd party SEAM module’s signer (SHA384 hash).
+                                            ///       The value is 0’ed for Intel SEAM module
+    tee_attributes_t seam_attributes;       ///< 112: MBZ: TDX 1.0
+    tee_attributes_t td_attributes;         ///< 120: TD's attributes
+    tee_attributes_t xfam;                  ///< 128: TD's XFAM
+    tee_measurement_t mr_td;                ///< 136: Measurement of the initial contents of the TD
+    tee_measurement_t mr_config_id;         ///< 184: Software defined ID for non-owner-defined configuration on the guest TD. e.g., runtime or OS configuration
+    tee_measurement_t mr_owner;             ///< 232: Software defined ID for the guest TD's owner
+    tee_measurement_t mr_owner_config;      ///< 280: Software defined ID for owner-defined configuration of the guest TD, e.g., specific to the workload rather than the runtime or OS
+    tee_measurement_t rt_mr[4];             ///< 328: Array of 4(TDX1: NUM_RTMRS is 4) runtime extendable measurement registers
+    tee_report_data_t report_data;          ///< 520: Additional report data
+    tee_tcb_svn_t tee_tcb_svn2;             ///< 584: Array of TEE TCB SVNs (for TD preserving).
+    tee_measurement_t mr_servicetd;         ///< 600: If is one or more bound or pre-bound service TDs, SERVTD_HASH is the SHA384 hash of the TDINFO_STRUCTs of those service TDs bound.
+                                            ///       Else, SERVTD_HASH is 0..
+    uint8_t vmid;                           ///< 648: 0x00: Unpartitioned TD or L1 VMM
+                                            ///       0x01 - 03 : TD VMs 1 - 3
+    tee_td_id_t td_id;                      ///< 649: TD instance statistically unique ID (regenerated on TD relaunch but preserved on TD preserving update and migration)
+    tee_devinfo_t devinfo;                  ///< 681: Hash of the Device Information CBOR
+    tee_measurement_t init_server_td_hash;  ///< 729: Initial SERVTD_HASH (non-NRX) or Mig Policy Hash (NRX)
+    tee_attributes_t init_server_td_attr;   ///< 777: Initial SERVTD_ATTR (non-NRX) or 0 (NRX) INIT_SERVTD_HASH generator policy.00's is default security safe.
+    tee_cpu_svn_t init_cpu_svn;             ///< 785: TD’s initial CPUSVN from creation
+    tee_tcb_svn_t init_tee_tcb_svn;         ///< 801: TD’s initial TEE_TCB_SVN from creation
+    tee_fmspc_t init_tee_fmspc;             ///< 817: Model information corresponding to the model that INIT_TEE_TCB_SVN was captured on
+    tee_measurement_t curr_server_td_hash;  ///< 829: Current SERVTD_HASH (non-NRX) or Mig Policy Hash (NRX)
+    tee_attributes_t curr_server_td_attr;   ///< 877: Current SERVTD_ATTR (non-NRX) or 0 (NRX) CUR_SERV_TD_HASH generator policy.00's is default security safe.
+} sgx_report2_body_v1_5_ex_t;
 
 #pragma pack(pop)
 
