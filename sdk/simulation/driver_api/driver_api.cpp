@@ -119,7 +119,7 @@ int add_enclave_page(sgx_enclave_id_t enclave_id,
 
 int init_enclave(sgx_enclave_id_t  enclave_id,
                  enclave_css_t     *enclave_css,
-                 token_t           *launch)
+                 token_t           *reserved)
 {
     CEnclaveMngr* mngr = CEnclaveMngr::get_instance();
     CEnclaveSim* ce = mngr->get_enclave(enclave_id);
@@ -131,7 +131,7 @@ int init_enclave(sgx_enclave_id_t  enclave_id,
         return SGX_ERROR_INVALID_ENCLAVE_ID;
     }
 
-    return (int)DoEINIT_SW(ce->get_secs(), enclave_css, launch);
+    return (int)DoEINIT_SW(ce->get_secs(), enclave_css, reserved);
 }
 
 int destroy_enclave(sgx_enclave_id_t enclave_id)

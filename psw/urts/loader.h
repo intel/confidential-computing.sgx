@@ -57,8 +57,8 @@ class CLoader: private Uncopyable
 public:
     CLoader(uint8_t *mapped_file_base, BinParser &parser);
     virtual ~CLoader();
-    int load_enclave(SGXLaunchToken *lc, int flag, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file = NULL, sgx_misc_attribute_t *misc_attr = NULL);
-    int load_enclave_ex(SGXLaunchToken *lc, bool is_debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file = NULL, sgx_misc_attribute_t *misc_attr = NULL);
+    int load_enclave(Reserved_FormerlyLaunchToken *reserved, int flag, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file = NULL, sgx_misc_attribute_t *misc_attr = NULL);
+    int load_enclave_ex(Reserved_FormerlyLaunchToken *reserved, bool is_debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file = NULL, sgx_misc_attribute_t *misc_attr = NULL);
     int destroy_enclave();
     sgx_enclave_id_t get_enclave_id() const;
     const void* get_start_addr() const;
@@ -71,7 +71,7 @@ public:
 
 private:
     int build_mem_region(const section_info_t &sec_info);
-    int build_image(SGXLaunchToken * const lc, sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t * const misc_attr);
+    int build_image(Reserved_FormerlyLaunchToken * const reserved, sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t * const misc_attr);
     int build_secs(sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, sgx_misc_attribute_t * const misc_attr);
     int build_context(const uint64_t start_rva, layout_entry_t *layout);
     int build_contexts(layout_t *layout_start, layout_t *layout_end, uint64_t delta);
@@ -85,7 +85,7 @@ private:
     int validate_layout_table();
     int validate_patch_table();
     int validate_metadata();
-    int get_debug_flag(const token_t * const launch);
+    int get_debug_flag(const token_t * const reserved);
     virtual int build_sections(std::vector<uint8_t> *bitmap);
     int set_context_protection(layout_t *layout_start, layout_t *layout_end, uint64_t delta);
     int set_elrange_config();

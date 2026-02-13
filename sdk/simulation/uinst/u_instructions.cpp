@@ -56,7 +56,7 @@
 
 #include "crypto_wrapper.h"
 
-static uintptr_t _EINIT(secs_t* secs, enclave_css_t* css, token_t* launch);
+static uintptr_t _EINIT(secs_t* secs, enclave_css_t* css, token_t* reserved);
 static uintptr_t _ECREATE (page_info_t* pi);
 static uintptr_t _EADD (page_info_t* pi, void* epc_lin_addr);
 static uintptr_t _EREMOVE(const void* epc_lin_addr);
@@ -240,8 +240,9 @@ void reg_sig_handler_sim()
     if (0 != ret) abort();
 }
 
-uintptr_t _EINIT(secs_t* secs, enclave_css_t *css, token_t *launch)
+uintptr_t _EINIT(secs_t* secs, enclave_css_t *css, token_t *reserved)
 {
+    UNUSED(reserved);
     CEnclaveMngr *mngr = CEnclaveMngr::get_instance();
     assert(mngr != NULL);
 
@@ -300,16 +301,6 @@ uintptr_t _EINIT(secs_t* secs, enclave_css_t *css, token_t *launch)
         assert(signer_len == SGX_HASH_SIZE);
 
         mcp_same_size(&this_secs->mr_signer, signer, SGX_HASH_SIZE);
-    }
-
-    // Check launch token
-    if (launch != NULL && launch->body.valid) {
-        if (memcmp(&launch->body.attributes, &this_secs->attributes, sizeof(sgx_attributes_t)))
-        {
-            SE_TRACE(SE_TRACE_DEBUG,
-                "SECS attributes does NOT match launch token attribuets\n");
-            return SGX_ERROR_INVALID_ATTRIBUTE;
-        }
     }
 
     // Mark it initialized
@@ -571,7 +562,7 @@ void _SE3(uintptr_t xax, uintptr_t xbx,
 }
 
 uintptr_t _SE0(uintptr_t xax, uintptr_t xbx,
-               uintptr_t xcx, uintptr_t xdx,
+               uintptr_t xcx, uintptr_t xdx  /*Reserved (formerly init token)*/,
                uintptr_t xsi, uintptr_t xdi)
 {
     UNUSED(xsi), UNUSED(xdi);

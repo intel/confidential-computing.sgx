@@ -69,15 +69,7 @@ vpath %.c   $(COMMON_DIR)/src
 C_SRC   := se_trace.c
 
 IPC_SRC  :=  ProtobufSerializer.cpp \
-             AEGetLaunchTokenRequest.cpp  \
-             AEGetWhiteListSizeRequest.cpp \
-             AEGetWhiteListSizeResponse.cpp \
-             AEGetWhiteListRequest.cpp \
-             AEGetWhiteListResponse.cpp \
-             AESGXRegisterRequest.cpp \
-             AESGXRegisterResponse.cpp \
              SocketTransporter.cpp \
-             AEGetLaunchTokenResponse.cpp  \
              UnixCommunicationSocket.cpp \
              UnixSocketFactory.cpp \
              NonBlockingUnixCommunicationSocket.cpp \
@@ -111,7 +103,7 @@ LEGACY_OBJ := $(LEGACY_SRC:.cpp=.o)
 
 LDUFLAGS:= -pthread $(COMMON_LDFLAGS)
 
-LIBNAME := libsgx_launch.so libsgx_quote_ex.so
+LIBNAME := libsgx_quote_ex.so
 LEGACY_LIBNAME := libsgx_uae_service.so
 
 .PHONY: all

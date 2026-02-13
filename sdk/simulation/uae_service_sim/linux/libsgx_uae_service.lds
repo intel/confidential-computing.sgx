@@ -1,9 +1,9 @@
 {
 global:
-    get_launch_token;
-    sgx_get_whitelist_size;
-    sgx_get_whitelist;
-    sgx_register_wl_cert_chain;
+    get_launch_token;           /* DEPRECATED, hollow definition kept for ABI compat - returns SGX_ERROR_FEATURE_NOT_SUPPORTED */
+    sgx_get_whitelist_size;     /* DEPRECATED, hollow definition kept for ABI compat - returns SGX_ERROR_FEATURE_NOT_SUPPORTED */
+    sgx_get_whitelist;          /* DEPRECATED, hollow definition kept for ABI compat - returns SGX_ERROR_FEATURE_NOT_SUPPORTED */
+    sgx_register_wl_cert_chain; /* DEPRECATED, hollow definition kept for ABI compat - returns SGX_ERROR_FEATURE_NOT_SUPPORTED */
     sgx_select_att_key_id;
     sgx_init_quote_ex;
     sgx_get_quote_size_ex;

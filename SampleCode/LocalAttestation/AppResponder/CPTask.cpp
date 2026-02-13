@@ -59,8 +59,8 @@ sgx_enclave_id_t e2_enclave_id = 0;
 int load_enclaves()
 {
     sgx_status_t ret = SGX_SUCCESS;
-    sgx_launch_token_t token = {0};
-    int update = 0;
+    sgx_launch_token_t token = {0};  // Note: Since v2.28 this value is ignored
+    int update = 0;  // Note: Since v2.28 this value is ignored
 
     ret = sgx_create_enclave(ENCLAVE_RESPONDER_NAME, SGX_DEBUG_FLAG, &token, &update, &e2_enclave_id, NULL);
     if (ret != SGX_SUCCESS) 

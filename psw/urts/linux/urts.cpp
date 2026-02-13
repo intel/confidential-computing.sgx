@@ -67,8 +67,8 @@ static bool inline _check_ex_params_(const uint32_t ex_features, const void* ex_
 
 extern "C" sgx_status_t __sgx_create_enclave_ex(const char *file_name, 
                                                 const int debug, 
-                                                sgx_launch_token_t *launch_token, 
-                                                int *launch_token_updated, 
+                                                sgx_launch_token_t *reserved1, 
+                                                int *reserved2, 
                                                 sgx_enclave_id_t *enclave_id, 
                                                 sgx_misc_attribute_t *misc_attr,
                                                 const uint32_t ex_features,
@@ -96,7 +96,7 @@ extern "C" sgx_status_t __sgx_create_enclave_ex(const char *file_name,
     file.name = realpath(file_name, resolved_path);
     file.name_len = (uint32_t)strnlen_s(resolved_path, PATH_MAX);
 
-    ret = _create_enclave_ex(!!debug, fd, file, NULL, launch_token, launch_token_updated, enclave_id, misc_attr, ex_features, ex_features_p);
+    ret = _create_enclave_ex(!!debug, fd, file, NULL, reserved1, reserved2, enclave_id, misc_attr, ex_features, ex_features_p);
     if(SGX_SUCCESS != ret && misc_attr)
     {
         sgx_misc_attribute_t plat_cap;
@@ -112,26 +112,26 @@ extern "C" sgx_status_t __sgx_create_enclave_ex(const char *file_name,
 
 extern "C" sgx_status_t sgx_create_enclave(const char *file_name, 
                                            const int debug, 
-                                           sgx_launch_token_t *launch_token, 
-                                           int *launch_token_updated, 
+                                           sgx_launch_token_t *reserved1, 
+                                           int *reserved2, 
                                            sgx_enclave_id_t *enclave_id, 
                                            sgx_misc_attribute_t *misc_attr) 
 {
-    return __sgx_create_enclave_ex(file_name, debug, launch_token, launch_token_updated, enclave_id, misc_attr, 0, NULL);
+    return __sgx_create_enclave_ex(file_name, debug, reserved1, reserved2, enclave_id, misc_attr, 0, NULL);
 }
 
 extern "C"  sgx_status_t sgx_create_enclave_ex(const char *file_name,
                                                const int debug,
-                                               sgx_launch_token_t *launch_token,
-                                               int *launch_token_updated,
+                                               sgx_launch_token_t *reserved1,
+                                               int *reserved2,
                                                sgx_enclave_id_t *enclave_id,
                                                sgx_misc_attribute_t *misc_attr,
                                                const uint32_t ex_features,
                                                const void* ex_features_p[32])
 {
 
-    return __sgx_create_enclave_ex(file_name, debug, launch_token,
-        launch_token_updated, enclave_id, misc_attr, ex_features, ex_features_p);
+    return __sgx_create_enclave_ex(file_name, debug, reserved1,
+        reserved2, enclave_id, misc_attr, ex_features, ex_features_p);
 }
 
 extern "C" sgx_status_t sgx_get_target_info(
@@ -191,8 +191,8 @@ extern "C" sgx_status_t
 sgx_create_encrypted_enclave(
     const char *file_name,
     const int debug,
-    sgx_launch_token_t *launch_token,
-    int *launch_token_updated,
+    sgx_launch_token_t *reserved1,
+    int *reserved2,
     sgx_enclave_id_t *enclave_id,
     sgx_misc_attribute_t *misc_attr,
     uint8_t* sealed_key)
@@ -201,8 +201,8 @@ sgx_create_encrypted_enclave(
     const void* ex_features_p[32] = { 0 };
     ex_features_p[SGX_CREATE_ENCLAVE_EX_PCL_BIT_IDX] = (void*)sealed_key;
 
-    return __sgx_create_enclave_ex(file_name, debug, launch_token,
-        launch_token_updated, enclave_id, misc_attr, ex_features, ex_features_p);
+    return __sgx_create_enclave_ex(file_name, debug, reserved1,
+        reserved2, enclave_id, misc_attr, ex_features, ex_features_p);
 }
 
 static bool get_metadata_internal(BinParser *parser, metadata_t **metadata)

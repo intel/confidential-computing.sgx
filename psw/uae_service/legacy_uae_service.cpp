@@ -30,9 +30,14 @@
  */
 
 #include <dlfcn.h>
-#include "sgx_uae_launch.h"
 #include "sgx_uae_quote_ex.h"
-#include "uae_service_internal.h"
+#include "arch.h"
+#include <cstdlib>
+
+/* used to eliminate `unused variable' warning */
+#ifndef UNUSED
+#define UNUSED(val) (void)(val)
+#endif
 
 template<class T>
 class Singleton
@@ -123,17 +128,6 @@ public:
 
 #define MAJOR_VER "1"
 
-const static char LAUNCH_LIB[] = _CONCAT("libsgx_launch.so.", MAJOR_VER);
-
-class LaunchLib:public SharedLibProxy<LaunchLib>
-{
-protected:	
-    const char* GetLibraryPath(void) const
-	{
-		return LAUNCH_LIB;
-	};
-};
-
 const static char QUOTE_EX_LIB[] = _CONCAT("libsgx_quote_ex.so.", MAJOR_VER);
 
 class QuoteExLib:public SharedLibProxy<QuoteExLib>
@@ -150,30 +144,20 @@ extern "C" {
 sgx_status_t get_launch_token(
     const enclave_css_t*        signature,
     const sgx_attributes_t*     attribute,
-    sgx_launch_token_t*         launch_token)
+    sgx_reserved_field_1024t*   reserved)
 {
-	sgx_status_t (*p_get_launch_token)(
-		const enclave_css_t*        signature,
-		const sgx_attributes_t*     attribute,
-		sgx_launch_token_t*         launch_token) = NULL;
-    if (LaunchLib::instance().findSymbol(__FUNCTION__, (void**)&p_get_launch_token))
-    {
-        return p_get_launch_token(signature, attribute, launch_token);
-    }
-    return SGX_ERROR_SERVICE_UNAVAILABLE;
+    UNUSED(signature);
+    UNUSED(attribute);
+    UNUSED(reserved);
+    return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
 
 
 sgx_status_t sgx_get_whitelist_size(
     uint32_t* p_whitelist_size)
 {
-	sgx_status_t (*p_sgx_get_whitelist_size)(
-		uint32_t* p_whitelist_size) = NULL;
-    if (LaunchLib::instance().findSymbol(__FUNCTION__, (void**)&p_sgx_get_whitelist_size))
-    {
-        return p_sgx_get_whitelist_size(p_whitelist_size);
-    }
-    return SGX_ERROR_SERVICE_UNAVAILABLE;
+    UNUSED(p_whitelist_size);
+    return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
 
 
@@ -181,24 +165,16 @@ sgx_status_t sgx_get_whitelist(
     uint8_t* p_whitelist,
     uint32_t whitelist_size)
 {
-	sgx_status_t (*p_sgx_get_whitelist)(
-		uint8_t* p_whitelist,
-		uint32_t whitelist_size) = NULL;
-    if (LaunchLib::instance().findSymbol(__FUNCTION__, (void**)&p_sgx_get_whitelist))
-    {
-        return p_sgx_get_whitelist(p_whitelist, whitelist_size);
-    }
-    return SGX_ERROR_SERVICE_UNAVAILABLE;
+    UNUSED(p_whitelist);
+    UNUSED(whitelist_size);
+	return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
 
 sgx_status_t sgx_register_wl_cert_chain(uint8_t* p_wl_cert_chain, uint32_t wl_cert_chain_size)
 {
-	sgx_status_t (*p_sgx_register_wl_cert_chain)(uint8_t* p_wl_cert_chain, uint32_t wl_cert_chain_size) = NULL;
-    if (LaunchLib::instance().findSymbol(__FUNCTION__, (void**)&p_sgx_register_wl_cert_chain))
-    {
-        return p_sgx_register_wl_cert_chain(p_wl_cert_chain, wl_cert_chain_size);
-    }
-    return SGX_ERROR_SERVICE_UNAVAILABLE;
+    UNUSED(p_wl_cert_chain);
+    UNUSED(wl_cert_chain_size);
+	return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
 
 sgx_status_t sgx_select_att_key_id(const uint8_t *p_att_key_id_list, uint32_t att_key_id_list_size,

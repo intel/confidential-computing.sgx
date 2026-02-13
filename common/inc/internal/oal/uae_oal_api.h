@@ -50,31 +50,6 @@ typedef enum{
 extern "C"
 {
 
-uae_oal_status_t SGXAPI oal_get_launch_token(
-    const enclave_css_t*        signature,
-    const sgx_attributes_t*     attribute,
-    sgx_launch_token_t*         launch_token,
-    uint32_t                    timeout_usec,
-    aesm_error_t                *result);
-
-uae_oal_status_t oal_get_whitelist_size(
-    uint32_t* p_whitelist_size,
-    uint32_t timeout_usec,
-    aesm_error_t* result);
-
-uae_oal_status_t oal_get_whitelist(
-    uint8_t* p_whitelist,
-    uint32_t whitelist_size,
-    uint32_t timeout_usec,
-    aesm_error_t *result);
-
-uae_oal_status_t oal_register_common(
-    uint8_t* buf,
-    uint32_t buf_size,
-    uint32_t data_type,
-    uint32_t timeout_usec,
-    aesm_error_t *result);
-
 uae_oal_status_t oal_select_att_key_id(const uint8_t *att_key_id_list,
                 uint32_t att_key_id_list_size,
                 sgx_att_key_id_t *selected_key_id,

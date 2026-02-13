@@ -84,7 +84,7 @@ enum sgx_page_flags {
  *              /dev/sgx/enclave  - for enclave loading IOCTLs using the filehandle
  *                                     requires SGX_IOC_ENCLAVE_SET_ATTRIBUTE to get access to provision key
  *              /dev/sgx/provision- for provision key configuration
- *   SGX_DRIVER_OUT_OF_TREE 0x2   - out-of-tree driver which uses legacy launch and supports EDMM
+ *   SGX_DRIVER_OUT_OF_TREE 0x2   - out-of-tree driver which uses legacy launch and supports EDMM /DEPRECATED/
  *              /dev/isgx         - for enclave loading IOCTLs
  *   SGX_DRIVER_DCAP        0x3   - DCAP driver which partially supports in-kernel interface in that it:
  *                                1) Does not take a launch token for init - uses SGX_IOC_ENCLAVE_INIT_IN_KERNEL
@@ -95,7 +95,7 @@ enum sgx_page_flags {
  */
 #define SGX_DRIVER_UNKNOWN      0x0
 #define SGX_DRIVER_IN_KERNEL    0x1
-#define SGX_DRIVER_OUT_OF_TREE  0x2
+#define SGX_DRIVER_OUT_OF_TREE  0x2  // DEPRECATED - out-of-tree driver is no longer supported
 #define SGX_DRIVER_DCAP         0x3
 
 
@@ -122,15 +122,6 @@ enum sgx_page_flags {
 /* Legacy OOT driver support for EDMM */
 #define SGX_IOC_ENCLAVE_EMODPR \
 	_IOW(SGX_MAGIC, 0x09, struct sgx_modification_param)
-#define SGX_IOC_ENCLAVE_MKTCS \
-	_IOW(SGX_MAGIC, 0x0a, struct sgx_range)
-#define SGX_IOC_ENCLAVE_TRIM \
-	_IOW(SGX_MAGIC, 0x0b, struct sgx_range)
-
-//Legacy implementation to ensure EPC pages removed no later by this ioctl
-
-#define SGX_IOC_ENCLAVE_NOTIFY_ACCEPT \
-	_IOW(SGX_MAGIC, 0x0c, struct sgx_range)
 
 //Note: SGX_IOC_ENCLAVE_CREATE is the same for in-kernel except that it returns a file handle for in-kernel
 #define SGX_IOC_ENCLAVE_ADD_PAGES_IN_KERNEL \
@@ -282,10 +273,6 @@ struct sgx_enclave_destroy {
 /*
  *     SGX2.0 definitions for Legacy OOT driver
  */
-
-#define SGX_GROW_UP_FLAG	1
-#define SGX_GROW_DOWN_FLAG	2
-
 struct sgx_range {
 	unsigned long start_addr;
 	unsigned int nr_pages;

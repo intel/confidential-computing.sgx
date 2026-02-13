@@ -76,7 +76,14 @@ typedef struct _sgx_kss_config_t
 extern "C" {
 #endif
 
-typedef uint8_t sgx_launch_token_t[1024];
+
+typedef uint8_t sgx_reserved_field_1024t[1024];
+
+/**
+ * @deprecated Support for launch tokens was removed in v2.28 (in favor of Flexible Launch Control). 
+ * This field is now reserved. Please update your API to use @c sgx_reserved_field_1024t type
+ */
+typedef sgx_reserved_field_1024t sgx_launch_token_t;
 
 /* Convenient macro to be passed to sgx_create_enclave(). */
 #if !defined(NDEBUG) || defined(EDEBUG)
@@ -87,8 +94,8 @@ typedef uint8_t sgx_launch_token_t[1024];
 
 sgx_status_t SGXAPI sgx_create_enclave(const char *file_name, 
                                        const int debug, 
-                                       sgx_launch_token_t *launch_token, 
-                                       int *launch_token_updated, 
+                                       sgx_reserved_field_1024t *reserved1 /* formerly launch_token(sgx_launch_token_t). Ignored, may be a nullptr */, 
+                                       int *reserved2 /* formerly launch_token_updated(int*). Ignored, may be a nullptr */, 
                                        sgx_enclave_id_t *enclave_id, 
                                        sgx_misc_attribute_t *misc_attr);
 
@@ -96,8 +103,8 @@ sgx_status_t SGXAPI sgx_create_enclave(const char *file_name,
 
 sgx_status_t SGXAPI sgx_create_enclave_ex(const char * file_name, 
                                           const int debug, 
-                                          sgx_launch_token_t * launch_token, 
-                                          int * launch_token_updated, 
+                                          sgx_reserved_field_1024t *reserved1 /* formerly launch_token(sgx_launch_token_t). Ignored, may be a nullptr */, 
+                                          int *reserved2 /* formerly launch_token_updated(int*). Ignored, may be a nullptr */,
                                           sgx_enclave_id_t * enclave_id, 
                                           sgx_misc_attribute_t * misc_attr,  
                                           const uint32_t ex_features, 
@@ -120,8 +127,8 @@ sgx_status_t SGXAPI sgx_create_enclave_from_buffer_ex(
 sgx_status_t SGXAPI sgx_create_encrypted_enclave(
                         const char *file_name,
                         const int debug,
-                        sgx_launch_token_t *launch_token,
-                        int *launch_token_updated,
+                        sgx_reserved_field_1024t *reserved1 /* formerly launch_token(sgx_launch_token_t). Ignored, may be a nullptr */,
+                        int *reserved2 /* formerly launch_token_updated(int*). Ignored, may be a nullptr */,
                         sgx_enclave_id_t *enclave_id,
                         sgx_misc_attribute_t *misc_attr,
                         uint8_t* sealed_key);

@@ -270,6 +270,9 @@ se_static_assert(sizeof(enclave_css_t) == 1808);
 /****************************************************************************
 * Definitions for launch token
 ****************************************************************************/
+/**
+ * @deprecated - Support for whitelist-based (Launch Enclave) based controls has been removed in SDK v2.28
+ */
 typedef struct _launch_body_t
 {
    uint32_t              valid;            /* (  0) 0 = Invalid, 1 = Valid */
@@ -282,6 +285,9 @@ typedef struct _launch_body_t
 } launch_body_t;
 se_static_assert(sizeof(launch_body_t) == 192);
 
+/**
+ * @deprecated - Support for whitelist-based (Launch Enclave) based controls has been removed in SDK v2.28
+ */
 typedef struct _launch_t {
   launch_body_t         body;
   sgx_cpu_svn_t          cpu_svn_le;       /* (192) Launch Enclave's CPUSVN */
@@ -295,6 +301,9 @@ typedef struct _launch_t {
 } token_t;
 se_static_assert(sizeof(token_t) == 304);
 
+/**
+ * @deprecated - Support for whitelist-based (Launch Enclave) based controls has been removed in SDK v2.28
+ */
 typedef struct _wl_cert_t                           /* All fields except the mr_signer_list fields, are big-endian integer format */
 {
     uint16_t                version;                /* ( 0) White List Cert format version. Currently, only valid version is 1 */
@@ -305,6 +314,10 @@ typedef struct _wl_cert_t                           /* All fields except the mr_
     uint32_t                entry_number;           /* (12) Number of MRSIGNER entries in the Cert. If the White List Certificate allows enclave signed by any key to launch, the White List Cert must only contain one all-0 MRSIGNER entry. */
     sgx_measurement_t       mr_signer_list[];       /* (16) White Listed Enclave Signing Key entry 0 - SHA256 Hash of the little-endian format RSA-3072 Enclave Signing Key modulus. If the White List Cert allows enclave signed by any key to launch, this field must be all 0s */
 }wl_cert_t;
+
+/**
+ * @deprecated - Support for whitelist-based (Launch Enclave) based controls has been removed in SDK v2.28
+ */
 typedef struct _wl_provider_cert_t                  /* All fields are big endian */
 {
     uint16_t                version;                /* ( 0) White List Cert format version. Currently, only valid version is 1 */
@@ -315,6 +328,10 @@ typedef struct _wl_provider_cert_t                  /* All fields are big endian
     sgx_ec256_signature_t   signature;              /* (72) ECDSA Signature by WL Root CA identified by WLRootID */
 }wl_provider_cert_t;
 se_static_assert(sizeof(wl_provider_cert_t) == 136);
+
+/**
+ * @deprecated - Support for whitelist-based (Launch Enclave) based controls has been removed in SDK v2.28
+ */
 typedef struct _wl_cert_chain_t
 {
     wl_provider_cert_t      wl_provider_cert;

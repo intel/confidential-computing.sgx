@@ -84,11 +84,9 @@ public:
     void unload_enclave();
 protected:
     sgx_enclave_id_t m_enclave_id;
-    sgx_launch_token_t m_launch_token;
     sgx_misc_attribute_t m_attributes;
     SingletonEnclave():m_enclave_id(0)
     {
-        memset(&m_launch_token, 0, sizeof(m_launch_token));
         memset(&m_attributes, 0, sizeof(m_attributes));
     }
     ~SingletonEnclave(){}
@@ -116,9 +114,8 @@ ae_error_t SingletonEnclave<T>::load_enclave()
         AESM_LOG_ERROR("fail to get enclave pathname");
         return ae_err;
     }
-    int launch_token_update;
-    ret = sgx_create_enclave(enclave_path, get_debug_flag(), &m_launch_token,
-        &launch_token_update, &m_enclave_id,
+    ret = sgx_create_enclave(enclave_path, get_debug_flag(), nullptr,
+        nullptr, &m_enclave_id,
         &m_attributes);
     if (ret == SGX_ERROR_NO_DEVICE){
         AESM_LOG_ERROR("AE SERVER NOT AVAILABLE in load enclave: %s",enclave_path);

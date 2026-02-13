@@ -40,56 +40,6 @@
 #include "se_wrapper.h"
 #include "se_map.h"
 #include "edmm_utility.h"
-#include "uae_service_internal.h"
 
 
-extern sgx_status_t _create_enclave(const bool debug, se_file_handle_t pfile, se_file_t& file, le_prd_css_file_t *prd_css_file, sgx_launch_token_t *launch, int *launch_updated, sgx_enclave_id_t *enclave_id, sgx_misc_attribute_t *misc_attr);
-
-extern func_get_launch_token_t get_launch_token_func;
-
-extern "C" void init_get_launch_token(const func_get_launch_token_t func)
-{
-    get_launch_token_func = func;
-}
-
-
-extern "C" sgx_status_t sgx_create_le(const char* file_name, const char* prd_css_file_name, const int debug, sgx_launch_token_t *launch_token, int *launch_token_updated, sgx_enclave_id_t *enclave_id, sgx_misc_attribute_t *misc_attr, int *production_loaded)
-{
-    sgx_status_t ret = SGX_SUCCESS;
-
-    //Only true or false is valid
-    if(TRUE != debug &&  FALSE != debug)
-        return SGX_ERROR_INVALID_PARAMETER;
-
-    int fd = open(file_name, O_RDONLY);
-    if(-1 == fd)
-    {
-        SE_TRACE(SE_TRACE_ERROR, "Couldn't open the enclave file, error = %d\n", errno);
-        return SGX_ERROR_ENCLAVE_FILE_ACCESS;
-    }
-    se_file_t file = {NULL, 0, false};
-    char resolved_path[PATH_MAX] = {0};
-    file.name = realpath(file_name, resolved_path);
-    file.name_len = (uint32_t)strlen(resolved_path);
-
-    char css_real_path[PATH_MAX] = {0};
-
-    le_prd_css_file_t prd_css_file = {NULL, false};
-    prd_css_file.prd_css_name = realpath(prd_css_file_name, css_real_path);
-
-    ret = _create_enclave(!!debug, fd, file, &prd_css_file, launch_token, launch_token_updated, enclave_id, misc_attr);
-    close(fd);
-    if(ret == SGX_SUCCESS && production_loaded != NULL)
-    {
-        *production_loaded = prd_css_file.is_used ? 1: 0;
-    }
-
-    return ret;
-}
-
-extern "C" bool is_launch_token_required()
-{
-    //noly out of tree driver need to get launch token
-    return is_out_of_tree_driver();
-}
-
+extern sgx_status_t _create_enclave(const bool debug, se_file_handle_t pfile, se_file_t& file, le_prd_css_file_t *prd_css_file, sgx_launch_token_t *reserved1, int *reserved2, sgx_enclave_id_t *enclave_id, sgx_misc_attribute_t *misc_attr);

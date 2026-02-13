@@ -112,7 +112,7 @@ typedef enum {
 } enclave_alloc_flags_t;
 
 typedef enum {
-    ENCLAVE_LAUNCH_TOKEN = 0x1
+    ENCLAVE_LAUNCH_TOKEN = 0x1  //DEPRECATED
 } enclave_info_type_t;
 
 /**

@@ -76,7 +76,7 @@ C_SRC   := se_trace.c se_thread.c
 OBJ := $(sort $(CPP_SRC:.cpp=.o)) \
        $(C_SRC:.c=.o)
 
-LIBNAME = libsgx_launch_sim.so libsgx_quote_ex_sim.so libsgx_uae_service_sim.so
+LIBNAME = libsgx_quote_ex_sim.so libsgx_uae_service_sim.so
 LIBUAE_SERVICE_DEPLOY := $(LIBNAME:_sim.so=_deploy.so)
 
 .PHONY: all
@@ -86,6 +86,10 @@ all: $(LIBNAME) $(LIBUAE_SERVICE_DEPLOY) $(LEGACY_LIBUAE_SERVICE_DEPLOY) | $(BUI
 
 libsgx_%_sim.so: $(OBJ) -lrdrand
 	$(CXX) $(CXXFLAGS) $^ -shared $(LDUFLAGS) -Wl,--version-script=$(@:_sim.so=.lds) -Wl,--gc-sections $(EXTERNAL_LIB) -o $@
+
+# One-off suppress of deprecated API warnings (token-based launch control is deprecated but we want to leave behind hollow symbols for ABI compat)
+../licensing_sim.o: ../licensing_sim.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -Wno-deprecated -c $< -o $@
 
 ../quoting_sim.o: CXXFLAGS += -Wno-deprecated-declarations
 

@@ -219,10 +219,10 @@ int EnclaveCreatorST::add_enclave_page(sgx_enclave_id_t enclave_id, void *src, u
     return SGX_SUCCESS;
 }
 
-int EnclaveCreatorST::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, SGXLaunchToken *lc, le_prd_css_file_t *prd_css_file)
+int EnclaveCreatorST::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, Reserved_FormerlyLaunchToken *reserved, le_prd_css_file_t *prd_css_file)
 {
     assert(m_ctx != NULL);
-    UNUSED(enclave_id), UNUSED(enclave_css), UNUSED(lc), UNUSED(prd_css_file);
+    UNUSED(enclave_id), UNUSED(enclave_css), UNUSED(reserved), UNUSED(prd_css_file);
 
     uint8_t temp_hash[SGX_HASH_SIZE];
     memset(temp_hash, 0, SGX_HASH_SIZE);
@@ -243,9 +243,9 @@ int EnclaveCreatorST::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *e
     return SGX_SUCCESS;
 }
 
-int EnclaveCreatorST::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, SGXLaunchToken * const lc, uint32_t flag)
+int EnclaveCreatorST::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, Reserved_FormerlyLaunchToken * const reserved, uint32_t flag)
 {
-    UNUSED(metadata), UNUSED(lc), UNUSED(flag);
+    UNUSED(metadata), UNUSED(reserved), UNUSED(flag);
     memset(sgx_misc_attr, 0, sizeof(sgx_misc_attribute_t));
     return SGX_SUCCESS;
 }

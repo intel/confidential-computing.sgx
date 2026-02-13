@@ -108,7 +108,7 @@ int EnclaveCreatorHW::error_driver2urts(int driver_error, int err_no)
         case SGX_INVALID_SIGNATURE:
             ret = SGX_ERROR_INVALID_SIGNATURE;
             break;
-        case SGX_INVALID_LICENSE:
+        case SGX_INVALID_LICENSE:  // DEPRECATED - support for LE-based launch removed in v2.28
             ret = SE_ERROR_INVALID_LAUNCH_TOKEN;
             break;
         case SGX_INVALID_CPUSVN:
@@ -231,9 +231,9 @@ int EnclaveCreatorHW::add_enclave_page(sgx_enclave_id_t enclave_id, void *src, u
     return error_api2urts(enclave_error);
 }
 
-int EnclaveCreatorHW::try_init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, token_t *launch)
+int EnclaveCreatorHW::try_init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, token_t *reserved)
 {
-    UNUSED(launch);
+    UNUSED(reserved);
 
     enclave_init_sgx_t enclave_init_sgx = {0};
     if (0 != memcpy_s(enclave_init_sgx.sigstruct, SIGSTRUCT_SIZE, enclave_css, SIGSTRUCT_SIZE))

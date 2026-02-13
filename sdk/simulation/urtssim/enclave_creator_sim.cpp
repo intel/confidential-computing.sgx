@@ -105,11 +105,12 @@ int EnclaveCreatorSim::add_enclave_page(sgx_enclave_id_t enclave_id, void *src, 
 
 void reg_sig_handler();
 void reg_sig_handler_sim();
-int EnclaveCreatorSim::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, SGXLaunchToken *lc, le_prd_css_file_t *prd_css_file)
+int EnclaveCreatorSim::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, Reserved_FormerlyLaunchToken *reserved, le_prd_css_file_t *prd_css_file)
 {
     UNUSED(prd_css_file);
-    sgx_launch_token_t token;
-    memset(token, 0, sizeof(sgx_launch_token_t));
+    UNUSED(reserved);
+    sgx_reserved_field_1024t placeholder;
+    memset(placeholder, 0, sizeof(sgx_reserved_field_1024t));
 
     if(false == m_sig_registered)
     {
@@ -118,20 +119,12 @@ int EnclaveCreatorSim::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *
         m_sig_registered = true;
     }
 
-    int ret = lc->update_launch_token(false);
-    if(ret != SGX_SUCCESS)
-        return ret;
-
-    ret = lc->get_launch_token(&token);
-    if(ret != SGX_SUCCESS)
-        return ret;
-
-    return ::init_enclave(enclave_id, enclave_css, reinterpret_cast<token_t *>(token));
+    return ::init_enclave(enclave_id, enclave_css, reinterpret_cast<token_t *>(placeholder));
 }
 
-int EnclaveCreatorSim::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, SGXLaunchToken * const lc, uint32_t debug_flag)
+int EnclaveCreatorSim::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, Reserved_FormerlyLaunchToken * const reserved, uint32_t debug_flag)
 {
-    UNUSED(lc);
+    UNUSED(reserved);
     sgx_attributes_t *required_attr;
     enclave_css_t *enclave_css;
     sgx_attributes_t *secs_attr;

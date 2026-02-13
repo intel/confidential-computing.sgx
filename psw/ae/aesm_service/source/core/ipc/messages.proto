@@ -35,33 +35,11 @@ option optimize_for = LITE_RUNTIME;
 
 message Request{
 
-    message GetLaunchTokenRequest{
-        required    bytes mr_enclave        = 1;
-        required    bytes mr_signer         = 2;
-        required    bytes se_attributes     = 3;
-        optional    uint32  timeout         = 9;
-    }
-
     message ReportAttestationErrorRequest{
         required    bytes platform_info             = 1;
         required    uint32 attestation_error_code   = 2;
         required    uint32 update_info_size         = 3;
         optional    uint32  timeout                 = 9;
-    }
-
-    message GetWhiteListSizeRequest{
-        optional    uint32  timeout         = 9;
-    }
-
-    message GetWhiteListRequest{
-        optional    uint32  white_list_size = 1;
-        optional    uint32  timeout         = 9;
-    }
-
-    message SGXRegisterRequest{
-        required    bytes   buf             = 1;
-        required    uint32  data_type       = 2;
-        optional    uint32  timeout         = 9;
     }
 
     message InitQuoteExRequest{
@@ -96,11 +74,7 @@ message Request{
         required    uint32  buf_size        = 1;
         optional    uint32  timeout         = 9;
     }
-    optional    GetLaunchTokenRequest getLicTokenReq          = 3;
     optional    ReportAttestationErrorRequest   reportErrReq  = 4;
-    optional    GetWhiteListSizeRequest getWhiteListSizeReq   = 10;
-    optional    GetWhiteListRequest getWhiteListReq           = 11;
-    optional    SGXRegisterRequest sgxRegisterReq             = 14;
     optional    InitQuoteExRequest initQuoteExReq             = 15;
     optional    GetQuoteSizeExRequest getQuoteSizeExReq       = 16;
     optional    GetQuoteExRequest getQuoteExReq               = 17;
@@ -123,28 +97,9 @@ message Response{
         optional    bytes qe_report     = 3;
     }
 
-    message GetLaunchTokenResponse{
-        required    uint32 errorCode    = 1 [default = 1];
-        optional    bytes token         = 2;
-    }
-
     message ReportAttestationErrorResponse{
         required   uint32 errorCode             = 1 [default = 1];
         optional   bytes platform_update_info   = 2;
-    }
-
-    message GetWhiteListSizeResponse{
-        required   uint32 errorCode = 1 [default = 1];
-        optional   uint32 white_list_size = 2;
-    }
-
-    message GetWhiteListResponse{
-        required   uint32 errorCode = 1 [default = 1];
-        optional   bytes  white_list = 2;
-    }
-
-    message SGXRegisterResponse{
-        required   uint32 errorCode = 1 [ default = 1];
     }
 
     message SelectAttKeyIDResponse{
@@ -186,11 +141,7 @@ message Response{
     }
     optional    InitQuoteResponse initQuoteRes              = 1;
     optional    GetQuoteResponse getQuoteRes                = 2;
-    optional    GetLaunchTokenResponse getLicTokenRes       = 3;
     optional    ReportAttestationErrorResponse reportErrRes = 4;
-    optional    GetWhiteListSizeResponse getWhiteListSizeRes = 10;
-    optional    GetWhiteListResponse getWhiteListRes        = 11;
-    optional    SGXRegisterResponse sgxRegisterRes          = 14;
     optional    InitQuoteExResponse initQuoteExRes          = 15;
     optional    GetQuoteSizeExResponse getQuoteSizeExRes    = 16;
     optional    GetQuoteExResponse getQuoteExRes            = 17;

@@ -34,18 +34,6 @@
 
 #include <stdlib.h>
 
-#include <AEGetLaunchTokenRequest.h>
-#include <AEGetLaunchTokenResponse.h>
-
-#include <AEGetWhiteListSizeRequest.h>
-#include <AEGetWhiteListSizeResponse.h>
-
-#include <AEGetWhiteListRequest.h>
-#include <AEGetWhiteListResponse.h>
-
-#include <AESGXRegisterRequest.h>
-#include <AESGXRegisterResponse.h>
-
 #include <AEInitQuoteExRequest.h>
 #include <AEInitQuoteExResponse.h>
 
@@ -68,7 +56,6 @@
 #include <sgx_report.h>
 #include <arch.h>
 #include <sgx_urts.h>
-#include <sgx_uae_launch.h>
 #include <sgx_uae_quote_ex.h>
 
 
@@ -92,104 +79,9 @@
 // NOTE -> uAE works internally with milliseconds and cannot obtain a better resolution for timeout because
 // epoll_wait will get the timeout parameter in milliseconds
 
-extern "C"
-uae_oal_status_t oal_get_launch_token(const enclave_css_t* signature, const sgx_attributes_t* attribute, sgx_launch_token_t* launchToken, uint32_t timeout_usec, aesm_error_t *result)
-{
-    TRY_CATCH_BAD_ALLOC({
-        AEServices* servicesProvider = AEServicesProvider::GetServicesProvider();
-        if (servicesProvider == NULL)
-            return UAE_OAL_ERROR_UNEXPECTED;
-
-
-        AEGetLaunchTokenRequest getLaunchTokenRequest(sizeof(sgx_measurement_t),
-            (const uint8_t*)signature->body.enclave_hash.m,
-            sizeof(signature->key.modulus),
-            (const uint8_t*)signature->key.modulus,
-            sizeof(sgx_attributes_t),
-            (const uint8_t*)attribute,
-            timeout_usec/1000);
-
-        AEGetLaunchTokenResponse getLaunchTokenResponse;
-        uae_oal_status_t ret  = servicesProvider->InternalInterface(&getLaunchTokenRequest, &getLaunchTokenResponse, timeout_usec / 1000);
-        if (ret == UAE_OAL_SUCCESS)
-        {
-            bool valid = getLaunchTokenResponse.GetValues((uint32_t*)result, (uint8_t*)launchToken, sizeof(sgx_launch_token_t));
-            if (!valid)
-                ret = UAE_OAL_ERROR_UNEXPECTED;
-        }
-        return ret;
-    });
-}
-
 /*
    QUOTING
 */
-
-extern "C"
-uae_oal_status_t oal_get_whitelist_size(uint32_t* white_list_size, uint32_t timeout_usec, aesm_error_t *result)
-{
-    TRY_CATCH_BAD_ALLOC({
-        AEServices* servicesProvider = AEServicesProvider::GetServicesProvider();
-        if (servicesProvider == NULL)
-            return UAE_OAL_ERROR_UNEXPECTED;
-
-        AEGetWhiteListSizeRequest getWhiteListSizeRequest(timeout_usec / 1000);
-
-        AEGetWhiteListSizeResponse getWhiteListSizeResponse;
-        uae_oal_status_t ret = servicesProvider->InternalInterface(&getWhiteListSizeRequest, &getWhiteListSizeResponse, timeout_usec / 1000);
-        if (ret == UAE_OAL_SUCCESS)
-        {
-            bool valid = getWhiteListSizeResponse.GetValues((uint32_t*)result, white_list_size);
-            if (!valid)
-                ret = UAE_OAL_ERROR_UNEXPECTED;
-        }
-        return ret;
-    });
-}
-
-extern "C"
-uae_oal_status_t oal_get_whitelist(uint8_t *white_list, uint32_t white_list_size, uint32_t timeout_usec, aesm_error_t *result)
-{
-    TRY_CATCH_BAD_ALLOC({
-        AEServices* servicesProvider = AEServicesProvider::GetServicesProvider();
-        if (servicesProvider == NULL)
-            return UAE_OAL_ERROR_UNEXPECTED;
-
-        AEGetWhiteListRequest getWhiteListRequest(white_list_size, timeout_usec / 1000);
-
-        AEGetWhiteListResponse getWhiteListResponse;
-        uae_oal_status_t ret = servicesProvider->InternalInterface(&getWhiteListRequest, &getWhiteListResponse, timeout_usec / 1000);
-        if (ret == UAE_OAL_SUCCESS)
-        {
-            bool valid = getWhiteListResponse.GetValues((uint32_t*)result, white_list_size, white_list);
-            if (!valid)
-                ret = UAE_OAL_ERROR_UNEXPECTED;
-        }
-        return ret;
-    });
-}
-
-extern "C"
-uae_oal_status_t oal_register_common(uint8_t* buf, uint32_t buf_size, uint32_t data_type, uint32_t timeout_usec, aesm_error_t *result)
-{
-    TRY_CATCH_BAD_ALLOC({
-        AEServices* servicesProvider = AEServicesProvider::GetServicesProvider();
-        if (servicesProvider == NULL)
-            return UAE_OAL_ERROR_UNEXPECTED;
-
-        AESGXRegisterRequest sgxRegisterRequest(buf_size, buf, data_type, timeout_usec / 1000);
-
-        AESGXRegisterResponse sgxRegisterResponse;
-        uae_oal_status_t ret = servicesProvider->InternalInterface(&sgxRegisterRequest, &sgxRegisterResponse, timeout_usec / 1000);
-        if (ret == UAE_OAL_SUCCESS)
-        {
-            bool valid = sgxRegisterResponse.GetValues((uint32_t*)result);
-            if (!valid)
-                ret = UAE_OAL_ERROR_UNEXPECTED;
-        }
-        return ret;
-    });
-}
 
 extern "C"
 uae_oal_status_t oal_select_att_key_id(const uint8_t *att_key_id_list,

@@ -47,7 +47,6 @@
 #include <iostream>
 
 #include "sgx_quote.h"
-#include "launch_service.h"
 #include "quote_proxy_service.h"
 #include "pce_service.h"
 #include "network_service.h"
@@ -367,108 +366,6 @@ aesm_error_t AESMLogicWrapper::get_quote_ex(
     return result;
 }
 
-aesm_error_t AESMLogicWrapper::getLaunchToken(const uint8_t *measurement,
-                                              uint32_t measurement_size,
-                                              const uint8_t *mrsigner,
-                                              uint32_t mrsigner_size,
-                                              const uint8_t *se_attributes,
-                                              uint32_t se_attributes_size,
-                                              uint8_t **launch_token,
-                                              uint32_t *launch_token_size)
-{
-    uint32_t output_launch_token_size = sizeof(token_t);
-    uint8_t *output_launch_token = new uint8_t[sizeof(token_t)]();
-    aesm_error_t result = AESM_SERVICE_UNAVAILABLE;
-    std::shared_ptr<ILaunchService> service;
-    if (!intall_and_get_service(service))
-    {
-        delete[] output_launch_token;
-        return AESM_SERVICE_UNAVAILABLE;
-    }
-
-    result = service->get_launch_token(measurement,
-                                       measurement_size,
-                                       mrsigner,
-                                       mrsigner_size,
-                                       se_attributes,
-                                       se_attributes_size,
-                                       output_launch_token,
-                                       output_launch_token_size);
-    if (result == AESM_SUCCESS)
-    {
-        *launch_token = output_launch_token;
-        *launch_token_size = output_launch_token_size;
-    }
-    else
-    {
-        delete[] output_launch_token;
-    }
-    return result;
-}
-
-aesm_error_t AESMLogicWrapper::getWhiteListSize(uint32_t* white_list_size)
-{
-    std::shared_ptr<ILaunchService> service;
-    if (!intall_and_get_service(service))
-    {
-        return AESM_SERVICE_UNAVAILABLE;
-    }
-
-    return service->get_white_list_size(white_list_size);
-}
-
-aesm_error_t AESMLogicWrapper::getWhiteList(uint8_t **white_list,
-                                            uint32_t white_list_size)
-{
-    uint32_t local_white_list_size = 0;
-    uint8_t *output_white_list = NULL;
-    aesm_error_t result = AESM_SERVICE_UNAVAILABLE;
-    std::shared_ptr<ILaunchService> service;
-    if (!intall_and_get_service(service))
-    {
-        return AESM_SERVICE_UNAVAILABLE;
-    }
-    result = service->get_white_list_size(&local_white_list_size);
-    if (result != AESM_SUCCESS)
-    {
-        return result;
-    }
-    if (white_list_size != local_white_list_size)
-    {
-        return AESM_PARAMETER_ERROR;
-    }
-
-    output_white_list = new uint8_t[white_list_size]();
-    result = service->get_white_list(output_white_list, white_list_size);
-    if (result == AESM_SUCCESS)
-    {
-        *white_list = output_white_list;
-    }
-    else
-    {
-        delete[] output_white_list;
-    }
-    return result;
-}
-
-aesm_error_t AESMLogicWrapper::sgxRegister(uint8_t *buf, uint32_t buf_size, uint32_t data_type)
-{
-    if (data_type == SGX_REGISTER_WHITE_LIST_CERT)
-    {
-        std::shared_ptr<ILaunchService> service;
-        if (!intall_and_get_service(service))
-        {
-            return AESM_SERVICE_UNAVAILABLE;
-        }
-
-        return service->white_list_register(buf, buf_size);
-    }
-    else
-    {
-        return AESM_PARAMETER_ERROR;
-    }
-}
-
 ae_error_t AESMLogicWrapper::service_start()
 {
     try
@@ -548,17 +445,6 @@ ae_error_t AESMLogicWrapper::service_start()
             service->start();
     }
     {
-        ae_error_t ret = AE_SUCCESS;
-        std::shared_ptr<ILaunchService> service;
-        if (get_service_wrapper(service, g_fw_ctx))
-            ret = service->start();
-        if (AE_SUCCESS != ret && AESM_AE_NO_DEVICE != ret)
-        {
-            AESM_DBG_INFO("Failed to load LE and it's not because of LCP");
-            return AE_FAILURE;
-        }
-    }
-    {
         std::shared_ptr<IQuoteProxyService> service;
         if (get_service_wrapper(service, g_fw_ctx)) 
         {
@@ -583,9 +469,6 @@ void AESMLogicWrapper::service_stop()
     std::shared_ptr<IPceService> pce_service;
     if (get_service_wrapper(pce_service, g_fw_ctx))
         pce_service->stop();
-    std::shared_ptr<ILaunchService> launch_service;
-    if (get_service_wrapper(launch_service, g_fw_ctx))
-        launch_service->stop();
     std::shared_ptr<INetworkService> network_service;
     if (get_service_wrapper(network_service, g_fw_ctx))
         network_service->stop();

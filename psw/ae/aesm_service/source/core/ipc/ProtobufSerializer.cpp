@@ -38,14 +38,6 @@
 
 #include <IAERequest.h>
 
-#include <AEGetLaunchTokenRequest.h>
-
-#include <AEGetWhiteListSizeRequest.h>
-
-#include <AEGetWhiteListRequest.h>
-
-#include <AESGXRegisterRequest.h>
-
 #include <AEInitQuoteExRequest.h>
 
 #include <AEGetQuoteSizeExRequest.h>
@@ -67,15 +59,7 @@ IAERequest* ProtobufSerializer::inflateRequest(AEMessage* message) {
 
     reqMsg->ParseFromArray(message->data, message->size);
     IAERequest* request = NULL;
-    if (reqMsg->has_getlictokenreq() == true)
-        request = new AEGetLaunchTokenRequest(reqMsg->getlictokenreq());
-    else if(reqMsg->has_getwhitelistsizereq() == true)
-        request = new AEGetWhiteListSizeRequest(reqMsg->getwhitelistsizereq());
-    else if(reqMsg->has_getwhitelistreq() == true)
-        request = new AEGetWhiteListRequest(reqMsg->getwhitelistreq());
-    else if(reqMsg->has_sgxregisterreq() == true)
-        request = new AESGXRegisterRequest(reqMsg->sgxregisterreq());
-    else if(reqMsg->has_initquoteexreq() == true)
+    if (reqMsg->has_initquoteexreq() == true)
         request = new AEInitQuoteExRequest(reqMsg->initquoteexreq());
     else if(reqMsg->has_getquotesizeexreq() == true)
         request = new AEGetQuoteSizeExRequest(reqMsg->getquotesizeexreq());

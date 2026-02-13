@@ -260,7 +260,7 @@ extern "C" __attribute__((visibility("default"))) sgx_pce_error_t sgx_pce_sign_r
 }
 extern "C" quote3_error_t load_qe(sgx_enclave_id_t *p_qe_eid,
                                   sgx_misc_attribute_t *p_qe_attributes,
-                                  sgx_launch_token_t *p_launch_token);
+                                  sgx_launch_token_t *p_reserved);
 
 class EcdsaQuoteServiceImp : public IQuoteProviderService
 {
@@ -304,9 +304,9 @@ public:
         quote3_error_t ret = SGX_QL_SUCCESS;
         sgx_enclave_id_t qe_eid = 0;
         sgx_misc_attribute_t qe_attributes ={ 0 };
-        sgx_launch_token_t launch_token = { 0 };
-
-        ret = load_qe(&qe_eid, &qe_attributes, &launch_token);
+        sgx_launch_token_t placeholder = { 0 };  // Placeholder launch token required by current DCAP QE interface (zeroized target-side, not used by this code).
+                                                 // Slated for removal in a future version once the `load_qe` implementation is updated.
+        ret = load_qe(&qe_eid, &qe_attributes, &placeholder);
         if (SGX_QL_SUCCESS != ret)
         {
             AESM_LOG_ERROR("Failed to load QE3: 0x%x", ret);

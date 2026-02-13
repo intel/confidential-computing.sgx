@@ -101,3 +101,8 @@ If using libsgx-enclave-common or sgxpsw under version 2.4, an initialized varia
 
 sgx_launch_token_t launch_token = {0};
 sgx_create_enclave(ENCLAVE_FILENAME, SGX_DEBUG_FLAG, launch_token, NULL, &global_eid, NULL);
+
+*******
+! NOTICE: support for launch_token has been removed in version 2.28 of the SDK.
+!         The 'launch_token' parameter is now reserved (a 'nullptr' may be passed in its place)
+*******

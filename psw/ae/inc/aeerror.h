@@ -78,13 +78,13 @@ typedef enum _ae_error_t{
     PVE_PERFORMANCE_REKEY_NOT_SUPPORTED      = 36, /* DEPRECATED - EPID-based functionality is no longer supported (removed in v2.28) */
 
     /* LICENSING ENCLAVE ERROR CASES*/
-    LE_UNEXPECTED_ERROR                      = 37,
-    LE_INVALID_PARAMETER                     = 38,
-    LE_GET_EINITTOKEN_KEY_ERROR              = 39,
-    LE_INVALID_ATTRIBUTE                     = 40,
-    LE_INVALID_PRIVILEGE_ERROR               = 41,
-    LE_WHITELIST_UNINITIALIZED_ERROR         = 42,
-    LE_CALC_LIC_TOKEN_ERROR                  = 43,
+    LE_UNEXPECTED_ERROR                      = 37,  /*DEPRECATED*/
+    LE_INVALID_PARAMETER                     = 38,  /*DEPRECATED*/
+    LE_GET_EINITTOKEN_KEY_ERROR              = 39,  /*DEPRECATED*/
+    LE_INVALID_ATTRIBUTE                     = 40,  /*DEPRECATED*/
+    LE_INVALID_PRIVILEGE_ERROR               = 41,  /*DEPRECATED*/
+    LE_WHITELIST_UNINITIALIZED_ERROR         = 42,  /*DEPRECATED*/
+    LE_CALC_LIC_TOKEN_ERROR                  = 43,  /*DEPRECATED*/
     /* PSE ERROR CASES*/
     PSE_PAIRING_BLOB_SEALING_ERROR           = 44, /* DEPRECATED - EPID-based functionality is no longer supported (removed in v2.28) */
     PSE_PAIRING_BLOB_UNSEALING_ERROR         = 45, /* DEPRECATED - EPID-based functionality is no longer supported (removed in v2.28) */

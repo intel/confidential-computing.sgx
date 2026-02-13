@@ -80,7 +80,7 @@ static bool is_urts_support_edmm()
  * Parameters:
  *      driver_type [out] - Indicate the SGX device which was opened.  Can be:
  *            SGX_DRIVER_IN_KERNEL   (0x1) - using kernel driver
- *            SGX_DRIVER_OUT_OF_TREE (0x2) - using out-of-tree driver
+ *            SGX_DRIVER_OUT_OF_TREE (0x2) - using out-of-tree driver /DEPRECATED/
  *            SGX_DRIVER_DCAP        (0x3) - using DCAP driver
  * Return Value:
  *      true - The function succeeds - driver_type is valid
@@ -120,6 +120,7 @@ bool get_driver_type(int *driver_type)
         }
         else
         {
+            // Notice: Out of tree driver is no longer supported.
             sgx_driver_type = SGX_DRIVER_OUT_OF_TREE;
         }
     }
@@ -139,7 +140,7 @@ bool get_driver_type(int *driver_type)
  * Parameters:
  *      driver_type [in] - Indicate the SGX device which was opened.  Can be:
  *            SGX_DRIVER_IN_KERNEL   (0x1) - using kernel driver
- *            SGX_DRIVER_OUT_OF_TREE (0x2) - using out-of-tree driver
+ *            SGX_DRIVER_OUT_OF_TREE (0x2) - using out-of-tree driver /DEPRECATED/
  *            SGX_DRIVER_DCAP        (0x3) - using DCAP driver
  *      hdevice [out] - The device handle as returned from the open_se_device API.
  * Return Value:
@@ -167,7 +168,8 @@ extern "C" bool open_se_device(int driver_type, int *hdevice)
     }
     else if (driver_type == SGX_DRIVER_OUT_OF_TREE)
     {
-        *hdevice = open("/dev/isgx", O_RDWR);    //attempt to open the out-of-tree driver
+        SE_PROD_LOG("Failed to open Intel SGX device. Out of tree driver is no longer supported.\n");
+        // Note: *Not* attempting to open the `/dev/isgx` node anymore & instead letting the code fall through to 'return false'.
     }
     else
     {
@@ -246,6 +248,8 @@ extern "C" bool is_driver_support_edmm(int driver_type, int hdevice)
         return supported;
     }
 
+    // TODO: OOT-driver specific code below is considered for removal (both SGX OOT as well as DCAP OOT drivers are no longer supported).
+    //       When following-up, consider removing EMODPR ioctl definitions as well as sgx_modification_param/sgx_range structs from isgx_user.h.
     sgx_modification_param param;
     param.flags = 0;
     param.range.start_addr = 0;
@@ -293,28 +297,3 @@ extern "C" bool is_support_edmm()
 
     return true;
 }
-
-
-/* is_out_of_tree_driver()
- * Parameters:
- *      None.
- * Return Value:
- *      true - out-of-tree driver.
- *      false - in-kernel driver or DCAP driver.
-*/
-extern "C" bool is_out_of_tree_driver()
-{
-    int driver_type = 0;
-    if (false == get_driver_type(&driver_type))
-    {
-        return false;
-    }
-
-    if(driver_type == SGX_DRIVER_OUT_OF_TREE)
-    {
-        return true;
-    }
-    
-    return false;
-}
-

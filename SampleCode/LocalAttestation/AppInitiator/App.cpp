@@ -45,10 +45,10 @@
 
 int main(int argc, char* argv[])
 {
-    int update = 0;
+    int update = 0;  // Note: Since v2.28 this value is ignored
     uint32_t ret_status;
     sgx_status_t status;
-    sgx_launch_token_t token = {0};
+    sgx_launch_token_t token = {0};  // Note: Since v2.28 this value is ignored
     sgx_enclave_id_t initiator_enclave_id = 0;
 
     (void)argc;

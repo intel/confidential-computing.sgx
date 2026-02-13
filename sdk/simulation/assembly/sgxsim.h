@@ -49,7 +49,7 @@ uintptr_t DoECREATE_SW(const page_info_t* pinfo);
 uintptr_t DoEADD_SW(const page_info_t* pi, void *epc_lin_addr);
 
 uintptr_t DoEINIT_SW(secs_t* secs, enclave_css_t *css,
-             token_t *launch);
+             token_t *reserved);
 
 uintptr_t DoEREMOVE_SW(uintptr_t unused_xbx, void* epc_lin_addr);
 

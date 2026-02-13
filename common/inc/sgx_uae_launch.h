@@ -32,6 +32,10 @@
 #ifndef _SGX_UAE_LAUNCH_H_
 #define _SGX_UAE_LAUNCH_H_
 
+#ifdef __DEPRECATED
+#warning This header is deprecated. Support for Launch Enclave (whitelist-based) launch control has been removed. To disable this warning use -Wno-deprecated.
+#endif
+
 #include <stdint.h>
 
 #include "sgx_error.h"
@@ -42,28 +46,37 @@ extern "C" {
 #endif
 
 /**
- * Get the white list's size
+ * Get the white list's size - Not supported since v2.28
+ * 
+ * @deprecated Support for whitelist-based launch control (via Launch Enclave) has been removed.
+ *             Flexible Launch Control mechanism does not require use of this API.
  *
- * @param p_whitelist_size Save the size of the white list.
- * @return if OK, return SGX_SUCCESS
+ * @param p_whitelist_size Unused (was: output size of the white list.)
+ * @return SGX_ERROR_FEATURE_NOT_SUPPORTED
  */
 sgx_status_t SGXAPI sgx_get_whitelist_size(uint32_t* p_whitelist_size);
 
 /**
- * Get the white list value
+ * Get the white list value - Not supported since v2.28
+ * 
+ * @deprecated Support for whitelist-based launch control (via Launch Enclave) has been removed.
+ *             Flexible Launch Control mechanism does not require use of this API.
  *
- * @param p_whitelist Save the white list value
- * @param whitelist_size The size of the white list and the read data size is whitelist_size
- * @return if OK, return SGX_SUCCESS
+ * @param p_whitelist Unused (was: output white list value)
+ * @param whitelist_size Unused (was: The size of the white list and the read data size is whitelist_size)
+ * @return SGX_ERROR_FEATURE_NOT_SUPPORTED
  */
 sgx_status_t SGXAPI sgx_get_whitelist(uint8_t* p_whitelist, uint32_t whitelist_size);
 
 /**
- * Register white list certificate chain
+ * Register white list certificate chain - Not supported since v2.28
+ * 
+ * @deprecated Support for whitelist-based launch control (via Launch Enclave) has been removed.
+ *             Flexible Launch Control mechanism does not require use of this API.
  *
- * @param p_wl_cert_chain The white list to be registered.
- * @param wl_cert_chain_size The size of the white list.
- * @return If OK, return SGX_SUCCESS
+ * @param p_wl_cert_chain Unused (was: The white list to be registered.)
+ * @param wl_cert_chain_size Unused (was: The size of the white list.)
+ * @return SGX_ERROR_FEATURE_NOT_SUPPORTED
  */
 sgx_status_t SGXAPI sgx_register_wl_cert_chain(uint8_t* p_wl_cert_chain, uint32_t wl_cert_chain_size);
 

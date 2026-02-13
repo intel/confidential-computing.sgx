@@ -31,16 +31,24 @@
 
 #ifndef _PRD_CSS_UTIL_H_
 #define _PRD_CSS_UTIL_H_
+
 #include "arch.h"
 #include "file.h"
 #include <stdio.h>
 
-#define LE_PROD_ID  0x20
+#define LE_PROD_ID  0x20  //DEPRECATED, ProdID of the legacy Launch Enclave, which is no longer supported.
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+    /**
+     * @deprecated Support for LE removed in v2.28
+     */
     int read_prd_css(const prd_css_path_t prd_css_path, enclave_css_t *css);
+
+    /**
+     * @deprecated Support for LE removed in v2.28
+     */
     bool is_le(const enclave_css_t *const css);
 
 #ifdef __cplusplus

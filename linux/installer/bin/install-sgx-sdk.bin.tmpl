@@ -148,12 +148,10 @@ export_the_simulation()
         rm -f ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/libsgx_urts_sim.so
         rm -f ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/libsgx_uae_service_sim.so
         rm -f ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/libsgx_quote_ex_sim.so
-        rm -f ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/libsgx_launch_sim.so
     fi
     ln -s ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/${LIB_DIR}/libsgx_urts_sim.so ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/
     ln -s ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/${LIB_DIR}/libsgx_uae_service_sim.so ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/
     ln -s ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/${LIB_DIR}/libsgx_quote_ex_sim.so ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/
-    ln -s ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/${LIB_DIR}/libsgx_launch_sim.so ${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}/sdk_libs/
 }
 
 create_urts_soname_link()

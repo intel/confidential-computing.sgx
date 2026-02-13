@@ -96,9 +96,9 @@ int EnclaveCreatorHW::initialize(sgx_enclave_id_t enclave_id)
     }
 }
 
-int EnclaveCreatorHW::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, SGXLaunchToken * const lc, uint32_t debug_flag)
+int EnclaveCreatorHW::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, Reserved_FormerlyLaunchToken * const reserved, uint32_t debug_flag)
 {
-    UNUSED(lc);
+    UNUSED(reserved);
     sgx_attributes_t *required_attr = &metadata->attributes;
     enclave_css_t *enclave_css = &metadata->enclave_css;
     sgx_attributes_t *secs_attr = &sgx_misc_attr->secs_attr;
@@ -194,9 +194,9 @@ int EnclaveCreatorHW::get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadat
     return SGX_SUCCESS;
 }
 
-int EnclaveCreatorHW::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, SGXLaunchToken * lc, le_prd_css_file_t *prd_css_file)
+int EnclaveCreatorHW::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, Reserved_FormerlyLaunchToken * reserved, le_prd_css_file_t *prd_css_file)
 {
-    UNUSED(lc);
+    UNUSED(reserved);
 
     unsigned int ret = 0;
 
@@ -209,7 +209,7 @@ int EnclaveCreatorHW::init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *e
 
         if(i > 0)
             return ret;
-        if(true == is_le(&css))
+        if(true == is_le(&css))  // TODO: Consider removing this condition together with prd_css_util{.h|.cpp} (LE support removed in v2.28)
         {
             // LE is loaded with the interface sgx_create_le.
             // Read the input prd css file and use it to init again.

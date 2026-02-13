@@ -83,8 +83,7 @@ OBJ1 := enclave.o         \
         se_ocalls.o       \
         cpu_features.o    \
         cpu_features_ext.o    \
-        node.o            \
-        launch_checker.o 
+        node.o
 
 OBJ2 := urts.o             \
         misc.o             \

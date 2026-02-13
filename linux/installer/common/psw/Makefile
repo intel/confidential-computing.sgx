@@ -57,7 +57,6 @@ install:
 	cp -r $(SOURCE_FOLDER)/* $(SOURCE_INSTALL_PATH)
 	install $(SCRIPTS_FOLDER)/* $(SCRIPTS_INSTALL_PATH)
 	mv $(PSW_LIB_PATH)/libsgx_uae_service.so $(USR_LIB_PATH)
-	mv $(PSW_LIB_PATH)/libsgx_launch.so $(USR_LIB_PATH)
 	mv $(PSW_LIB_PATH)/libsgx_quote_ex.so $(USR_LIB_PATH)
 	mv $(PSW_LIB_PATH)/libsgx_urts.so $(USR_LIB_PATH)
 	mv $(PSW_LIB_PATH)/libsgx_enclave_common.so $(USR_LIB_PATH)
@@ -69,9 +68,6 @@ install:
 	mv libsgx_enclave_common.so libsgx_enclave_common.so.$(ECL_VER) && \
 	ln -fs libsgx_enclave_common.so.$(ECL_VER) libsgx_enclave_common.so.$(call SPLIT_VERSION,$(ECL_VER),1) && \
 	ln -fs libsgx_enclave_common.so.$(call SPLIT_VERSION,$(ECL_VER),1) libsgx_enclave_common.so && \
-	mv libsgx_launch.so libsgx_launch.so.$(LCH_VER) && \
-	ln -fs libsgx_launch.so.$(LCH_VER) libsgx_launch.so.$(call SPLIT_VERSION,$(LCH_VER),1) && \
-	ln -fs libsgx_launch.so.$(call SPLIT_VERSION,$(LCH_VER),1) libsgx_launch.so && \
 	mv libsgx_quote_ex.so libsgx_quote_ex.so.$(QEX_VER) && \
 	ln -fs libsgx_quote_ex.so.$(QEX_VER) libsgx_quote_ex.so.$(call SPLIT_VERSION,$(QEX_VER),1) && \
 	ln -fs libsgx_quote_ex.so.$(call SPLIT_VERSION,$(QEX_VER),1) libsgx_quote_ex.so

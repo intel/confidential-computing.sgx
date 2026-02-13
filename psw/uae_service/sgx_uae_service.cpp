@@ -32,9 +32,7 @@
 #include <stddef.h>
 #include <oal/uae_oal_api.h>
 #include <aesm_error.h>
-#include "sgx_uae_launch.h"
 #include "sgx_uae_quote_ex.h"
-#include "uae_service_internal.h"
 #include "config.h"
 
 #include "stdint.h"
@@ -48,163 +46,54 @@
 #endif
 
 
-#define GET_LAUNCH_TOKEN_TIMEOUT_MSEC (IPC_LATENCY)
 #define SE_INIT_QUOTE_TIMEOUT_MSEC (IPC_LATENCY)
 #define SE_GET_QUOTE_TIMEOUT_MSEC (IPC_LATENCY)
 #define SE_REPORT_REMOTE_ATTESTATION_FAILURE_TIMEOUT_MSEC  (IPC_LATENCY)
 #define SE_CHECK_UPDATE_STATUS_TIMEOUT_MSEC  (IPC_LATENCY)
-
-#define GET_WHITE_LIST_SIZE_MSEC (IPC_LATENCY)
-#define GET_WHITE_LIST_MSEC (IPC_LATENCY)
-#define REG_WL_CERT_CHAIN_MSEC (IPC_LATENCY)
 #define SE_CALC_QUOTE_SIZE_TIMEOUT_MSEC (IPC_LATENCY)
 #define SE_SELECT_ATT_KEY_ID_TIMEOUT_MSEC (IPC_LATENCY)
 #define SE_GET_SUPPORTED_ATT_ID_NUM_TIMEOUT_MSEC  (IPC_LATENCY)
 #define SE_GET_SUPPORTED_ATT_IDS_TIMEOUT_MSEC (IPC_LATENCY)
+
+/* used to eliminate `unused variable' warning */
+#ifndef UNUSED
+#define UNUSED(val) (void)(val)
+#endif
 
 extern "C" {
 
 sgx_status_t get_launch_token(
     const enclave_css_t*        signature,
     const sgx_attributes_t*     attribute,
-    sgx_launch_token_t*         launch_token)
+    sgx_reserved_field_1024t*   reserved)
 {
-    if (signature == NULL || attribute == NULL || launch_token == NULL)
-        return SGX_ERROR_INVALID_PARAMETER;
-
-    aesm_error_t    result = AESM_UNEXPECTED_ERROR;
-    uae_oal_status_t status = oal_get_launch_token(signature, attribute, launch_token, GET_LAUNCH_TOKEN_TIMEOUT_MSEC*1000, &result);
-
-    /*common mappings */
-    sgx_status_t mapped = oal_map_status(status);
-    if (mapped != SGX_SUCCESS)
-        return mapped;
-
-    mapped = oal_map_result(result);
-    if (mapped != SGX_SUCCESS)
-    {
-        /*operation specific mapping */
-        if (mapped == SGX_ERROR_UNEXPECTED && result != AESM_UNEXPECTED_ERROR)
-        {
-            switch (result)
-            {
-                case AESM_NO_DEVICE_ERROR:
-                    mapped = SGX_ERROR_NO_DEVICE;
-                    break;
-                case AESM_GET_LICENSETOKEN_ERROR:
-                    mapped = SGX_ERROR_SERVICE_INVALID_PRIVILEGE;
-                    break;
-                case AESM_OUT_OF_EPC:
-                    mapped = SGX_ERROR_OUT_OF_EPC;
-                    break;
-                default:
-                    mapped = SGX_ERROR_UNEXPECTED;
-            }
-        }
-    }
-
-    return mapped;
+    UNUSED(signature);
+    UNUSED(attribute);
+    UNUSED(reserved);
+    return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
 
 sgx_status_t sgx_get_whitelist_size(
     uint32_t* p_whitelist_size)
 {
-    if (p_whitelist_size == NULL)
-        return SGX_ERROR_INVALID_PARAMETER;
-
-    aesm_error_t    result = AESM_UNEXPECTED_ERROR;
-    uae_oal_status_t ret = UAE_OAL_ERROR_UNEXPECTED;
-    ret = oal_get_whitelist_size(p_whitelist_size, GET_WHITE_LIST_SIZE_MSEC*1000, &result);
-
-    //common mappings
-    sgx_status_t mapped = oal_map_status(ret);
-    if (mapped != SGX_SUCCESS)
-        return mapped;
-
-    mapped = oal_map_result(result);
-    if (mapped != SGX_SUCCESS)
-    {
-        //operation specific mapping
-        if (mapped == SGX_ERROR_UNEXPECTED && result != AESM_UNEXPECTED_ERROR)
-        {
-            switch (result)
-            {
-            default:
-                mapped = SGX_ERROR_UNEXPECTED;
-            }
-        }
-    }
-
-    return mapped;
+    UNUSED(p_whitelist_size);
+    return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
-
 
 sgx_status_t sgx_get_whitelist(
     uint8_t* p_whitelist,
     uint32_t whitelist_size)
 {
-    if (p_whitelist == NULL || whitelist_size == 0)
-        return SGX_ERROR_INVALID_PARAMETER;
-
-    aesm_error_t    result = AESM_UNEXPECTED_ERROR;
-    uae_oal_status_t ret = UAE_OAL_ERROR_UNEXPECTED;
-
-    ret = oal_get_whitelist(p_whitelist, whitelist_size, GET_WHITE_LIST_MSEC*1000, &result);
-
-    //common mappings
-    sgx_status_t mapped = oal_map_status(ret);
-    if (mapped != SGX_SUCCESS)
-        return mapped;
-
-    mapped = oal_map_result(result);
-    if (mapped != SGX_SUCCESS)
-    {
-        //operation specific mapping
-        if (mapped == SGX_ERROR_UNEXPECTED && result != AESM_UNEXPECTED_ERROR)
-        {
-            switch (result)
-            {
-            default:
-                mapped = SGX_ERROR_UNEXPECTED;
-            }
-        }
-    }
-
-    return mapped;
+    UNUSED(p_whitelist);
+    UNUSED(whitelist_size);
+    return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
-
-
-typedef enum _sgx_register_type_t {SGX_REGISTER_WHITE_LIST_CERT} sgx_register_type_t;
 
 sgx_status_t sgx_register_wl_cert_chain(uint8_t* p_wl_cert_chain, uint32_t wl_cert_chain_size)
 {
-    if (p_wl_cert_chain == NULL || wl_cert_chain_size == 0)
-        return SGX_ERROR_INVALID_PARAMETER;
-
-    aesm_error_t    result = AESM_UNEXPECTED_ERROR;
-    uae_oal_status_t oal_ret = UAE_OAL_ERROR_UNEXPECTED;
-    oal_ret = oal_register_common(p_wl_cert_chain, wl_cert_chain_size, SGX_REGISTER_WHITE_LIST_CERT,
-            REG_WL_CERT_CHAIN_MSEC*1000, &result);
-
-    //common mappings
-    sgx_status_t mapped = oal_map_status(oal_ret);
-    if (mapped != SGX_SUCCESS)
-        return mapped;
-
-    mapped = oal_map_result(result);
-    if (mapped != SGX_SUCCESS)
-    {
-        //operation specific mapping
-        if (mapped == SGX_ERROR_UNEXPECTED && result != AESM_UNEXPECTED_ERROR)
-        {
-            switch (result)
-            {
-            default:
-                mapped = SGX_ERROR_UNEXPECTED;
-            }
-        }
-    }
-    return mapped;
+    UNUSED(p_wl_cert_chain);
+    UNUSED(wl_cert_chain_size);
+    return SGX_ERROR_FEATURE_NOT_SUPPORTED; // Token-based launch control is deprecated
 }
 
 sgx_status_t sgx_select_att_key_id(const uint8_t *p_att_key_id_list, uint32_t att_key_id_list_size,

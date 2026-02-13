@@ -38,24 +38,29 @@
 #include "arch.h"
 #include "sgx_urts.h"
 
+/* used to eliminate `unused variable' warning */
+#ifndef UNUSED
+#define UNUSED(val) (void)(val)
+#endif
+
+/**
+ * @deprecated This class does nothing, as launch control support has been removed in v2.28
+ * It is kept around only for the purpose of interface backward-compatibility.
+ */
 class SGXLaunchToken : private Uncopyable {
 public:
     SGXLaunchToken(
         const enclave_css_t *css,
         const sgx_attributes_t *secs_attr,
-        const sgx_launch_token_t *launch);
-
-    sgx_status_t update_launch_token(
-        bool force_update_tok);
-    sgx_status_t get_launch_token(sgx_launch_token_t *tok) const;
-    bool is_launch_updated() const;
-
-private:
-    const enclave_css_t     *m_css;
-    const sgx_attributes_t  *m_secs_attr;
-    sgx_launch_token_t       m_launch;
-    bool                     m_launch_updated;
+        const sgx_launch_token_t *reserved)
+        {
+            UNUSED(css);
+            UNUSED(secs_attr);
+            UNUSED(reserved);
+        };
 };
+
+using Reserved_FormerlyLaunchToken = SGXLaunchToken;
 
 #endif
 

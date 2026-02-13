@@ -110,7 +110,6 @@ bool AEInitQuoteExResponse::inflateWithMessage(AEMessage* message)
     if (msg.has_initquoteexres() == false)
         return false;
 
-    //this is an AEGetLaunchTokenResponse
     ReleaseMemory();
     m_response = new aesm::message::Response::InitQuoteExResponse(msg.initquoteexres());
     return true;

@@ -621,7 +621,7 @@ int CLoader::build_secs(sgx_attributes_t * const secs_attr, sgx_config_id_t *con
 
     return ret;
 }
-int CLoader::build_image(SGXLaunchToken * const lc, sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t * const misc_attr)
+int CLoader::build_image(Reserved_FormerlyLaunchToken * const reserved, sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t * const misc_attr)
 {
     int ret = SGX_SUCCESS;
 
@@ -666,7 +666,7 @@ int CLoader::build_image(SGXLaunchToken * const lc, sgx_attributes_t * const sec
     }
 
     //initialize Enclave
-    ret = get_enclave_creator()->init_enclave(ENCLAVE_ID_IOCTL, const_cast<enclave_css_t *>(&m_metadata->enclave_css), lc, prd_css_file);
+    ret = get_enclave_creator()->init_enclave(ENCLAVE_ID_IOCTL, const_cast<enclave_css_t *>(&m_metadata->enclave_css), reserved, prd_css_file);
     if(SGX_SUCCESS != ret)
     {
         SE_TRACE(SE_TRACE_WARNING, "init_enclave failed\n");
@@ -861,7 +861,7 @@ bool CLoader::is_ae(const enclave_css_t *enclave_css)
     return false;
 }
 
-int CLoader::load_enclave(SGXLaunchToken *lc, int debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t *misc_attr)
+int CLoader::load_enclave(Reserved_FormerlyLaunchToken *reserved, int debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t *misc_attr)
 {
     int ret = SGX_SUCCESS;
     sgx_misc_attribute_t sgx_misc_attr;
@@ -875,13 +875,13 @@ int CLoader::load_enclave(SGXLaunchToken *lc, int debug, const metadata_t *metad
         return ret;
     }
 
-    ret = get_enclave_creator()->get_misc_attr(&sgx_misc_attr, const_cast<metadata_t *>(m_metadata), lc, debug);
+    ret = get_enclave_creator()->get_misc_attr(&sgx_misc_attr, const_cast<metadata_t *>(m_metadata), reserved, debug);
     if(SGX_SUCCESS != ret)
     {
         return ret;
     }
 
-    ret = build_image(lc, &sgx_misc_attr.secs_attr, config_id, config_svn, prd_css_file, &sgx_misc_attr);
+    ret = build_image(reserved, &sgx_misc_attr.secs_attr, config_id, config_svn, prd_css_file, &sgx_misc_attr);
     // Update misc_attr with secs.attr upon success.
     if(SGX_SUCCESS == ret)
     {
@@ -897,14 +897,14 @@ int CLoader::load_enclave(SGXLaunchToken *lc, int debug, const metadata_t *metad
     return ret;
 }
 
-int CLoader::load_enclave_ex(SGXLaunchToken *lc, bool debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t *misc_attr)
+int CLoader::load_enclave_ex(Reserved_FormerlyLaunchToken *reserved, bool debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t *misc_attr)
 {
     unsigned int ret = SGX_SUCCESS, map_retry_count = 3;
     bool retry = true;
 
     while (retry)
     {
-        ret = this->load_enclave(lc, debug, metadata, config_id, config_svn, prd_css_file, misc_attr);
+        ret = this->load_enclave(reserved, debug, metadata, config_id, config_svn, prd_css_file, misc_attr);
         switch(ret)
         {
             //If CreateEnclave failed due to power transition, we retry it.

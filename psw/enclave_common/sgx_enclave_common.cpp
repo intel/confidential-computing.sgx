@@ -42,7 +42,6 @@
 #include "edmm_utility.h"
 #include "isgx_user.h"
 #include "se_error_internal.h"
-#include "uae_service_internal.h"
 #include "se_map.h"
 #include "se_thread.h"
 #include "se_trace.h"
@@ -60,11 +59,7 @@
 
 #define POINTER_TO_U64(A) ((__u64)((uintptr_t)(A)))
 
-#define SGX_LAUNCH_SO "libsgx_launch.so.1"
-#define SGX_GET_LAUNCH_TOKEN "get_launch_token"
 #define SGX_CPUID 0x12
-
-func_get_launch_token_t get_launch_token_func = NULL;
 
 static void* s_hdlopen = NULL;
 static Mutex s_dlopen_mutex;
@@ -207,43 +202,6 @@ static bool get_elrange_from_base_address(void* base_address, enclave_elrange_t*
     return false;
 }
 
-static bool get_secs_attr_from_base_address(void* base_address, sgx_attributes_t* secs_attr)
-{
-    LockGuard lock(&s_enclave_mutex);
-    std::map<void*, sgx_attributes_t>::iterator it = s_secs_attr.find(base_address);
-    if (it == s_secs_attr.end())
-    {
-        return false;
-    }
-    if(secs_attr != NULL)
-    {
-        secs_attr->flags = it->second.flags;
-        secs_attr->xfrm = it->second.xfrm;
-    }
-    return true;
-}
-
-static func_get_launch_token_t get_launch_token_function(void)
-{
-    if (get_launch_token_func == NULL) {
-        LockGuard lock(&s_dlopen_mutex);
-        if (get_launch_token_func != NULL)
-        {
-            return get_launch_token_func;
-        }
-
-        if (s_hdlopen == NULL) {
-            s_hdlopen = dlopen(SGX_LAUNCH_SO, RTLD_LAZY);
-            if (s_hdlopen == NULL) {
-                return NULL;
-            }
-        }
-
-        get_launch_token_func = (func_get_launch_token_t)dlsym(s_hdlopen, SGX_GET_LAUNCH_TOKEN);
-    }
-
-    return get_launch_token_func;
-}
 
 static void close_sofile(void)
 {
@@ -324,36 +282,6 @@ static uint32_t error_driver2api(int driver_error, int err_no)
     return ret;
 }
 
-static uint32_t error_aesm2api(int aesm_error)
-{
-    uint32_t ret = ENCLAVE_UNEXPECTED;
-
-    switch (aesm_error) {
-    case SGX_ERROR_INVALID_PARAMETER:
-        ret = ENCLAVE_INVALID_PARAMETER;
-        break;
-    case SGX_ERROR_SERVICE_UNAVAILABLE:
-        ret = ENCLAVE_SERVICE_NOT_AVAILABLE;
-        break;
-    case SGX_ERROR_NO_DEVICE:
-        ret = ENCLAVE_NOT_SUPPORTED;
-        break;
-    case SGX_ERROR_OUT_OF_EPC:
-        ret = ENCLAVE_DEVICE_NO_RESOURCES;
-        break;
-    case SGX_ERROR_SERVICE_INVALID_PRIVILEGE:
-        ret = ENCLAVE_NOT_AUTHORIZED;
-        break;
-    case SGX_ERROR_SERVICE_TIMEOUT:
-        ret = ENCLAVE_SERVICE_TIMEOUT;
-        break;
-    default:
-        ret = ENCLAVE_UNEXPECTED;
-        break;
-    }
-
-    return ret;
-}
 
 static inline bool is_power_of_two(size_t n)
 {
@@ -1139,46 +1067,11 @@ extern "C" bool COMM_API enclave_initialize(
     int ret = 0;
     if ( s_driver_type == SGX_DRIVER_OUT_OF_TREE )
     {
-        //out-of-tree driver requires a launch token to be provided
-        sgx_attributes_t secs_attr;
-        memset(&secs_attr, 0, sizeof(sgx_attributes_t));
-        
-        if(get_secs_attr_from_base_address(base_address, &secs_attr)== false)
-        {
-            if (enclave_error != NULL)
-            {
-                *enclave_error = ENCLAVE_INVALID_PARAMETER;
-            }
-            return false;
+        SE_TRACE(SE_TRACE_WARNING, "Unable to initialize enclave. Launch Enclave-based launch control and out of tree driver are no longer supported.\n");
+        if (enclave_error != NULL) {
+            *enclave_error = ENCLAVE_NOT_SUPPORTED;
         }
-        
-        sgx_launch_token_t launch_token;
-        memset(launch_token, 0, sizeof(sgx_launch_token_t));
-
-        enclave_css_t* enclave_css = (enclave_css_t*)enclave_init_sgx->sigstruct;
-        if (0 == enclave_css->header.hw_version) {
-            func_get_launch_token_t func = get_launch_token_function();
-            if (func == NULL) {
-                SE_TRACE(SE_TRACE_WARNING, "Failed to get sysmbol %s from %s.\n", SGX_GET_LAUNCH_TOKEN, SGX_LAUNCH_SO);
-                if (enclave_error != NULL)
-                    *enclave_error = ENCLAVE_UNEXPECTED;
-                return false;
-            }
-
-            sgx_status_t status = func(enclave_css, &secs_attr, &launch_token);
-            if (status != SGX_SUCCESS) {
-                if (enclave_error != NULL)
-                    *enclave_error = error_aesm2api(status);
-                return false;
-            }
-        }
-
-        struct sgx_enclave_init initp = { 0, 0, 0 };
-        initp.addr = POINTER_TO_U64(base_address);
-        initp.sigstruct = POINTER_TO_U64(enclave_css);
-        initp.einittoken = POINTER_TO_U64(&launch_token);
-
-        ret = ioctl(s_hdevice, SGX_IOC_ENCLAVE_INIT, &initp);
+        return false;
     } 
     else if (s_driver_type == SGX_DRIVER_DCAP )
     {
@@ -1398,14 +1291,11 @@ uint32_t COMM_API enclave_alloc(
     }
     if (s_driver_type == SGX_DRIVER_OUT_OF_TREE)
     {
-        ret = mprotect(target_addr, target_size, PROT_WRITE | PROT_READ);
-        if (ret != 0)
-        {
-            if (enclave_error != NULL)
-                *enclave_error = ENCLAVE_UNEXPECTED;
-            return ENCLAVE_UNEXPECTED;
+        SE_TRACE(SE_TRACE_WARNING, "Unable to allocate memory for enclave. Out of tree driver is no longer supported.\n");
+        if (enclave_error != NULL) {
+            *enclave_error = ENCLAVE_NOT_SUPPORTED;
         }
-        return ENCLAVE_ERROR_SUCCESS;
+        return ENCLAVE_NOT_SUPPORTED;
     }
 
     void* enclave_base = get_enclave_base_address_from_address(target_addr);
@@ -1566,75 +1456,6 @@ static int emodpr(int fd, void *addr, size_t length, uint64_t prot)
     return 0;
 }
 
-// legacy support for EDMM
-
-static int trim_accept_legacy(int fd, void *addr, size_t len)
-{
-    sgx_range params;
-    memset(&params, 0, sizeof(sgx_range));
-    params.start_addr = (unsigned long)addr;
-    params.nr_pages = (unsigned int)(len / SE_PAGE_SIZE);
-
-    int ret = ioctl(fd, SGX_IOC_ENCLAVE_NOTIFY_ACCEPT, &params);
-
-    if (ret)
-    {
-        return errno;
-    }
-
-    return SGX_SUCCESS;
-}
-
-static int trim_legacy(int fd, void *fromaddr, uint64_t len)
-{
-    sgx_range params;
-    memset(&params, 0, sizeof(sgx_range));
-    params.start_addr = (unsigned long)fromaddr;
-    params.nr_pages = (unsigned int)((len) / SE_PAGE_SIZE);
-
-    int ret = ioctl(fd, SGX_IOC_ENCLAVE_TRIM, &params);
-    if (ret)
-    {
-        return errno;
-    }
-
-    return SGX_SUCCESS;
-}
-
-static int mktcs_legacy(int fd, void *tcs_addr, size_t len)
-{
-    if (len != SE_PAGE_SIZE)
-        return EINVAL;
-    sgx_range params;
-    memset(&params, 0, sizeof(sgx_range));
-    params.start_addr = (unsigned long)tcs_addr;
-    params.nr_pages = 1;
-
-    int ret = ioctl(fd, SGX_IOC_ENCLAVE_MKTCS, &params);
-    if (ret)
-    {
-        return errno;
-    }
-    return SGX_SUCCESS;
-}
-
-static int emodpr_legacy(int fd, void *addr, uint64_t size, uint64_t flag)
-{
-    sgx_modification_param params;
-    memset(&params, 0, sizeof(sgx_modification_param));
-    params.range.start_addr = (unsigned long)addr;
-    params.range.nr_pages = (unsigned int)(size / SE_PAGE_SIZE);
-    params.flags = (unsigned long)flag;
-
-    int ret = ioctl(fd, SGX_IOC_ENCLAVE_EMODPR, &params);
-    if (ret)
-    {
-        return errno;
-    }
-
-    return SGX_SUCCESS;
-}
-
 uint32_t COMM_API enclave_modify(
     COMM_IN void* target_addr,
     COMM_IN size_t target_size,
@@ -1672,11 +1493,11 @@ uint32_t COMM_API enclave_modify(
     int fd = get_file_handle_from_base_address((void*)enclave_base);
     if (s_driver_type == SGX_DRIVER_OUT_OF_TREE)
     {
-        _trim = trim_legacy;
-        _trim_accept = trim_accept_legacy;
-        _mktcs = mktcs_legacy;
-        _emodpr = emodpr_legacy;
-        fd = s_hdevice;
+        SE_TRACE(SE_TRACE_WARNING, "Unable to modify enclave. Out of tree driver is no longer supported.\n");
+        if (enclave_error != NULL) {
+            *enclave_error = ENCLAVE_NOT_SUPPORTED;
+        }
+        return ENCLAVE_NOT_SUPPORTED;
     }
     if(fd == -1)
     {

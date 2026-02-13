@@ -16,11 +16,8 @@
         sgx_get_target_info;
         sgx_create_encrypted_enclave;
         sgx_create_enclave_from_buffer_ex;
-        sgx_create_le;
-        is_launch_token_required;
         sgx_get_metadata;
         sgx_set_switchless_itf;
-        init_get_launch_token;
         sgx_trace_logger_callback;
         sgx_trace_loglevel;
     local:

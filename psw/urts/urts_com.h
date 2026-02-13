@@ -291,7 +291,7 @@ static int __create_enclave(BinParser &parser,
                             const metadata_t *metadata, 
                             se_file_t& file, 
                             const bool debug, 
-                            SGXLaunchToken *lc, 
+                            Reserved_FormerlyLaunchToken *reserved, 
                             le_prd_css_file_t *prd_css_file, 
                             sgx_enclave_id_t *enclave_id, 
                             sgx_misc_attribute_t *misc_attr,
@@ -315,7 +315,7 @@ static int __create_enclave(BinParser &parser,
         config_svn = kss_config->config_svn;
     }
 
-    ret = loader.load_enclave_ex(lc, debug, metadata, config_id, config_svn, prd_css_file, misc_attr);
+    ret = loader.load_enclave_ex(reserved, debug, metadata, config_id, config_svn, prd_css_file, misc_attr);
     if (ret != SGX_SUCCESS)
     {
         return ret;
@@ -519,7 +519,7 @@ sgx_status_t _create_enclave_from_buffer_ex(const bool debug, uint8_t *base_addr
     unsigned int ret = SGX_SUCCESS;
     sgx_misc_attribute_t sgx_misc_attr;
     metadata_t *metadata = NULL;
-    SGXLaunchToken *lc = NULL;
+    Reserved_FormerlyLaunchToken *placeholder = NULL;
     memset(&sgx_misc_attr, 0, sizeof(sgx_misc_attribute_t));
     sgx_isvfamily_id_t isvf;
     sgx_isvext_prod_id_t isvp;
@@ -605,7 +605,7 @@ sgx_status_t _create_enclave_from_buffer_ex(const bool debug, uint8_t *base_addr
         goto clean_return;
     }
 
-    lc = new SGXLaunchToken(&metadata->enclave_css, &sgx_misc_attr.secs_attr, NULL);
+    placeholder = new Reserved_FormerlyLaunchToken(&metadata->enclave_css, &sgx_misc_attr.secs_attr, NULL);  //Deprecated, does nothing. Slated for removal in a future version.
 #ifndef SE_SIM
     // Only LE allows the prd_css_file
     if(is_le(&metadata->enclave_css) == false && prd_css_file != NULL)
@@ -621,11 +621,11 @@ sgx_status_t _create_enclave_from_buffer_ex(const bool debug, uint8_t *base_addr
 
     //Need to set the whole misc_attr instead of just secs_attr.
     do {
-        ret = __create_enclave(parser, base_addr, metadata, file, debug, lc, prd_css_file, enclave_id, misc_attr, ex_features, ex_features_p);
+        ret = __create_enclave(parser, base_addr, metadata, file, debug, placeholder, prd_css_file, enclave_id, misc_attr, ex_features, ex_features_p);
         //SGX_ERROR_ENCLAVE_LOST caused by initializing enclave while power transition occurs
     } while(SGX_ERROR_ENCLAVE_LOST == ret);
 
-    if(SE_ERROR_INVALID_LAUNCH_TOKEN == ret)
+    if(SE_ERROR_INVALID_LAUNCH_TOKEN == ret)  // DEPRECATED - support for LE-based launch removed in v2.28
         ret = SGX_ERROR_INVALID_LAUNCH_TOKEN;
         
     // The launch token is updated, so the SE_INVALID_MEASUREMENT is only caused by signature.
@@ -641,17 +641,17 @@ sgx_status_t _create_enclave_from_buffer_ex(const bool debug, uint8_t *base_addr
 
 
 clean_return:
-    if(lc != NULL)
-        delete lc;
+    if(placeholder != NULL)
+        delete placeholder;
     return (sgx_status_t)ret;
 }
 
 sgx_status_t _create_enclave_ex(const bool debug, se_file_handle_t pfile, se_file_t& file, le_prd_css_file_t *prd_css_file,
-                                sgx_launch_token_t *launch, int *launch_updated, sgx_enclave_id_t *enclave_id, 
+                                sgx_launch_token_t *reserved1, int *reserved2, sgx_enclave_id_t *enclave_id, 
                                 sgx_misc_attribute_t *misc_attr, const uint32_t ex_features, const void* ex_features_p[32])
 {
-    UNUSED(launch);
-    UNUSED(launch_updated);
+    UNUSED(reserved1);
+    UNUSED(reserved2);
 
     unsigned int ret = SGX_SUCCESS;
     off_t file_size = 0;
@@ -669,9 +669,9 @@ sgx_status_t _create_enclave_ex(const bool debug, se_file_handle_t pfile, se_fil
 }
 
 sgx_status_t _create_enclave(const bool debug, se_file_handle_t pfile, se_file_t& file, le_prd_css_file_t *prd_css_file, 
-                             sgx_launch_token_t *launch, int *launch_updated, sgx_enclave_id_t *enclave_id, sgx_misc_attribute_t *misc_attr) 
+                             sgx_launch_token_t *reserved1, int *reserved2, sgx_enclave_id_t *enclave_id, sgx_misc_attribute_t *misc_attr) 
 {
-    return _create_enclave_ex(debug, pfile, file, prd_css_file, launch, launch_updated, enclave_id, misc_attr, 0, NULL);
+    return _create_enclave_ex(debug, pfile, file, prd_css_file, reserved1, reserved2, enclave_id, misc_attr, 0, NULL);
 }
 
 

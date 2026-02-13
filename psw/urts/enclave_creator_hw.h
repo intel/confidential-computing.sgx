@@ -52,18 +52,18 @@ public:
     ~EnclaveCreatorHW();
     int create_enclave(secs_t *secs, sgx_enclave_id_t *enclave_id, void **start_addr, const uint32_t ex_features, const void* ex_features_p[32]);
     int add_enclave_page(sgx_enclave_id_t enclave_id, void *source, uint64_t offset, const sec_info_t &sinfo, uint32_t attr);
-    int init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, SGXLaunchToken *lc, le_prd_css_file_t *prd_css_file);
+    int init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, Reserved_FormerlyLaunchToken *reserved, le_prd_css_file_t *prd_css_file);
     int destroy_enclave(sgx_enclave_id_t enclave_id, uint64_t enclave_size);
     int initialize(sgx_enclave_id_t enclave_id);
     bool use_se_hw() const;
     bool is_EDMM_supported(sgx_enclave_id_t enclave_id);
     bool is_driver_compatible();
-    int get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, SGXLaunchToken * const lc, uint32_t flag);
+    int get_misc_attr(sgx_misc_attribute_t *sgx_misc_attr, metadata_t *metadata, Reserved_FormerlyLaunchToken * const reserved, uint32_t flag);
     bool get_plat_cap(sgx_misc_attribute_t *se_attr);
 private:
     virtual bool open_device();
     virtual void close_device();
-    int try_init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, token_t *launch);
+    int try_init_enclave(sgx_enclave_id_t enclave_id, enclave_css_t *enclave_css, token_t *reserved);
     int error_driver2urts(int driver_error, int err_no);
     int error_api2urts(uint32_t api_error);
     se_file_handle_t    m_hdevice;
