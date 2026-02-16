@@ -400,9 +400,11 @@ NOTE: You need to set up the needed environment variables before compiling your 
 
 ### Compile and Run the Code Samples in the Hardware Mode
 If you use an Intel SGX hardware enabled machine, you can run the code samples in Hardware mode.
-Ensure that you install Intel(R) SGX driver and Intel(R) SGX PSW installer on the machine.
-See the earlier topic, *Build and Install the Intel(R) SGX Driver*, for information on how to install the Intel(R) SGX driver.
-See the later topic, *Install Intel(R) SGX PSW*, for information on how to install the PSW package.
+Ensure that your machine is running a Linux\* kernel with SGX driver support[^in-kernel-driver-info-note] and that Intel(R) SGX PSW is installed on the system.
+See the later topic, [*Install Intel(R) SGX PSW*](#install-the-intelr-sgx-psw), for information on how to install the PSW package.
+
+[^in-kernel-driver-info-note]: The Linux\* kernel contains the necessary driver since the mainline kernel release `5.11`.
+
 - Compile and run each code sample in Hardware mode, Debug build, as follows:
 ```
   $ cd ${sgx-sdk-install-path}/SampleCode/LocalAttestation
@@ -437,8 +439,7 @@ Install the Intel(R) SGX PSW
   * Debian 12 64bits
 - Ensure that you have a system with the following required hardware:
   * 6th Generation Intel(R) Core(TM) Processor or newer
-- Configure the system with the **Intel SGX hardware enabled** option and install Intel(R) SGX driver in advance.
-  See the earlier topic, *Build and Install the Intel(R) SGX Driver*, for information on how to install the Intel(R) SGX driver.
+- Configure the system with the **Intel SGX hardware enabled** option in advance and ensure that your machine is running a Linux\* kernel with SGX driver support[^in-kernel-driver-info-note].
 - Install the library using the following command:
   * On Ubuntu 22.04, Ubuntu 24.04, Debian 10 and Debian 12:
   ```
@@ -514,10 +515,6 @@ To enable ECDSA attestation
 - Ensure that you have the following required hardware:
   * 8th Generation Intel(R) Core(TM) Processor or newer with **Flexible Launch Control** support*
   * Intel(R) Atom(TM) Processor with **Flexible Launch Control** support*
-- To use ECDSA attestation, you must install Intel(R) Software Guard Extensions Driver for Data Center Attestation Primitives (Intel(R) SGX DCAP).
-Please follow the [Intel(R) SGX DCAP Installation Guide for Linux* OS](https://download.01.org/intel-sgx/latest/dcap-latest/linux/docs/Intel_SGX_SW_Installation_Guide_for_Linux.pdf) to install the Intel(R) SGX DCAP driver.
-
-**NOTE**: If you had already installed Intel(R) SGX driver without ECDSA attestation, please uninstall the driver firstly and then install the Intel(R) SGX DCAP driver. Otherwise the newly installed Intel(R) SGX DCAP driver will be unworkable.
 
 - Install Quote Provider Library(QPL). You can use your own customized QPL or use default QPL provided by Intel(libsgx-dcap-default-qpl)
 
