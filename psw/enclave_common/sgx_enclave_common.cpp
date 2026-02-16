@@ -637,10 +637,11 @@ extern "C" void* COMM_API enclave_create_ex(
     
     if(s_driver_type == SGX_DRIVER_IN_KERNEL && enclave_elrange == NULL)
     {
-        uint64_t aligned_addr = ((uint64_t)enclave_base + virtual_size - 1) & ~(virtual_size - 1);
-        if(aligned_addr != (uint64_t)enclave_base)
+        uint64_t original_base = (uint64_t)enclave_base;
+        uint64_t aligned_addr = (original_base + virtual_size - 1) & ~(virtual_size - 1);
+        if(aligned_addr != original_base)
         {
-            int ret = munmap(enclave_base, aligned_addr - (uint64_t)enclave_base);
+            int ret = munmap(enclave_base, aligned_addr - original_base);
             if(ret == -1)
             {
                 SE_TRACE(SE_TRACE_WARNING, "\ncreate enclave: munmap failed, errno = %d\n", errno);
@@ -653,9 +654,9 @@ extern "C" void* COMM_API enclave_create_ex(
                 return NULL;
             }
         }
-        if((uint64_t)enclave_base + virtual_size != aligned_addr)
+        if(original_base + virtual_size != aligned_addr)
         {
-            int ret = munmap((void *)(aligned_addr + virtual_size),(uint64_t)enclave_base + virtual_size - aligned_addr);
+            int ret = munmap((void *)(aligned_addr + virtual_size), original_base + virtual_size - aligned_addr);
             if(ret == -1)
             {
                 SE_TRACE(SE_TRACE_WARNING, "\ncreate enclave: munmap failed, errno = %d\n", errno);
@@ -664,7 +665,7 @@ extern "C" void* COMM_API enclave_create_ex(
                     *enclave_error = ENCLAVE_UNEXPECTED;
                 }
                 close_file(&hdevice_temp);
-                munmap((void *)aligned_addr, enclave_size - aligned_addr + (uint64_t)enclave_base);
+                munmap((void *)aligned_addr, enclave_size - aligned_addr + original_base);
                 return NULL;
             }
         }

@@ -267,8 +267,17 @@ class EcdsaQuoteServiceImp : public IQuoteProviderService
 private:
 
     bool initialized;
+    void* handle;
+
+    EcdsaQuoteServiceImp(const EcdsaQuoteServiceImp&) = delete;
+    EcdsaQuoteServiceImp& operator=(const EcdsaQuoteServiceImp&) = delete;
+
 public:
-    EcdsaQuoteServiceImp():initialized(false) {}
+    EcdsaQuoteServiceImp():initialized(false), handle(NULL) {}
+
+    ~EcdsaQuoteServiceImp() {
+        stop();
+    }
 
     ae_error_t start()
     {
@@ -315,7 +324,7 @@ public:
         }
                     
         // Set logging callback for default quote provider library
-        void* handle = get_qpl_handle();
+        handle = get_qpl_handle();
         if (handle != NULL) {
             aesm_config_infos_t info = {0};
             char *error;
@@ -327,6 +336,7 @@ public:
             else {
                 AESM_LOG_ERROR("Failed to set logging callback for the quote provider library.");
             }
+
         }
 
         initialized = true;
@@ -335,6 +345,11 @@ public:
     }
     void stop()
     {
+        AESMLogicLock lock(ecdsa_quote_mutex);
+        if (handle != NULL) {
+            dlclose(handle);
+            handle = NULL;
+        }
         sgx_ql_set_enclave_load_policy(SGX_QL_EPHEMERAL);
         initialized = false;
         AESM_DBG_INFO("ecdsa bundle stopped");
@@ -346,8 +361,6 @@ public:
         uint8_t *pub_key_id, size_t *pub_key_id_size)
     {
         AESM_DBG_INFO("init_quote_ex");
-        if (false == initialized)
-            return AESM_SERVICE_UNAVAILABLE;
         // att_key_id_ext has been checked by caller
         if((NULL != target_info && sizeof(sgx_target_info_t) != target_info_size)
            || (NULL == pub_key_id && NULL == pub_key_id_size))
@@ -355,6 +368,8 @@ public:
             return AESM_PARAMETER_ERROR;
         }
         AESMLogicLock lock(ecdsa_quote_mutex);
+        if (false == initialized)
+            return AESM_SERVICE_UNAVAILABLE;
         return quote3_error_to_aesm_error(sgx_ql_init_quote(
                 //TODO: need to update sgx_ql_get_quote_size to add "const" for att_key_id
                 &((sgx_att_key_id_ext_t *)att_key_id_ext)->base,
@@ -369,10 +384,10 @@ public:
         uint32_t *quote_size)
     {
         AESM_DBG_INFO("get_quote_size_ex");
-        if (false == initialized)
-            return AESM_SERVICE_UNAVAILABLE;
         // att_key_id_ext has been checked by caller
         AESMLogicLock lock(ecdsa_quote_mutex);
+        if (false == initialized)
+            return AESM_SERVICE_UNAVAILABLE;
         return quote3_error_to_aesm_error(sgx_ql_get_quote_size(
                 //TODO: need to update sgx_ql_get_quote_size to add "const" for att_key_id
                 &((sgx_att_key_id_ext_t *)att_key_id_ext)->base,
@@ -386,8 +401,6 @@ public:
         uint8_t *quote, uint32_t quote_size)
     {
         AESM_DBG_INFO("get_quote_ex");
-        if (false == initialized)
-            return AESM_SERVICE_UNAVAILABLE;
         // att_key_id_ext has been checked by caller
         if((NULL != app_report && sizeof(sgx_report_t) != app_report_size)
            || (NULL != qe_report_info && sizeof(sgx_ql_qe_report_info_t) != qe_report_info_size)
@@ -396,6 +409,8 @@ public:
             return AESM_PARAMETER_ERROR;
         }
         AESMLogicLock lock(ecdsa_quote_mutex);
+        if (false == initialized)
+            return AESM_SERVICE_UNAVAILABLE;
         return quote3_error_to_aesm_error(sgx_ql_get_quote(
                     reinterpret_cast<const sgx_report_t *>(app_report),
                     //TODO: need to update sgx_ql_get_quote_size to add "const" for att_key_id
@@ -407,12 +422,13 @@ public:
     aesm_error_t get_att_key_id(uint8_t *att_key_id, uint32_t att_key_id_size)
     {
         AESM_DBG_INFO("get_att_key_id");
-        if (false == initialized)
-            return AESM_SERVICE_UNAVAILABLE;
         if(NULL == att_key_id || sizeof(sgx_att_key_id_ext_t) > att_key_id_size)
         {
             return AESM_PARAMETER_ERROR;
         }
+        AESMLogicLock lock(ecdsa_quote_mutex);
+        if (false == initialized)
+            return AESM_SERVICE_UNAVAILABLE;
         sgx_ql_get_keyid((sgx_att_key_id_ext_t *)att_key_id);
         // sgx_ql_get_keyid should always return success
         return AESM_SUCCESS;
