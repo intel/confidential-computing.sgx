@@ -1,5 +1,41 @@
-libsgx-uae-service (1.0-1) unstable; urgency=low
+libsgx-uae-service (9.9.9.9-1) unstable; urgency=low
 
-  * Initial Release
+  * Release v2.28
+    See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 
- -- Xiangquan Liu <xiangquan.liu@intel.com>  Mon, 29 Jul 2019 15:23:51 +0800
+  * Breaking changes:
+    1. Removed deprecated functionality based on EPID (Enhanced Privacy ID), including EPID remote attestation.
+         Note support remains for ECDSA-based attestation and universal quoting APIs (i.e. sgx_get_quote_ex()).
+       - The following definitions have been removed:
+           sgx_calc_quote_size()
+           sgx_check_update_status()
+           sgx_get_extended_epid_group_id()
+           sgx_get_quote()                     - note: sgx_get_quote_ex() remains supported
+           sgx_get_quote_size()                - note: sgx_get_quote_size_ex() remains supported
+           sgx_init_quote()                    - note: sgx_init_quote_ex() remains supported
+           sgx_report_attestation_status()
+       - The following dev header has been removed: sgx_uae_epid.h
+
+    2. Removed code supporting the deprecated Launch Enclave, whitelist management and "out-of-tree" driver.
+       Recommended launch mechanism continues to be the Flexible Launch Control via the in-kernel SGX driver.
+       - The following launch-related UAE APIs were deprecated and will now return `SGX_ERROR_FEATURE_NOT_SUPPORTED`:
+           get_launch_token()
+           sgx_get_whitelist()
+           sgx_get_whitelist_size()
+           sgx_register_wl_cert_chain()
+       - The following dev header has been deprecated: sgx_uae_launch.h
+
+    3. The following parameters of sgx_create_enclave() URTS API: *launch_token and *launch_token_updated
+       are now RESERVED and ignored by the implementation. Implementers may choose to continue passing an empty/initialized
+       launch_token_t placeholder or pass a nullptr in their place.
+
+    4. The corresponding libraries (libsgx_epid.so, libsgx_launch.so, ...) are removed, including their _SIM counterparts in the SGX SDK.
+
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Fri, 01 Jan 2100 00:00:00 +0000
+
+libsgx-uae-service (2.27.100.1-all1) unstable; urgency=low
+
+  * Release v2.27
+    See release notes at https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.27 for more details and historical changelog.
+
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Thu, 18 Dec 2025 14:00:11 +0100

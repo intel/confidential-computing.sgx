@@ -1,5 +1,20 @@
-libsgx-urts (1.0-1) unstable; urgency=low
+libsgx-urts (9.9.9.9-1) unstable; urgency=low
 
-  * Initial Release
+  * Release v2.28
+    See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 
- -- Xiangquan Liu <xiangquan.liu@intel.com>  Mon, 29 Jul 2019 15:23:51 +0800
+  * Key changes:
+    1. Removed support for the previously-deprecated Launch Enclave-based launch mechanism (via out-of-tree driver).
+
+    2. The API signature of sgx_create_enclave() remains intact, but former *launch_token and *launch_token_updated
+       parameters are now RESERVED and ignored by the implementation.
+       Implementers may choose to pass a nullptr in their place.
+
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Fri, 01 Jan 2100 00:00:00 +0000
+
+libsgx-urts (2.27.100.1-all1) unstable; urgency=low
+
+  * Release v2.27
+  See release notes at https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.27 for more details and historical changelog
+
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Thu, 18 Dec 2025 14:00:11 +0100

@@ -1,5 +1,12 @@
-libsgx-headers (1.0-1) unstable; urgency=low
+libsgx-headers (9.9.9.9-1) unstable; urgency=low
 
-  * Initial Release
+  * EPID (Enhanced Privacy ID) and Launch Enclave (LE) related error codes are now deprecated
 
- -- Xiangquan Liu <xiangquan.liu@intel.com>  Sun, 23 Aug 2020 15:23:51 +0800
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Fri, 01 Jan 2100 00:00:00 +0000
+ 
+libsgx-headers (2.27.100.1-all1) unstable; urgency=low
+
+  * Release v2.27.100.1. 
+  See release notes at https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.27 for more details and historical changelog 
+
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Thu, 18 Dec 2025 14:00:11 +0100

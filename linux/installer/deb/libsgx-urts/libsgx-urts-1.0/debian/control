@@ -1,10 +1,10 @@
 Source: libsgx-urts
 Section: libs
 Priority: optional
-Maintainer: <xiangquan.liu@intel.com>
+Maintainer: Intel Confidential Computing Team <confidential.computing@intel.com>
 Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.4
-Homepage: https://github.com/intel/linux-sgx
+Homepage: https://github.com/intel/confidential-computing.sgx
 
 Package: libsgx-urts
 Architecture: amd64

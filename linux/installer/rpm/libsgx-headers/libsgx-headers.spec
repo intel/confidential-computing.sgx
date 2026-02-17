@@ -1,32 +1,6 @@
 #
-# Copyright (C) 2011-2019 Intel Corporation. All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-#   * Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright
-#     notice, this list of conditions and the following disclaimer in
-#     the documentation and/or other materials provided with the
-#     distribution.
-#   * Neither the name of Intel Corporation nor the names of its
-#     contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Copyright(c) 2011-2026 Intel Corporation
+# SPDX-License-Identifier: BSD-3-Clause
 #
 
 %define _license_file COPYING
@@ -38,7 +12,7 @@ Summary:        Intel(R) Software Guard Extensions Basic Headers
 Group:          Development
 
 License:        BSD License
-URL:            https://github.com/intel/linux-sgx
+URL:            https://github.com/intel/confidential-computing.sgx
 Source0:        %{name}-%{version}.tar.gz
 
 %description
@@ -59,5 +33,18 @@ done
 %files -f %{_specdir}/list-%{name}
 
 %changelog
-* Sun Aug 23 2020 SGX Team
-- Initial Release
+* @date@ Intel Confidential Computing Team <confidential.computing@intel.com> - @version@-1
+- Remove EPID (Enhanced Privacy ID) attestation support:
+  - Removed EPID-based attestation functionality, including remote attestation
+  - Removed deprecated header files: sgx_uae_epid.h, sgx_key_exchange.h
+  - Removed support for Quote versions 1 and 2 (EPID-based quotes)
+  - Users should migrate to ECDSA-based attestation (Quote version 3+)
+- Remove deprecated Launch Enclave (LE) mechanism:
+  - Removed reference Launch Enclave implementation and related tools
+  - Removed Launch Enclave service bundle from AESM (Architectural Enclave Service Manager)
+  - Updated build system to remove LE-related compilation flags and targets
+  - Removed LE-related packages from installer scripts
+
+* Thu Dec 18 2025 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.27.100.1-1
+- Release v2.27.100.1
+  See release notes at https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.27 for more details and historical changelog 

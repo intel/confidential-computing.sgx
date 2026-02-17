@@ -74,6 +74,11 @@ post_build() {
 update_spec() {
     pushd ${SCRIPT_DIR}/${RPM_BUILD_FOLDER}
     sed -i "s#@version@#${SGX_VERSION}#" SPECS/${SDK_PKG_NAME}.spec
+    
+    # RPM %changelog requires English format "Day Mon DD YYYY"; use LC_ALL=C to force English locale
+    BUILD_DATE=$(LC_ALL=C date +"%a %b %d %Y")
+    sed -i "s#@date@#${BUILD_DATE}#" SPECS/${SDK_PKG_NAME}.spec
+    
     sed -i "s#@install_path@#${SGX_PACKAGES_PATH}/${SDK_PKG_NAME}#" SPECS/${SDK_PKG_NAME}.spec
     sed -i "s#@helper_command@#${RPM_HELER_COMMAND}#" SPECS/${SDK_PKG_NAME}.spec
     popd

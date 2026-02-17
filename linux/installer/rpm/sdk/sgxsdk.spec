@@ -64,3 +64,34 @@ grep -v "^%{_install_path}" >> %{_specdir}/listfiles || :
 %files -f %{_specdir}/listfiles
 
 %changelog
+
+
+* @date@ Intel Confidential Computing Team <confidential.computing@intel.com> - @version@-1
+- Release v2.28
+  See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
+
+- Notable changes:
+  1. [BREAKING] Removed deprecated functionality based on EPID (Enhanced Privacy ID):
+     - Following headers and supporting libraries have been removed: 
+         sgx_uae_epid.h (+ libsgx_epid.so/libsgx_epid_sim.so)
+         sgx_key_exchange.h, sgx_ukey_exchange.h, sgx_tkey_exchange.edl, sgx_tkey_exchange.h (+sgx_ukey_exchange.a, sgx_tkey_exchange.a),
+     - Deprecated `sgx_quote_t` (v1, EPID-based) and related structures. ECDSA-based Quote version 3+ continue to be supported.
+
+  2. [BREAKING] Removed code supporting the deprecated Launch Enclave, whitelist management and the supporting "out-of-tree" Linux SGX driver.
+     Recommended launch mechanism continues to be the Flexible Launch Control via the in-kernel SGX driver.
+     - The supporting library stub libsgx_launch.so and libsgx_launch_sim.so have been removed
+     - The sgx_uae_launch.h has been deprecated and all the LE-specific launch definitions:
+         get_launch_token()
+         sgx_get_whitelist()
+         sgx_get_whitelist_size()
+         sgx_register_wl_cert_chain()
+       now return SGX_ERROR_FEATURE_NOT_SUPPORTED.
+
+  3. EPID-specific RemoteAttestation sample has been removed. Refer to `SampleAttestedTLS` or samples in the DCAP repository
+     (i.e. https://github.com/intel/confidential-computing.tee.dcap/tree/main/SampleCode/QuoteVerificationSample)
+     for ECDSA attestation examples.     
+
+
+* Thu Dec 18 2025 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.27.100.1-1
+- Release v2.27
+  See release notes at https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.27 for more details and historical changelog
