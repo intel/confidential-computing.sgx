@@ -88,6 +88,7 @@ ifeq ("$(wildcard $(PB_DIR)/src/file_lists_for_sgx.cmake)", "")
 		cd $(ABSEIL_DIR) && \
 		git apply ../../../sgx_abseil.patch && \
 		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch && \
+		git apply ../../../0001-abseil-fix-missing-abort.patch && \
 		cd ../../..
 endif
 	$(MKDIR) protobuf_code/final_tlibPB/build && cd protobuf_code/final_tlibPB/build && cmake $(PB_CONFIG) -Dprotobuf_BUILD_TESTS=FALSE -DSGX=TRUE ../../ -B . && make libprotobuf
