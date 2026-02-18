@@ -58,8 +58,8 @@ typedef struct _tee_devinfo_t {
 
 typedef struct _tee_fmspc_t {
     uint8_t f[12];
-}
- tee_fmspc_t;
+} tee_fmspc_t;
+
 typedef struct _tee_info_v1_5_t               /* 512 bytes */
 {
     tee_attributes_t     attributes;          /* (  0) TD's attributes */
