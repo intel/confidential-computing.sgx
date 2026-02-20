@@ -1,7 +1,7 @@
 # Extract the current version from the VERSION file
 file(STRINGS VERSION _version LIMIT_COUNT 1)
 
-set(US_CMAKE_MINIMUM_REQUIRED_VERSION 3.2)
+set(US_CMAKE_MINIMUM_REQUIRED_VERSION 3.10)
 
 cmake_minimum_required(VERSION ${US_CMAKE_MINIMUM_REQUIRED_VERSION})
 
