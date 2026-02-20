@@ -25,6 +25,7 @@
 
 #include "cppmicroservices/Any.h"
 
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 
