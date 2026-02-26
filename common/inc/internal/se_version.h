@@ -22,6 +22,5 @@
 #define QUOTE_EX_VERSION          "1.1.127.0"
 
 #define PCE_VERSION               "1.25.100.1"
-#define LE_VERSION                "1.25.100.1"
 
 #endif
