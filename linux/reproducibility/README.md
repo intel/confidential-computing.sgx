@@ -34,3 +34,5 @@ In order to reproduce the enclave build, there are three requirements:1. stable 
     ```
     $ ./build_and_launch_docker.sh --reproduce-type ae --code-dir ~/code_dir --sdk-installer {prepared_sdk_installer} --sgx-src-dir {prepared_sgx_src}
     ```
+> [!Note]
+> When using `--sgx-src-dir`, ensure the source directory is clean without build artifacts (e.g., CMake cache files, build directories). Previous build artifacts from different environments can cause build failures due to cached paths and ownership mismatches. Use a freshly cloned repository or run `make clean` in the source directory before using it with this option.

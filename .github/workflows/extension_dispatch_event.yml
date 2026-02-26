@@ -2,18 +2,28 @@ name: Route branch events to external dispatcher (if any)
 # This action only runs on repositories which are named EXTENSION_THIS_REPO_NAME and have the extension dispatcher defined.
 # Its purpose is to kick-off any auxiliary GHA tasks that are NOT on the target branch, but may be required by repo/fork policy.
 
+permissions:
+   actions: write
+   contents: none  # Dropping all non-required permissions (incl. code checkout) to harden, esp. given pull_request_target is one of the triggers. Only `actions: write` is granted - for createWorkflowDispatch()
+   checks: none
+   deployments: none
+   models: none
+   id-token: none
+   issues: none
+   discussions: none
+   packages: none
+   pages: none
+   pull-requests: none
+   repository-projects: none
+   security-events: none
+   statuses: none
+   artifact-metadata: none
+   attestations: none
 on:
   create:
-    branches:
-      - 'main*'
-      - 'platform/**'
-    tags:
-      - 'DCAP_*'
-      - 'dcap_*'
-      - 'sgx_*'
   merge_group:
     types: [checks_requested]
-  pull_request_target:
+  pull_request_target:  # Caution: This workflow may run on PRs from forks (with access to this repo's secrets). Do not add steps which may checkout & execute untrusted code.
     types: [ opened, reopened, edited, auto_merge_enabled, synchronize, converted_to_draft, locked, unlocked, ready_for_review, review_requested, review_request_removed, auto_merge_disabled, labeled, unlabeled ]
     branches:
       - '**'
@@ -23,6 +33,7 @@ on:
     branches:
       - 'main*'
       - 'platform/**'
+      - 'release*'
     tags:
       - 'DCAP_*'
       - 'dcap_*'
@@ -47,12 +58,13 @@ jobs:
       )
     steps:
       - name: Trigger Extension Workflow
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8.0.0
         env:
           EXTENSION_DISPATCHER_WORKFLOW_NAME: ${{vars.EXTENSION_DISPATCHER_WORKFLOW_NAME}}
           EXTENSION_BRANCH_NAME: ${{vars.EXTENSION_BRANCH_NAME}}
           REF_NAME: ${{ github.ref_name }}
         with:
+          retries: 3
           script: |
             const wf_inputs = {
               triggering_event_name: context.eventName,
@@ -60,7 +72,27 @@ jobs:
               triggering_branch_name_short: process.env.REF_NAME,
               triggering_sha: context.sha,
               triggering_action: context.payload ? context.payload.action : undefined,
-              triggering_context: JSON.stringify(context), //Future consideration: filter-out large/unnecessary properties to avoid transferring too much data
+              triggering_context: JSON.stringify({
+                actor: context.actor,
+                payload: {
+                  action: context.payload?.action,
+                  number: context.payload?.number,
+                  requested_reviewer: { login: context.payload?.requested_reviewer?.login },
+                  label: { name: context.payload?.label?.name },
+                  pull_request: {
+                    number: context.payload?.pull_request?.number,
+                    head: {
+                      ref: context.payload?.pull_request?.head?.ref,
+                      sha: context.payload?.pull_request?.head?.sha,
+                    },
+                    base: { ref: context.payload?.pull_request?.base?.ref },
+                    user: {
+                      login: context.payload?.pull_request?.user?.login,
+                      type: context.payload?.pull_request?.user?.type,
+                    },
+                  },
+                },
+              }),
               triggering_run_id: String(context.runId),
               triggering_run_number: String(context.runNumber) + '-' + String(context.runAttempt || 1)
             };

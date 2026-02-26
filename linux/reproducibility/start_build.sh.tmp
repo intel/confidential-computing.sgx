@@ -86,6 +86,8 @@ build_ae()
     pushd .
     local ae_out="$build_out/ae"
     mkdir -p $ae_out
+    cd $sgx_repo/external/dcap_source/ae/qae && make
+    cp libsgx_qae.so $ae_out
     cd $sgx_repo/psw/ae/pce && make
     cp pce.so $ae_out
     cd $sgx_repo/external/dcap_source/ae/qe3/linux && make

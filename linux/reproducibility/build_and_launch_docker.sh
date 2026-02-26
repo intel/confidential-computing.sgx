@@ -225,6 +225,10 @@ if [ $? != 0 ]; then
               --build-arg http_proxy=$http_proxy -f $script_dir/Dockerfile .
 fi
 
+# WAMR cleanup: `version.h` is an auto-generated file (via CMake's `configure_file()` which is committed to the 3rd party repo and not cleaned up by its `clean` target.
+# Deleting it ahead of build, so that subsequent container operations running on the bind-mounted tree, possibly with a different UID, do not encounter permission issues unlinking/replacing this file.
+rm -f "${sgx_repo}/external/dcap_source/external/wasm-micro-runtime/core/version.h"
+
 # Allow 'w' permission for other users to the code_dir in case the uid in the container
 # is different from the host uid.
 chmod -R o+w $code_dir
