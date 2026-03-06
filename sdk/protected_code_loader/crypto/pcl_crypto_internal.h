@@ -36,10 +36,10 @@
 
 extern "C" 
 {	
-#else // Not C++, must define bool:
-
-typedef unsigned int bool;
-
+#else // Not C++, must define bool if GCC < 15:
+#if defined(__GNUC__) && (__GNUC__ < 15)
+    typedef unsigned int bool;
+#endif
 #endif // #ifdef __cplusplus
 
 int pcl_SHA256_Update(SHA256_CTX *c, void *data_, size_t len);

@@ -1,0 +1,13 @@
+diff --git a/absl/container/internal/container_memory.h b/absl/container/internal/container_memory.h
+index bfa4ff9..624b586 100644
+--- a/absl/container/internal/container_memory.h
++++ b/absl/container/internal/container_memory.h
+@@ -16,6 +16,7 @@
+ #define ABSL_CONTAINER_INTERNAL_CONTAINER_MEMORY_H_
+ 
+ #include <cassert>
++#include <cstdint>
+ #include <cstddef>
+ #include <cstring>
+ #include <memory>
+

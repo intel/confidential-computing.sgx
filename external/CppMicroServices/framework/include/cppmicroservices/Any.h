@@ -43,6 +43,7 @@ DEALINGS IN THE SOFTWARE.
 #include <sstream>
 #include <typeinfo>
 #include <vector>
+#include <cstdint>
 
 /**
 

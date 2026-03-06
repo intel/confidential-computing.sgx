@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2019 Intel Corporation. All rights reserved.
+# Copyright (C) 2011-2026 Intel Corporation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -89,6 +89,7 @@ ifeq ("$(wildcard $(PB_DIR)/src/file_lists_for_sgx.cmake)", "")
 		git apply ../../../sgx_abseil.patch && \
 		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch && \
 		git apply ../../../0001-abseil-fix-missing-abort.patch && \
+		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC15.patch && \
 		cd ../../..
 endif
 	$(MKDIR) protobuf_code/final_tlibPB/build && cd protobuf_code/final_tlibPB/build && cmake $(PB_CONFIG) -Dprotobuf_BUILD_TESTS=FALSE -DSGX=TRUE ../../ -B . && make libprotobuf

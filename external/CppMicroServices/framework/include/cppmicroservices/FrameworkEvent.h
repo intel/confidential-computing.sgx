@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <memory>
+#include <cstdint>
 
 US_MSVC_PUSH_DISABLE_WARNING(
   4251) // 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
