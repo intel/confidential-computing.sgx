@@ -64,7 +64,7 @@ LIBTCXX    := $(BUILD_DIR)/libsgx_tcxx.a
 LIBTSE     := $(BUILD_DIR)/libsgx_tservice.a
 
 .PHONY: components
-components: tstdc tcxx tservice trts tcrypto tprotected_fs uprotected_fs ptrace sample_crypto libcapable simulation signtool edger8r tcmalloc sgx_pcl sgx_encrypt sgx_tswitchless sgx_uswitchless pthread openmp protobuf ttls utls
+components: tstdc tcxx tservice trts tcrypto tprotected_fs uprotected_fs ptrace sample_crypto libcapable simulation signtool edger8r tcmalloc sgx_pcl sgx_encrypt sgx_tswitchless sgx_uswitchless pthread openmp protobuf ttls utls tvl
 
 # ---------------------------------------------------
 #  tstdc
@@ -259,6 +259,13 @@ utls: cbor_untrusted
 	$(MAKE) -C utls
 
 # ---------------------------------------------------
+#  TVL library
+# ---------------------------------------------------
+.PHONY: tvl
+tvl:
+	$(MAKE) -C tvl
+
+# ---------------------------------------------------
 #  standalone, untrusted libraries
 # ---------------------------------------------------
 .PHONY: libcapable
@@ -338,6 +345,7 @@ clean:
 	$(MAKE) -C $(LINUX_EXTERNAL_DIR)/libcxxrt      clean
 	$(MAKE) -C ttls						           clean
 	$(MAKE) -C utls						           clean
+	$(MAKE) -C tvl						           clean
 	@$(RM) $(LIBTLIBC) $(LIBTCXX) $(LIBTSE)
 	@$(RM) $(BUILD_DIR)/libc++_Changes_SGX.txt
 	@$(RM) -rf $(BUILD_DIR)/.compiler-rt

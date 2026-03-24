@@ -80,8 +80,6 @@ psw:
 
 sdk_no_mitigation:
 	$(MAKE) -C sdk/ USE_OPT_LIBS=$(USE_OPT_LIBS)
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl clean
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl
 
 sdk:
 	$(MAKE) -C sdk/ clean
@@ -90,12 +88,6 @@ sdk:
 	$(MAKE) -C sdk/ MODE=$(MODE) MITIGATION-CVE-2020-0551=CF
 	$(MAKE) -C sdk/ clean
 	$(MAKE) -C sdk/ MODE=$(MODE)
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl MITIGATION-CVE-2020-0551=LOAD clean
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl MITIGATION-CVE-2020-0551=LOAD
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl MITIGATION-CVE-2020-0551=CF clean
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl MITIGATION-CVE-2020-0551=CF
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl clean
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl
 
 tdx:
 	$(MAKE) -C external/dcap_source/QuoteGeneration pce_logic
@@ -511,11 +503,6 @@ clean:
 	./linux/installer/rpm/sdk/clean.sh
 	./linux/installer/common/local_repo_builder/local_repo_builder.sh rpm clean
 	$(MAKE) -C external/ippcp_internal/ clean
-ifeq ("$(shell test -f external/dcap_source/QuoteVerification/dcap_tvl/Makefile && echo TVL Makefile exists)", "TVL Makefile exists")
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl MITIGATION-CVE-2020-0551=LOAD clean
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl MITIGATION-CVE-2020-0551=CF clean
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl clean
-endif
 ifeq ("$(shell test -f external/dcap_source/QuoteVerification/Makefile && echo Makefile exists)", "Makefile exists")
 	@$(MAKE) -C external/dcap_source/QuoteVerification  clean
 	@$(MAKE) -C external/dcap_source/QuoteGeneration    clean

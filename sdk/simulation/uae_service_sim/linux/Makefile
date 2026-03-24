@@ -48,8 +48,7 @@ INCLUDES := -I..                                                   \
             -I$(LINUX_PSW_DIR)/ae/inc/internal                     \
             -I$(LINUX_PSW_DIR)/ae/common                           \
             -I$(PREBUILT_OPENSSL_DIR)/inc                          \
-            -I$(DCAP_DIR)/QuoteGeneration/quote_wrapper/common/inc \
-            -I$(DCAP_DIR)/QuoteGeneration/pce_wrapper/inc
+            -I$(DCAP_DIR)/QuoteGeneration/quote_wrapper/common/inc
 
 
 CXXFLAGS += -Wall -fPIC $(INCLUDES) -Werror -g $(CET_FLAGS)

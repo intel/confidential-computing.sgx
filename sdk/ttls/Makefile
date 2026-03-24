@@ -32,8 +32,7 @@ INCLUDE += -I$(COMMON_DIR)/inc/tlibc    \
            -I$(SGX_QV_PATH)/appraisal/qal \
            -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/common/inc \
            -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/tdx_attest \
-           -I$(SGX_QV_PATH)/../QuoteGeneration/pce_wrapper/inc \
-           -I$(SGX_QV_PATH)/dcap_tvl \
+           -I$(LINUX_SDK_DIR)/tvl \
            -include./tsgxsslio.h \
            -I$(PREBUILT_OPENSSL_PATH)/inc
 

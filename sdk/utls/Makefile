@@ -25,8 +25,7 @@ INCLUDE += -I$(COMMON_DIR)              \
            -I$(SGX_QVE_PATH)/Include \
            -I$(SGX_QV_PATH)/dcap_quoteverify/inc \
            -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/common/inc \
-           -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/ql/inc \
-		   -I$(SGX_QV_PATH)/../QuoteGeneration/pce_wrapper/inc
+           -I$(SGX_QV_PATH)/../QuoteGeneration/quote_wrapper/ql/inc
 
 
 CXXFLAGS += $(COMMON_LDFLAGS) -fPIC -Werror -Wno-unused-parameter -g

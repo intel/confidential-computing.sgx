@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-# part of SDK
-# include buildenv in linux trunk
-include ../../../../buildenv.mk
+include ../../buildenv.mk
 
 TVL_CPP_SRCS := $(wildcard *.cpp)
 TVL_OBJS := $(TVL_CPP_SRCS:.cpp=.o)

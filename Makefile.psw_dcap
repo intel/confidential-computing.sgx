@@ -65,7 +65,6 @@ ippcp:
 
 sdk: ippcp
 	$(MAKE) -C sdk/
-	$(MAKE) -C external/dcap_source/QuoteVerification/dcap_tvl
 
 install_sdk: sdk
 	./linux/installer/bin/build-installpkg.sh sdk

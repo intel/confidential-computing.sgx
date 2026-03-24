@@ -1,3 +1,9 @@
+/*
+* Copyright(c) 2011-2026 Intel Corporation
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+
+
 #ifndef _SGX_DCAP_CONSTANT_VAL_H_
 #define _SGX_DCAP_CONSTANT_VAL_H_
 
@@ -26,12 +32,4 @@
 //Defense in depth, QaE ISV SVN in report must be greater or equal to hardcode QaE ISV SVN
 #define LEAST_QAE_ISVSVN  0xD
 
-quote3_error_t enclave_identity_verify(
-    int16_t prodid,
-    uint16_t isv_svn,
-    const sgx_report_t *p_report,
-    sgx_isv_svn_t isvsvn_threshold,
-    bool qae_mode
-);
-
-#endif
+#endif //_SGX_DCAP_CONSTANT_VAL_H_
