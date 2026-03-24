@@ -96,14 +96,18 @@ tdx:
 	$(MAKE) -C external/dcap_source/QuoteGeneration tdx_attest
 
 servtd_attest:
+	@test -L common/inc/sgx_mm.h && test -d external/dcap_source/QuoteVerification/sgxssl \
+		&& test -f external/libcxxrt/libcxxrt_code/src/sgx_disable_print.h || \
+		{ echo "Error: Please run 'make servtd_attest_preparation' first"; exit 1; }
 	$(MAKE) -C sdk/ servtd_attest SERVTD_ATTEST=1
 	$(MAKE) -C external/dcap_source/QuoteGeneration servtd_attest
 
 servtd_attest_preparation:
 # Only enable the download from git
-	git submodule update --init --recursive external/dcap_source external/sgx-emm/emm_src
+	git submodule update --init --recursive external/dcap_source external/sgx-emm/emm_src external/libcxxrt/libcxxrt_code
 	./external/sgx-emm/create_symlink.sh
 	./external/dcap_source/QuoteVerification/prepare_sgxssl.sh nobuild
+	cd external/libcxxrt/libcxxrt_code && (git apply ../sgx_libcxxrt.patch >/dev/null 2>&1 || git apply ../sgx_libcxxrt.patch --check -R)
 
 ipp:
 	$(MAKE) -C external/ippcp_internal/ clean
