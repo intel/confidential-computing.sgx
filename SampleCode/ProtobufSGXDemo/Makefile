@@ -75,12 +75,15 @@ SGX_COMMON_FLAGS += -Wall -Wextra -Winit-self -Wpointer-arith -Wreturn-type \
 SGX_COMMON_CFLAGS := $(SGX_COMMON_FLAGS) -Wjump-misses-init -Wstrict-prototypes -Wunsuffixed-float-constants
 SGX_COMMON_CXXFLAGS := $(SGX_COMMON_FLAGS) -Wnon-virtual-dtor
 
-CC_VERSION := $(shell $(CC) -dumpversion)
-CC_NO_LESS_THAN_11 := $(shell expr $(CC_VERSION) \>\= "11")
-ifeq ($(CC_NO_LESS_THAN_11), 1)
+CC_VERSION := $(shell $(CC) -dumpfullversion 2>/dev/null || $(CC) -dumpversion)
+CC_VERSION_MAJOR := $(shell echo $(CC_VERSION) | cut -f1 -d.)
+CC_VERSION_MINOR := $(shell echo $(CC_VERSION) | cut -f2 -d.)
+CC_7_3_OR_HIGHER := $(shell [ $(CC_VERSION_MAJOR) -gt 7 ] && echo 1 || { [ $(CC_VERSION_MAJOR) -eq 7 ] && [ $(CC_VERSION_MINOR) -ge 3 ] && echo 1 || echo 0; })
+
+ifeq ($(CC_7_3_OR_HIGHER), 1)
     SGX_COMMON_CXXFLAGS += -std=c++17
 else
-    SGX_COMMON_CXXFLAGS += -std=c++14
+    $(error C++17 or higher is required to run Protobuf 33.4)
 endif
 
 ######## App Settings ########
@@ -155,7 +158,7 @@ Enclave_Security_Link_Flags := -Wl,-z,relro,-z,now,-z,noexecstack
 Enclave_Link_Flags := $(Enclave_Security_Link_Flags) \
     -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) \
 	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
-	-Wl,--start-group  -lsgx_tstdc -lsgx_tcxx -lsgx_protobuf -l$(Crypto_Library_Name) -l$(Service_Library_Name) -Wl,--end-group \
+	-Wl,--start-group  -lsgx_tstdc -lsgx_pthread -lsgx_tcxx -lsgx_protobuf -l$(Crypto_Library_Name) -l$(Service_Library_Name) -Wl,--end-group \
 	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
 	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
 	-Wl,--defsym,__ImageBase=0 \

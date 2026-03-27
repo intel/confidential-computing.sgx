@@ -1,38 +1,45 @@
-From 7834ccaf86454164dd16bbe6ac2544cd1274066a Mon Sep 17 00:00:00 2001
-From: yanxue <yan.xue@intel.com>
-Date: Sun, 4 Feb 2024 20:50:53 -0500
-Subject: [PATCH] Enable Abseil in SGX
+From bb4216678aa5b210588430160a63c6a4a706dbca Mon Sep 17 00:00:00 2001
+From: Anna Platasz <anna.platasz@intel.com>
+Date: Wed, 4 Mar 2026 10:03:18 +0100
+Subject: [PATCH] sgx_abseil
 
 ---
- absl/base/config.h                            |  2 +
- absl/base/internal/direct_mmap.h              |  8 ++++
- absl/base/internal/low_level_alloc.cc         | 12 +++++
- absl/base/internal/prefetch.h                 |  2 +
+ .sgx_patched                                  |  1 +
+ absl/base/config.h                            |  4 ++
+ absl/base/internal/direct_mmap.h              |  8 +++
+ absl/base/internal/low_level_alloc.cc         | 14 +++++
  absl/base/internal/raw_logging.cc             |  4 ++
- absl/base/internal/spinlock_linux.inc         |  6 +++
- absl/base/internal/sysinfo.cc                 | 28 ++++++++++++
- absl/base/internal/sysinfo.h                  |  6 +++
+ absl/base/internal/spinlock.cc                |  4 ++
+ absl/base/internal/spinlock_linux.inc         |  6 ++
+ absl/base/internal/sysinfo.cc                 | 26 +++++++++
+ absl/base/internal/sysinfo.h                  |  6 ++
  absl/base/internal/thread_identity.cc         |  4 ++
- absl/container/internal/hashtablez_sampler.cc |  2 +
+ absl/base/internal/unscaledcycleclock.cc      |  4 ++
+ absl/base/prefetch.h                          |  4 ++
+ absl/container/internal/hash_policy_traits.h  |  4 ++
+ absl/container/internal/hashtablez_sampler.cc | 15 ++++-
  absl/container/internal/hashtablez_sampler.h  |  2 +
- absl/container/internal/layout.h              |  2 +
- absl/crc/internal/crc_memcpy.h                |  4 ++
- absl/crc/internal/crc_memcpy_x86_64.cc        |  4 ++
- absl/crc/internal/non_temporal_memcpy.h       |  6 +++
+ absl/container/internal/raw_hash_set.h        |  4 ++
+ absl/crc/crc32c.h                             |  2 +
+ .../internal/crc32_x86_arm_combined_simd.h    |  3 +
+ absl/crc/internal/crc_memcpy.h                |  6 ++
+ .../internal/crc_memcpy_x86_arm_combined.cc   |  4 ++
+ absl/crc/internal/non_temporal_memcpy.h       |  7 +++
  .../debugging/internal/address_is_readable.cc |  4 ++
  absl/debugging/internal/elf_mem_image.cc      |  2 +
  absl/debugging/internal/elf_mem_image.h       |  4 ++
- absl/debugging/internal/examine_stack.cc      |  6 +++
- .../debugging/internal/stacktrace_x86-inl.inc | 10 +++++
+ absl/debugging/internal/examine_stack.cc      |  6 ++
+ .../debugging/internal/stacktrace_x86-inl.inc | 10 ++++
  absl/debugging/internal/vdso_support.cc       |  4 ++
  absl/debugging/internal/vdso_support.h        |  2 +
  absl/debugging/stacktrace.cc                  |  2 +
  absl/flags/reflection.cc                      |  2 +
  absl/flags/reflection.h                       |  2 +
  absl/flags/usage_config.cc                    |  4 ++
+ absl/hash/internal/hash.h                     |  5 ++
  absl/log/initialize.cc                        |  2 +
  absl/log/initialize.h                         |  2 +
- absl/log/internal/check_op.cc                 |  6 +++
+ absl/log/internal/check_op.cc                 | 11 ++++
  absl/log/internal/check_op.h                  |  2 +
  absl/log/internal/conditions.h                |  4 ++
  absl/log/internal/config.h                    |  2 +
@@ -40,48 +47,49 @@ Subject: [PATCH] Enable Abseil in SGX
  absl/log/internal/globals.h                   |  2 +
  absl/log/internal/log_format.cc               |  4 ++
  absl/log/internal/log_format.h                |  2 +
- absl/log/internal/log_message.cc              | 33 ++++++++++++++
- absl/log/internal/log_message.h               | 12 +++++
+ absl/log/internal/log_message.cc              | 58 ++++++++++++++++++-
+ absl/log/internal/log_message.h               | 12 ++++
  absl/log/internal/log_sink_set.cc             |  2 +
  absl/log/internal/log_sink_set.h              |  2 +
- absl/log/internal/nullstream.h                |  8 ++++
- absl/log/log_entry.cc                         |  2 +
+ absl/log/internal/nullstream.h                | 10 ++++
  absl/log/log_entry.h                          |  2 +
  absl/log/log_sink.cc                          |  2 +
  absl/log/log_sink.h                           |  2 +
  absl/log/log_sink_registry.h                  |  2 +
- absl/numeric/int128.cc                        |  6 +++
+ absl/numeric/int128.cc                        |  8 +++
  absl/profiling/internal/sample_recorder.h     |  2 +
- absl/strings/cord.cc                          |  6 +++
- absl/strings/internal/cord_rep_btree.cc       |  8 ++++
- absl/strings/internal/cord_rep_btree.h        |  3 ++
- absl/strings/internal/cord_rep_ring.cc        |  6 +++
- absl/strings/internal/cord_rep_ring.h         |  6 +++
- absl/strings/internal/cordz_handle.cc         | 24 ++++++++++
- absl/strings/internal/cordz_handle.h          |  8 ++++
- absl/strings/internal/cordz_info.cc           | 17 +++++++
- absl/strings/internal/cordz_info.h            | 10 +++++
- absl/strings/internal/str_format/bind.cc      |  6 +++
+ absl/random/internal/randen_hwaes.cc          | 17 +++++-
+ absl/random/internal/seed_material.cc         | 16 +++++
+ absl/strings/ascii.cc                         | 10 ++++
+ absl/strings/cord.cc                          |  6 ++
+ absl/strings/internal/cord_rep_btree.cc       |  8 +++
+ absl/strings/internal/cord_rep_btree.h        |  3 +
+ absl/strings/internal/cordz_info.cc           | 18 ++++++
+ absl/strings/internal/cordz_info.h            | 10 ++++
+ absl/strings/internal/str_format/bind.cc      |  6 ++
  absl/strings/internal/str_format/bind.h       |  4 ++
- absl/strings/internal/str_format/extension.h  |  6 +++
+ absl/strings/internal/str_format/extension.h  |  6 ++
  absl/strings/internal/str_format/output.cc    |  2 +
  absl/strings/internal/str_format/output.h     |  4 ++
- absl/strings/numbers.cc                       |  8 ++++
+ absl/strings/numbers.cc                       |  8 +++
  absl/strings/numbers.h                        |  4 ++
- absl/strings/str_format.h                     |  5 ++-
+ absl/strings/str_format.h                     |  4 ++
  absl/synchronization/barrier.cc               |  2 +
  absl/synchronization/blocking_counter.cc      |  2 +
  .../internal/create_thread_identity.cc        |  4 ++
  absl/synchronization/internal/futex.h         |  4 ++
+ .../internal/kernel_timeout.cc                |  2 +
  .../synchronization/internal/kernel_timeout.h |  2 +
  .../internal/per_thread_sem.cc                |  2 +
  .../synchronization/internal/per_thread_sem.h |  2 +
- absl/synchronization/internal/waiter.cc       |  8 ++++
- absl/synchronization/internal/waiter.h        |  8 ++++
- absl/synchronization/mutex.cc                 | 34 +++++++++++++-
- absl/synchronization/mutex.h                  | 44 ++++++++++++++++++-
+ .../synchronization/internal/pthread_waiter.h |  2 +
+ absl/synchronization/internal/sem_waiter.h    |  2 +
+ absl/synchronization/internal/stdcpp_waiter.h |  2 +
+ absl/synchronization/internal/waiter.h        |  3 +
+ absl/synchronization/mutex.cc                 | 34 ++++++++++-
+ absl/synchronization/mutex.h                  | 49 ++++++++++++++++
  absl/synchronization/notification.cc          |  2 +
- absl/synchronization/notification.h           |  6 +++
+ absl/synchronization/notification.h           |  6 ++
  absl/time/civil_time.cc                       |  2 +
  absl/time/clock.cc                            |  2 +
  absl/time/clock.h                             |  2 +
@@ -90,33 +98,52 @@ Subject: [PATCH] Enable Abseil in SGX
  .../internal/cctz/include/cctz/time_zone.h    |  2 +
  .../time/internal/cctz/src/time_zone_fixed.cc |  2 +
  absl/time/internal/cctz/src/time_zone_fixed.h |  2 +
- .../internal/cctz/src/time_zone_format.cc     |  8 ++++
- absl/time/internal/cctz/src/time_zone_if.h    |  4 ++
+ .../internal/cctz/src/time_zone_format.cc     | 10 ++++
+ absl/time/internal/cctz/src/time_zone_if.cc   |  2 +
+ absl/time/internal/cctz/src/time_zone_if.h    |  6 ++
  absl/time/internal/cctz/src/time_zone_impl.cc |  2 +
  absl/time/internal/cctz/src/time_zone_impl.h  |  2 +
- absl/time/internal/cctz/src/time_zone_info.cc |  8 ++++
- absl/time/internal/cctz/src/time_zone_info.h  |  6 +++
- absl/time/internal/cctz/src/time_zone_libc.cc |  6 +++
+ absl/time/internal/cctz/src/time_zone_info.cc |  6 ++
+ absl/time/internal/cctz/src/time_zone_info.h  |  6 ++
+ absl/time/internal/cctz/src/time_zone_libc.cc |  6 ++
  absl/time/internal/cctz/src/time_zone_libc.h  |  2 +
  .../internal/cctz/src/time_zone_lookup.cc     |  2 +
  absl/time/internal/get_current_time_posix.inc |  2 +
  absl/time/time.cc                             |  2 +
  absl/time/time.h                              |  4 ++
- 98 files changed, 545 insertions(+), 3 deletions(-)
+ 107 files changed, 624 insertions(+), 4 deletions(-)
+ create mode 100644 .sgx_patched
 
+diff --git a/.sgx_patched b/.sgx_patched
+new file mode 100644
+index 00000000..85936838
+--- /dev/null
++++ b/.sgx_patched
+@@ -0,0 +1 @@
++sgx_abseil
+\ No newline at end of file
 diff --git a/absl/base/config.h b/absl/base/config.h
-index 05d960b6..8d7ae23f 100644
+index 1a9bc591..ea0a12e8 100644
 --- a/absl/base/config.h
 +++ b/absl/base/config.h
-@@ -900,6 +900,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
- // ABSL_INTERNAL_HAVE_SSE2 is used for compile-time detection of SSE2 support.
+@@ -753,6 +753,8 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
+ // available.
+ #ifdef ABSL_INTERNAL_HAS_CXA_DEMANGLE
+ #error ABSL_INTERNAL_HAS_CXA_DEMANGLE cannot be directly set
++#elif defined(PB_ENABLE_SGX)
++#define ABSL_INTERNAL_HAS_CXA_DEMANGLE 0
+ #elif defined(OS_ANDROID) && (defined(__i386__) || defined(__x86_64__))
+ #define ABSL_INTERNAL_HAS_CXA_DEMANGLE 0
+ #elif defined(__GNUC__)
+@@ -764,6 +766,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
+ // ABSL_INTERNAL_HAVE_SSE is used for compile-time detection of SSE support.
  // See https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html for an overview of
  // which architectures support the various x86 instruction sets.
 +#ifndef PB_ENABLE_SGX
- #ifdef ABSL_INTERNAL_HAVE_SSE2
- #error ABSL_INTERNAL_HAVE_SSE2 cannot be directly set
- #elif defined(__SSE2__)
-@@ -926,6 +927,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
+ #ifdef ABSL_INTERNAL_HAVE_SSE
+ #error ABSL_INTERNAL_HAVE_SSE cannot be directly set
+ #elif defined(__SSE__)
+@@ -807,6 +810,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
  #elif defined(__SSSE3__)
  #define ABSL_INTERNAL_HAVE_SSSE3 1
  #endif
@@ -125,7 +152,7 @@ index 05d960b6..8d7ae23f 100644
  // ABSL_INTERNAL_HAVE_ARM_NEON is used for compile-time detection of NEON (ARM
  // SIMD).
 diff --git a/absl/base/internal/direct_mmap.h b/absl/base/internal/direct_mmap.h
-index 815b8d23..57379601 100644
+index 1beb2ee4..9687ff9f 100644
 --- a/absl/base/internal/direct_mmap.h
 +++ b/absl/base/internal/direct_mmap.h
 @@ -22,7 +22,9 @@
@@ -159,7 +186,7 @@ index 815b8d23..57379601 100644
  // https://chromium.googlesource.com/linux-syscall-support/+/master/linux_syscall_support.h
 +#ifndef PB_ENABLE_SGX
  inline void* DirectMmap(void* start, size_t length, int prot, int flags, int fd,
-                         off64_t offset) noexcept {
+                         off_t offset) noexcept {
  #if defined(__i386__) || defined(__ARM_ARCH_3__) || defined(__ARM_EABI__) || \
 @@ -136,6 +143,7 @@ inline void* DirectMmap(void* start, size_t length, int prot, int flags, int fd,
  inline int DirectMunmap(void* start, size_t length) {
@@ -170,10 +197,10 @@ index 815b8d23..57379601 100644
  }  // namespace base_internal
  ABSL_NAMESPACE_END
 diff --git a/absl/base/internal/low_level_alloc.cc b/absl/base/internal/low_level_alloc.cc
-index 662167b0..d5ba3a0e 100644
+index 158b6098..c6020c60 100644
 --- a/absl/base/internal/low_level_alloc.cc
 +++ b/absl/base/internal/low_level_alloc.cc
-@@ -35,8 +35,10 @@
+@@ -35,15 +35,19 @@
  
  #ifndef _WIN32
  #include <pthread.h>
@@ -184,7 +211,16 @@ index 662167b0..d5ba3a0e 100644
  #include <unistd.h>
  #else
  #include <windows.h>
-@@ -279,6 +281,7 @@ static const uintptr_t kMagicUnallocated = ~kMagicAllocated;
+ #endif
+ 
+ #ifdef __linux__
++#ifndef PB_ENABLE_SGX
+ #include <sys/prctl.h>
++#endif //PB_ENABLE_SGX
+ #endif
+ 
+ #include <string.h>
+@@ -279,6 +283,7 @@ static const uintptr_t kMagicUnallocated = ~kMagicAllocated;
  namespace {
  class ABSL_SCOPED_LOCKABLE ArenaLock {
   public:
@@ -192,7 +228,7 @@ index 662167b0..d5ba3a0e 100644
    explicit ArenaLock(LowLevelAlloc::Arena *arena)
        ABSL_EXCLUSIVE_LOCK_FUNCTION(arena->mu)
        : arena_(arena) {
-@@ -304,12 +307,15 @@ class ABSL_SCOPED_LOCKABLE ArenaLock {
+@@ -304,12 +309,15 @@ class ABSL_SCOPED_LOCKABLE ArenaLock {
  #endif
      left_ = true;
    }
@@ -208,7 +244,7 @@ index 662167b0..d5ba3a0e 100644
  #endif
    LowLevelAlloc::Arena *arena_;
    ArenaLock(const ArenaLock &) = delete;
-@@ -324,6 +330,7 @@ inline static uintptr_t Magic(uintptr_t magic, AllocList::Header *ptr) {
+@@ -324,6 +332,7 @@ inline static uintptr_t Magic(uintptr_t magic, AllocList::Header *ptr) {
  }
  
  namespace {
@@ -216,7 +252,7 @@ index 662167b0..d5ba3a0e 100644
  size_t GetPageSize() {
  #ifdef _WIN32
    SYSTEM_INFO system_info;
-@@ -335,6 +342,7 @@ size_t GetPageSize() {
+@@ -335,6 +344,7 @@ size_t GetPageSize() {
    return static_cast<size_t>(sysconf(_SC_PAGESIZE));
  #endif
  }
@@ -224,7 +260,7 @@ index 662167b0..d5ba3a0e 100644
  
  size_t RoundedUpBlockSize() {
    // Round up block sizes to a power of two close to the header size.
-@@ -347,6 +355,7 @@ size_t RoundedUpBlockSize() {
+@@ -347,6 +357,7 @@ size_t RoundedUpBlockSize() {
  
  }  // namespace
  
@@ -232,7 +268,7 @@ index 662167b0..d5ba3a0e 100644
  LowLevelAlloc::Arena::Arena(uint32_t flags_value)
      : mu(base_internal::SCHEDULE_KERNEL_ONLY),
        allocation_count(0),
-@@ -428,6 +437,7 @@ bool LowLevelAlloc::DeleteArena(Arena *arena) {
+@@ -427,6 +438,7 @@ bool LowLevelAlloc::DeleteArena(Arena *arena) {
    Free(arena);
    return true;
  }
@@ -240,15 +276,15 @@ index 662167b0..d5ba3a0e 100644
  
  // ---------------------------------------------------------------------------
  
-@@ -488,6 +498,7 @@ static void Coalesce(AllocList *a) {
+@@ -487,6 +499,7 @@ static void Coalesce(AllocList *a) {
+ }
  
  // Adds block at location "v" to the free list
- // L >= arena->mu
 +#ifndef PB_ENABLE_SGX
- static void AddToFreelist(void *v, LowLevelAlloc::Arena *arena) {
-   AllocList *f = reinterpret_cast<AllocList *>(
-                         reinterpret_cast<char *>(v) - sizeof (f->header));
-@@ -612,6 +623,7 @@ void *LowLevelAlloc::AllocWithArena(size_t request, Arena *arena) {
+ static void AddToFreelist(void *v, LowLevelAlloc::Arena *arena)
+     ABSL_EXCLUSIVE_LOCKS_REQUIRED(arena->mu) {
+   AllocList *f = reinterpret_cast<AllocList *>(reinterpret_cast<char *>(v) -
+@@ -624,6 +637,7 @@ void *LowLevelAlloc::AllocWithArena(size_t request, Arena *arena) {
    void *result = DoAllocWithArena(request, arena);
    return result;
  }
@@ -256,36 +292,22 @@ index 662167b0..d5ba3a0e 100644
  
  }  // namespace base_internal
  ABSL_NAMESPACE_END
-diff --git a/absl/base/internal/prefetch.h b/absl/base/internal/prefetch.h
-index 06419283..37116a7e 100644
---- a/absl/base/internal/prefetch.h
-+++ b/absl/base/internal/prefetch.h
-@@ -18,7 +18,9 @@
- #include "absl/base/config.h"
- 
- #ifdef __SSE__
-+#ifndef PB_ENABLE_SGX
- #include <xmmintrin.h>
-+#endif //PB_ENABLE_SGX
- #endif
- 
- #if defined(_MSC_VER) && defined(ABSL_INTERNAL_HAVE_SSE)
 diff --git a/absl/base/internal/raw_logging.cc b/absl/base/internal/raw_logging.cc
-index 6273e847..3c9f6837 100644
+index 35a08f0a..7e56b850 100644
 --- a/absl/base/internal/raw_logging.cc
 +++ b/absl/base/internal/raw_logging.cc
-@@ -54,7 +54,9 @@
+@@ -58,7 +58,9 @@
+ //   syscall(SYS_write, /*int*/ fd, /*char* */ buf, /*size_t*/ len);
  // for low level operations that want to avoid libc.
- #if (defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)) && \
-     !defined(__ANDROID__)
+ #if (defined(__linux__) || defined(__FreeBSD__)) && !defined(__ANDROID__)
 +#ifndef PB_ENABLE_SGX
  #include <sys/syscall.h>
 +#endif //PB_ENABLE_SGX
  #define ABSL_HAVE_SYSCALL_WRITE 1
  #define ABSL_LOW_LEVEL_WRITE_SUPPORTED 1
  #else
-@@ -206,7 +208,9 @@ void AsyncSignalSafeWriteToStderr(const char* s, size_t len) {
- #if defined(ABSL_HAVE_SYSCALL_WRITE)
+@@ -233,7 +235,9 @@ void AsyncSignalSafeWriteError(const char* s, size_t len) {
+ #elif defined(ABSL_HAVE_SYSCALL_WRITE)
    // We prefer calling write via `syscall` to minimize the risk of libc doing
    // something "helpful".
 +#ifndef PB_ENABLE_SGX
@@ -294,6 +316,22 @@ index 6273e847..3c9f6837 100644
  #elif defined(ABSL_HAVE_POSIX_WRITE)
    write(STDERR_FILENO, s, len);
  #elif defined(ABSL_HAVE_RAW_IO)
+diff --git a/absl/base/internal/spinlock.cc b/absl/base/internal/spinlock.cc
+index 430f775b..4ebeea35 100644
+--- a/absl/base/internal/spinlock.cc
++++ b/absl/base/internal/spinlock.cc
+@@ -82,7 +82,11 @@ uint32_t SpinLock::SpinLoop() {
+   ABSL_CONST_INIT static absl::once_flag init_adaptive_spin_count;
+   ABSL_CONST_INIT static int adaptive_spin_count = 0;
+   base_internal::LowLevelCallOnce(&init_adaptive_spin_count, []() {
++#ifndef PB_ENABLE_SGX
+     adaptive_spin_count = base_internal::NumCPUs() > 1 ? 1000 : 1;
++#else
++    adaptive_spin_count = 1;
++#endif //PB_ENABLE_SGX
+   });
+ 
+   int c = adaptive_spin_count;
 diff --git a/absl/base/internal/spinlock_linux.inc b/absl/base/internal/spinlock_linux.inc
 index fe8ba674..a5a056d2 100644
 --- a/absl/base/internal/spinlock_linux.inc
@@ -327,7 +365,7 @@ index fe8ba674..a5a056d2 100644
  
  }  // extern "C"
 diff --git a/absl/base/internal/sysinfo.cc b/absl/base/internal/sysinfo.cc
-index da499d3a..b32c544a 100644
+index 1937db30..071967f5 100644
 --- a/absl/base/internal/sysinfo.cc
 +++ b/absl/base/internal/sysinfo.cc
 @@ -19,15 +19,21 @@
@@ -352,7 +390,7 @@ index da499d3a..b32c544a 100644
  #endif
  
  #if defined(__APPLE__) || defined(__FreeBSD__)
-@@ -124,6 +130,7 @@ int Win32NumCPUs() {
+@@ -137,6 +143,7 @@ int Win32NumCPUs() {
  
  }  // namespace
  
@@ -360,7 +398,7 @@ index da499d3a..b32c544a 100644
  static int GetNumCPUs() {
  #if defined(__myriad2__)
    return 1;
-@@ -139,6 +146,7 @@ static int GetNumCPUs() {
+@@ -152,6 +159,7 @@ static int GetNumCPUs() {
    return static_cast<int>(std::thread::hardware_concurrency());
  #endif
  }
@@ -368,15 +406,15 @@ index da499d3a..b32c544a 100644
  
  #if defined(_WIN32)
  
-@@ -187,6 +195,7 @@ static double GetNominalCPUFrequency() {
+@@ -200,6 +208,7 @@ static double GetNominalCPUFrequency() {
  
  // Helper function for reading a long from a file. Returns true if successful
  // and the memory location pointed to by value is set to the value read.
 +#ifndef PB_ENABLE_SGX
  static bool ReadLongFromFile(const char *file, long *value) {
    bool ret = false;
-   int fd = open(file, O_RDONLY | O_CLOEXEC);
-@@ -211,12 +220,14 @@ static bool ReadLongFromFile(const char *file, long *value) {
+ #if defined(_POSIX_C_SOURCE)
+@@ -230,12 +239,14 @@ static bool ReadLongFromFile(const char *file, long *value) {
    }
    return ret;
  }
@@ -391,7 +429,7 @@ index da499d3a..b32c544a 100644
  static int64_t ReadMonotonicClockNanos() {
    struct timespec t;
  #ifdef CLOCK_MONOTONIC_RAW
-@@ -230,6 +241,7 @@ static int64_t ReadMonotonicClockNanos() {
+@@ -249,6 +260,7 @@ static int64_t ReadMonotonicClockNanos() {
    }
    return int64_t{t.tv_sec} * 1000000000 + t.tv_nsec;
  }
@@ -399,7 +437,7 @@ index da499d3a..b32c544a 100644
  
  class UnscaledCycleClockWrapperForInitializeFrequency {
   public:
-@@ -246,6 +258,7 @@ struct TimeTscPair {
+@@ -265,6 +277,7 @@ struct TimeTscPair {
  // doing several reads and picking the reading with the lowest
  // latency.  This approach is used to minimize the probability that
  // our thread was preempted between clock reads.
@@ -407,7 +445,7 @@ index da499d3a..b32c544a 100644
  static TimeTscPair GetTimeTscPair() {
    int64_t best_latency = std::numeric_limits<int64_t>::max();
    TimeTscPair best;
-@@ -262,9 +275,11 @@ static TimeTscPair GetTimeTscPair() {
+@@ -281,9 +294,11 @@ static TimeTscPair GetTimeTscPair() {
    }
    return best;
  }
@@ -419,20 +457,7 @@ index da499d3a..b32c544a 100644
  static double MeasureTscFrequencyWithSleep(int sleep_nanoseconds) {
    auto t0 = GetTimeTscPair();
    struct timespec ts;
-@@ -276,10 +291,12 @@ static double MeasureTscFrequencyWithSleep(int sleep_nanoseconds) {
-   double elapsed_time = (t1.time - t0.time) * 1e-9;
-   return elapsed_ticks / elapsed_time;
- }
-+#endif //PB_ENABLE_SGX
- 
- // Measures and returns the TSC frequency by calling
- // MeasureTscFrequencyWithSleep(), doubling the sleep interval until the
- // frequency measurement stabilizes.
-+#ifndef PB_ENABLE_SGX
- static double MeasureTscFrequency() {
-   double last_measurement = -1.0;
-   int sleep_nanoseconds = 1000000;  // 1 millisecond.
-@@ -296,9 +313,11 @@ static double MeasureTscFrequency() {
+@@ -315,9 +330,11 @@ static double MeasureTscFrequency() {
    }
    return last_measurement;
  }
@@ -444,7 +469,7 @@ index da499d3a..b32c544a 100644
  static double GetNominalCPUFrequency() {
    long freq = 0;
  
-@@ -339,6 +358,7 @@ static double GetNominalCPUFrequency() {
+@@ -358,6 +375,7 @@ static double GetNominalCPUFrequency() {
    return 1.0;
  #endif  // !ABSL_INTERNAL_UNSCALED_CYCLECLOCK_FREQUENCY_IS_CPU_FREQUENCY
  }
@@ -452,7 +477,7 @@ index da499d3a..b32c544a 100644
  
  #endif
  
-@@ -347,11 +367,13 @@ ABSL_CONST_INIT static int num_cpus = 0;
+@@ -366,11 +384,13 @@ ABSL_CONST_INIT static int num_cpus = 0;
  
  // NumCPUs() may be called before main() and before malloc is properly
  // initialized, therefore this must not allocate memory.
@@ -466,7 +491,7 @@ index da499d3a..b32c544a 100644
  
  // A default frequency of 0.0 might be dangerous if it is used in division.
  ABSL_CONST_INIT static once_flag init_nominal_cpu_frequency_once;
-@@ -359,12 +381,14 @@ ABSL_CONST_INIT static double nominal_cpu_frequency = 1.0;
+@@ -378,12 +398,14 @@ ABSL_CONST_INIT static double nominal_cpu_frequency = 1.0;
  
  // NominalCPUFrequency() may be called before main() and before malloc is
  // properly initialized, therefore this must not allocate memory.
@@ -481,7 +506,7 @@ index da499d3a..b32c544a 100644
  
  #if defined(_WIN32)
  
-@@ -378,9 +402,11 @@ pid_t GetTID() {
+@@ -397,9 +419,11 @@ pid_t GetTID() {
  #define SYS_gettid __NR_gettid
  #endif
  
@@ -493,7 +518,7 @@ index da499d3a..b32c544a 100644
  
  #elif defined(__akaros__)
  
-@@ -497,6 +523,7 @@ pid_t GetTID() {
+@@ -489,6 +513,7 @@ pid_t GetTID() {
  // GetCachedTID() caches the thread ID in thread-local storage (which is a
  // userspace construct) to avoid unnecessary system calls. Without this caching,
  // it can take roughly 98ns, while it takes roughly 1ns with this caching.
@@ -501,7 +526,7 @@ index da499d3a..b32c544a 100644
  pid_t GetCachedTID() {
  #ifdef ABSL_HAVE_THREAD_LOCAL
    static thread_local pid_t thread_id = GetTID();
-@@ -505,6 +532,7 @@ pid_t GetCachedTID() {
+@@ -497,6 +522,7 @@ pid_t GetCachedTID() {
    return GetTID();
  #endif  // ABSL_HAVE_THREAD_LOCAL
  }
@@ -537,28 +562,28 @@ index 119cf1f0..95e25519 100644
  }  // namespace base_internal
  ABSL_NAMESPACE_END
 diff --git a/absl/base/internal/thread_identity.cc b/absl/base/internal/thread_identity.cc
-index 79853f09..8c6b4c15 100644
+index 0471a25d..062d78de 100644
 --- a/absl/base/internal/thread_identity.cc
 +++ b/absl/base/internal/thread_identity.cc
-@@ -16,7 +16,9 @@
- 
- #if !defined(_WIN32) || defined(__MINGW32__)
- #include <pthread.h>
+@@ -19,7 +19,9 @@
+ #ifndef __wasi__
+ // WASI does not provide this header, either way we disable use
+ // of signals with it below.
 +#ifndef PB_ENABLE_SGX
  #include <signal.h>
 +#endif //PB_ENABLE_SGX
  #endif
+ #endif
  
- #include <atomic>
-@@ -68,6 +70,7 @@ thread_local ThreadIdentity* thread_identity_ptr = nullptr;
+@@ -73,6 +75,7 @@ ABSL_CONST_INIT  // Must come before __attribute__((visibility("protected")))
  #endif  // ABSL_PER_THREAD_TLS
  #endif  // TLS or CPP11
  
 +#ifndef PB_ENABLE_SGX
- void SetCurrentThreadIdentity(
-     ThreadIdentity* identity, ThreadIdentityReclaimerFunction reclaimer) {
+ void SetCurrentThreadIdentity(ThreadIdentity* identity,
+                               ThreadIdentityReclaimerFunction reclaimer) {
    assert(CurrentThreadIdentityIfPresent() == nullptr);
-@@ -116,6 +119,7 @@ void SetCurrentThreadIdentity(
+@@ -123,6 +126,7 @@ void SetCurrentThreadIdentity(ThreadIdentity* identity,
  #error Unimplemented ABSL_THREAD_IDENTITY_MODE
  #endif
  }
@@ -566,69 +591,201 @@ index 79853f09..8c6b4c15 100644
  
  #if ABSL_THREAD_IDENTITY_MODE == ABSL_THREAD_IDENTITY_MODE_USE_TLS || \
      ABSL_THREAD_IDENTITY_MODE == ABSL_THREAD_IDENTITY_MODE_USE_CPP11
+diff --git a/absl/base/internal/unscaledcycleclock.cc b/absl/base/internal/unscaledcycleclock.cc
+index 68f92730..3449e65a 100644
+--- a/absl/base/internal/unscaledcycleclock.cc
++++ b/absl/base/internal/unscaledcycleclock.cc
+@@ -55,7 +55,11 @@ double UnscaledCycleClock::Frequency() {
+ #elif defined(__x86_64__)
+ 
+ double UnscaledCycleClock::Frequency() {
++#ifndef PB_ENABLE_SGX
+   return base_internal::NominalCPUFrequency();
++#else
++  return 1e9;
++#endif
+ }
+ 
+ #elif defined(__powerpc__) || defined(__ppc__)
+diff --git a/absl/base/prefetch.h b/absl/base/prefetch.h
+index 482cde3a..2a2c69da 100644
+--- a/absl/base/prefetch.h
++++ b/absl/base/prefetch.h
+@@ -28,7 +28,9 @@
+ #include "absl/base/config.h"
+ 
+ #if defined(ABSL_INTERNAL_HAVE_SSE)
++#ifndef PB_ENABLE_SGX
+ #include <xmmintrin.h>
++#endif //PB_ENABLE_SGX
+ #endif
+ 
+ #if defined(_MSC_VER)
+@@ -167,6 +169,7 @@ ABSL_ATTRIBUTE_ALWAYS_INLINE inline void PrefetchToLocalCacheForWrite(
+ 
+ #elif defined(ABSL_INTERNAL_HAVE_SSE)
+ 
++#ifndef PB_ENABLE_SGX
+ #define ABSL_HAVE_PREFETCH 1
+ 
+ ABSL_ATTRIBUTE_ALWAYS_INLINE inline void PrefetchToLocalCache(
+@@ -191,6 +194,7 @@ ABSL_ATTRIBUTE_ALWAYS_INLINE inline void PrefetchToLocalCacheForWrite(
+   asm("prefetchw %0" : : "m"(*reinterpret_cast<const char*>(addr)));
+ #endif
+ }
++#endif //PB_ENABLE_SGX
+ 
+ #else
+ 
+diff --git a/absl/container/internal/hash_policy_traits.h b/absl/container/internal/hash_policy_traits.h
+index cd6b42f9..5bfcb971 100644
+--- a/absl/container/internal/hash_policy_traits.h
++++ b/absl/container/internal/hash_policy_traits.h
+@@ -148,7 +148,11 @@ struct hash_policy_traits : common_policy_traits<Policy> {
+   using HashSlotFn = size_t (*)(const void* hash_fn, void* slot);
+ 
+   template <class Hash>
++#ifndef PB_ENABLE_SGX
+   static constexpr HashSlotFn get_hash_slot_fn() {
++#else
++  static const HashSlotFn get_hash_slot_fn() {
++#endif //PB_ENABLE_SGX
+ // get_hash_slot_fn may return nullptr to signal that non type erased function
+ // should be used. GCC warns against comparing function address with nullptr.
+ #if defined(__GNUC__) && !defined(__clang__)
 diff --git a/absl/container/internal/hashtablez_sampler.cc b/absl/container/internal/hashtablez_sampler.cc
-index 6b6d3491..6e2ab4a1 100644
+index c0fce879..4dbd8dd0 100644
 --- a/absl/container/internal/hashtablez_sampler.cc
 +++ b/absl/container/internal/hashtablez_sampler.cc
-@@ -82,7 +82,9 @@ void HashtablezInfo::PrepareForSampling(int64_t stride,
+@@ -89,13 +89,19 @@ void HashtablezInfo::PrepareForSampling(int64_t stride,
    hashes_bitwise_xor.store(0, std::memory_order_relaxed);
    max_reserve.store(0, std::memory_order_relaxed);
  
-+#ifndef PB_ENABLE_SGX
++  #ifndef PB_ENABLE_SGX
    create_time = absl::Now();
-+#endif //PB_ENABLE_SGX
++  #endif //PB_ENABLE_SGX
    weight = stride;
    // The inliner makes hardcoded skip_count difficult (especially when combined
    // with LTO).  We use the ability to exclude stacks by regex when encoding
+   // instead.
++  #ifndef PB_ENABLE_SGX
+   depth = absl::GetStackTrace(stack, HashtablezInfo::kMaxStackDepth,
+                               /* skip_count= */ 0);
++  #else
++  depth = 0;
++  #endif //PB_ENABLE_SGX
+   inline_element_size = inline_element_size_value;
+   key_size = key_size_value;
+   value_size = value_size_value;
+@@ -148,9 +154,13 @@ HashtablezInfo* SampleSlow(SamplingState& next_sample,
+   if (ABSL_PREDICT_FALSE(ShouldForceSampling())) {
+     next_sample.next_sample = 1;
+     const int64_t old_stride = exchange(next_sample.sample_stride, 1);
++#ifndef PB_ENABLE_SGX
+     HashtablezInfo* result = GlobalHashtablezSampler().Register(
+         old_stride, inline_element_size, key_size, value_size, soo_capacity);
+     return result;
++#else
++    return nullptr;
++#endif
+   }
+ 
+ #if !defined(ABSL_INTERNAL_HASHTABLEZ_SAMPLE)
+@@ -182,9 +192,12 @@ HashtablezInfo* SampleSlow(SamplingState& next_sample,
+     return SampleSlow(next_sample, inline_element_size, key_size, value_size,
+                       soo_capacity);
+   }
+-
++#ifndef PB_ENABLE_SGX
+   return GlobalHashtablezSampler().Register(old_stride, inline_element_size,
+                                             key_size, value_size, soo_capacity);
++#else
++  return nullptr;
++#endif
+ #endif
+ }
+ 
 diff --git a/absl/container/internal/hashtablez_sampler.h b/absl/container/internal/hashtablez_sampler.h
-index d8fd8f34..0ad01984 100644
+index 305dc855..5112e835 100644
 --- a/absl/container/internal/hashtablez_sampler.h
 +++ b/absl/container/internal/hashtablez_sampler.h
-@@ -89,7 +89,9 @@ struct HashtablezInfo : public profiling_internal::Sample<HashtablezInfo> {
+@@ -96,7 +96,9 @@ struct HashtablezInfo : public profiling_internal::Sample<HashtablezInfo> {
    // which can read them only during `SampleRecorder::Iterate` which will hold
    // the lock.
    static constexpr int kMaxStackDepth = 64;
-+#ifndef PB_ENABLE_SGX
++  #ifndef PB_ENABLE_SGX
    absl::Time create_time;
-+#endif //PB_ENABLE_SGX
++  #endif //PB_ENABLE_SGX
    int32_t depth;
-   void* stack[kMaxStackDepth];
-   size_t inline_element_size;  // How big is the slot?
-diff --git a/absl/container/internal/layout.h b/absl/container/internal/layout.h
-index a59a2430..659b3662 100644
---- a/absl/container/internal/layout.h
-+++ b/absl/container/internal/layout.h
-@@ -181,9 +181,11 @@
- #include <sanitizer/asan_interface.h>
- #endif
- 
+   // The SOO capacity for this table in elements (not bytes). Note that sampled
+   // tables are never SOO because we need to store the infoz handle on the heap.
+diff --git a/absl/container/internal/raw_hash_set.h b/absl/container/internal/raw_hash_set.h
+index 3effc441..129e7661 100644
+--- a/absl/container/internal/raw_hash_set.h
++++ b/absl/container/internal/raw_hash_set.h
+@@ -3604,7 +3604,11 @@ class raw_hash_set {
+                   size_t{(std::numeric_limits<uint32_t>::max)()});
+     static constexpr size_t kBackingArrayAlignment =
+         BackingArrayAlignment(alignof(slot_type));
 +#ifndef PB_ENABLE_SGX
- #if defined(__GXX_RTTI)
- #define ABSL_INTERNAL_HAS_CXA_DEMANGLE
- #endif
+     static constexpr PolicyFunctions value = {
++#else
++    static const PolicyFunctions value = {
++#endif //PB_ENABLE_SGX
+         static_cast<uint32_t>(sizeof(key_type)),
+         static_cast<uint32_t>(sizeof(value_type)),
+         static_cast<uint32_t>(sizeof(slot_type)),
+diff --git a/absl/crc/crc32c.h b/absl/crc/crc32c.h
+index 5ecc6b35..8e937d92 100644
+--- a/absl/crc/crc32c.h
++++ b/absl/crc/crc32c.h
+@@ -182,9 +182,11 @@ crc32c_t RemoveCrc32cSuffix(crc32c_t full_string_crc, crc32c_t suffix_crc,
+ // operator<<
+ //
+ // Streams the CRC32C value `crc` to the stream `os`.
++#ifndef PB_ENABLE_SGX
+ inline std::ostream& operator<<(std::ostream& os, crc32c_t crc) {
+   return os << absl::StreamFormat("%08x", static_cast<uint32_t>(crc));
+ }
 +#endif //PB_ENABLE_SGX
  
- #ifdef ABSL_INTERNAL_HAS_CXA_DEMANGLE
- #include <cxxabi.h>
-diff --git a/absl/crc/internal/crc_memcpy.h b/absl/crc/internal/crc_memcpy.h
-index 4909d433..f739aa76 100644
---- a/absl/crc/internal/crc_memcpy.h
-+++ b/absl/crc/internal/crc_memcpy.h
-@@ -21,6 +21,10 @@
- #include "absl/base/config.h"
- #include "absl/crc/crc32c.h"
+ ABSL_NAMESPACE_END
+ }  // namespace absl
+diff --git a/absl/crc/internal/crc32_x86_arm_combined_simd.h b/absl/crc/internal/crc32_x86_arm_combined_simd.h
+index 5a9b61a5..56e92b88 100644
+--- a/absl/crc/internal/crc32_x86_arm_combined_simd.h
++++ b/absl/crc/internal/crc32_x86_arm_combined_simd.h
+@@ -18,6 +18,9 @@
+ #include <cstdint>
  
+ #include "absl/base/config.h"
 +#ifdef PB_ENABLE_SGX
 +#undef __SSE4_2__
 +#endif //PB_ENABLE_SGX
+ 
+ // -------------------------------------------------------------------------
+ // Many x86 and ARM machines have CRC acceleration hardware.
+diff --git a/absl/crc/internal/crc_memcpy.h b/absl/crc/internal/crc_memcpy.h
+index a0fed65a..0607f8dd 100644
+--- a/absl/crc/internal/crc_memcpy.h
++++ b/absl/crc/internal/crc_memcpy.h
+@@ -22,6 +22,12 @@
+ #include "absl/crc/crc32c.h"
+ #include "absl/crc/internal/crc32_x86_arm_combined_simd.h"
+ 
++#ifdef PB_ENABLE_SGX
++#undef __SSE4_2__
++#undef ABSL_CRC_INTERNAL_HAVE_X86_SIMD
++#endif //PB_ENABLE_SGX
++
 +
  // Defined if the class AcceleratedCrcMemcpyEngine exists.
- #if defined(__x86_64__) && defined(__SSE4_2__)
- #define ABSL_INTERNAL_HAVE_X86_64_ACCELERATED_CRC_MEMCPY_ENGINE 1
-diff --git a/absl/crc/internal/crc_memcpy_x86_64.cc b/absl/crc/internal/crc_memcpy_x86_64.cc
-index 66f784de..e5d1f6fb 100644
---- a/absl/crc/internal/crc_memcpy_x86_64.cc
-+++ b/absl/crc/internal/crc_memcpy_x86_64.cc
+ // TODO(b/299127771): Consider relaxing the pclmul requirement once the other
+ // intrinsics are conditionally compiled without it.
+diff --git a/absl/crc/internal/crc_memcpy_x86_arm_combined.cc b/absl/crc/internal/crc_memcpy_x86_arm_combined.cc
+index 38f61e9b..0e9ecea9 100644
+--- a/absl/crc/internal/crc_memcpy_x86_arm_combined.cc
++++ b/absl/crc/internal/crc_memcpy_x86_arm_combined.cc
 @@ -38,6 +38,10 @@
  // using 3 CRCs over fixed-size blocks where the zero-extensions required for
  // CRC32C::Concat can be precomputed.
@@ -641,10 +798,10 @@ index 66f784de..e5d1f6fb 100644
  #include <immintrin.h>
  #endif
 diff --git a/absl/crc/internal/non_temporal_memcpy.h b/absl/crc/internal/non_temporal_memcpy.h
-index b3d94bad..f23c73f6 100644
+index 5d3e4e3f..8e7e3b1f 100644
 --- a/absl/crc/internal/non_temporal_memcpy.h
 +++ b/absl/crc/internal/non_temporal_memcpy.h
-@@ -19,6 +19,12 @@
+@@ -19,6 +19,13 @@
  #include <intrin.h>
  #endif
  
@@ -652,13 +809,14 @@ index b3d94bad..f23c73f6 100644
 +#undef __SSE__
 +#undef __SSE2__
 +#undef __SSE3__
++#undef __AVX__
 +#endif //PB_ENABLE_SGX
 +
- #ifdef __SSE__
- #include <xmmintrin.h>
- #endif
+ #if defined(__SSE__) || defined(__AVX__)
+ // Pulls in both SSE and AVX intrinsics.
+ #include <immintrin.h>
 diff --git a/absl/debugging/internal/address_is_readable.cc b/absl/debugging/internal/address_is_readable.cc
-index 91eaa76f..ca40e89e 100644
+index be17a105..fc10d956 100644
 --- a/absl/debugging/internal/address_is_readable.cc
 +++ b/absl/debugging/internal/address_is_readable.cc
 @@ -33,7 +33,9 @@ ABSL_NAMESPACE_END
@@ -677,9 +835,9 @@ index 91eaa76f..ca40e89e 100644
  //
 +#ifndef PB_ENABLE_SGX
  bool AddressIsReadable(const void *addr) {
-   // Align address on 8-byte boundary. On aarch64, checking last
-   // byte before inaccessible page returned unexpected EFAULT.
-@@ -88,6 +91,7 @@ bool AddressIsReadable(const void *addr) {
+   // rt_sigprocmask below checks 8 contiguous bytes. If addr resides in the
+   // last 7 bytes of a page (unaligned), rt_sigprocmask would additionally
+@@ -90,6 +93,7 @@ bool AddressIsReadable(const void *addr) {
    ABSL_RAW_CHECK(errno == EFAULT || errno == EINVAL, "unexpected errno");
    return errno != EFAULT;
  }
@@ -688,10 +846,10 @@ index 91eaa76f..ca40e89e 100644
  }  // namespace debugging_internal
  ABSL_NAMESPACE_END
 diff --git a/absl/debugging/internal/elf_mem_image.cc b/absl/debugging/internal/elf_mem_image.cc
-index 42dcd3cd..2cbf201f 100644
+index 2c168309..a2569102 100644
 --- a/absl/debugging/internal/elf_mem_image.cc
 +++ b/absl/debugging/internal/elf_mem_image.cc
-@@ -38,6 +38,7 @@
+@@ -41,6 +41,7 @@
  
  #define VERSYM_VERSION 0x7fff
  
@@ -699,7 +857,7 @@ index 42dcd3cd..2cbf201f 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace debugging_internal {
-@@ -382,5 +383,6 @@ void ElfMemImage::SymbolIterator::Update(int increment) {
+@@ -409,5 +410,6 @@ void ElfMemImage::SymbolIterator::Update(uint32_t increment) {
  }  // namespace debugging_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -707,10 +865,10 @@ index 42dcd3cd..2cbf201f 100644
  
  #endif  // ABSL_HAVE_ELF_MEM_IMAGE
 diff --git a/absl/debugging/internal/elf_mem_image.h b/absl/debugging/internal/elf_mem_image.h
-index 113071a9..a1dbba3b 100644
+index 1fac29c5..e32a4729 100644
 --- a/absl/debugging/internal/elf_mem_image.h
 +++ b/absl/debugging/internal/elf_mem_image.h
-@@ -39,12 +39,15 @@
+@@ -41,12 +41,15 @@
  
  #ifdef ABSL_HAVE_ELF_MEM_IMAGE
  
@@ -726,7 +884,7 @@ index 113071a9..a1dbba3b 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace debugging_internal {
-@@ -133,6 +136,7 @@ class ElfMemImage {
+@@ -135,6 +138,7 @@ class ElfMemImage {
  }  // namespace debugging_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -735,16 +893,19 @@ index 113071a9..a1dbba3b 100644
  #endif  // ABSL_HAVE_ELF_MEM_IMAGE
  
 diff --git a/absl/debugging/internal/examine_stack.cc b/absl/debugging/internal/examine_stack.cc
-index 57863228..05b68f10 100644
+index 3dd6ba1a..951c756a 100644
 --- a/absl/debugging/internal/examine_stack.cc
 +++ b/absl/debugging/internal/examine_stack.cc
-@@ -23,11 +23,15 @@
+@@ -23,14 +23,18 @@
  #include "absl/base/config.h"
  
  #ifdef ABSL_HAVE_MMAP
 +#ifndef PB_ENABLE_SGX
  #include <sys/mman.h>
 +#endif //PB_ENABLE_SGX
+ #if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
+ #define MAP_ANONYMOUS MAP_ANON
+ #endif
  #endif
  
  #if defined(__linux__) || defined(__APPLE__)
@@ -754,7 +915,7 @@ index 57863228..05b68f10 100644
  #endif
  
  #include <csignal>
-@@ -39,6 +43,7 @@
+@@ -42,6 +46,7 @@
  #include "absl/debugging/stacktrace.h"
  #include "absl/debugging/symbolize.h"
  
@@ -762,13 +923,13 @@ index 57863228..05b68f10 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace debugging_internal {
-@@ -315,3 +320,4 @@ void DumpStackTrace(int min_dropped_frames, int max_num_frames,
+@@ -318,3 +323,4 @@ void DumpStackTrace(int min_dropped_frames, int max_num_frames,
  }  // namespace debugging_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/debugging/internal/stacktrace_x86-inl.inc b/absl/debugging/internal/stacktrace_x86-inl.inc
-index 7b26464e..2acf7129 100644
+index 96b128e0..24a06c04 100644
 --- a/absl/debugging/internal/stacktrace_x86-inl.inc
 +++ b/absl/debugging/internal/stacktrace_x86-inl.inc
 @@ -18,7 +18,9 @@
@@ -781,7 +942,7 @@ index 7b26464e..2acf7129 100644
  #endif
  
  #if !defined(_WIN32)
-@@ -120,6 +122,7 @@ constexpr uintptr_t kUnknownStackEnd =
+@@ -121,6 +123,7 @@ constexpr uintptr_t kUnknownStackEnd =
  // Returns the stack frame pointer from signal context, 0 if unknown.
  // vuc is a ucontext_t *.  We use void* to avoid the use
  // of ucontext_t on non-POSIX systems.
@@ -789,7 +950,7 @@ index 7b26464e..2acf7129 100644
  static uintptr_t GetFP(const void *vuc) {
  #if !defined(__linux__)
    static_cast<void>(vuc);  // Avoid an unused argument compiler warning.
-@@ -155,6 +158,7 @@ static uintptr_t GetFP(const void *vuc) {
+@@ -156,6 +159,7 @@ static uintptr_t GetFP(const void *vuc) {
  #endif
    return 0;
  }
@@ -797,15 +958,15 @@ index 7b26464e..2acf7129 100644
  
  // Given a pointer to a stack frame, locate and return the calling
  // stackframe, or return null if no stackframe can be found. Perform sanity
-@@ -163,6 +167,7 @@ static uintptr_t GetFP(const void *vuc) {
- template <bool STRICT_UNWINDING, bool WITH_CONTEXT>
+@@ -165,6 +169,7 @@ template <bool STRICT_UNWINDING, bool WITH_CONTEXT>
  ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
  ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
+ ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
 +#ifndef PB_ENABLE_SGX
  static void **NextStackFrame(void **old_fp, const void *uc,
                               size_t stack_low, size_t stack_high) {
    void **new_fp = (void **)*old_fp;
-@@ -322,11 +327,13 @@ static void **NextStackFrame(void **old_fp, const void *uc,
+@@ -324,12 +329,14 @@ static void **NextStackFrame(void **old_fp, const void *uc,
  #endif
    return new_fp;
  }
@@ -814,12 +975,13 @@ index 7b26464e..2acf7129 100644
  template <bool IS_STACK_FRAMES, bool IS_WITH_CONTEXT>
  ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
  ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
+ ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
  ABSL_ATTRIBUTE_NOINLINE
 +#ifndef PB_ENABLE_SGX
- static int UnwindImpl(void **result, int *sizes, int max_depth, int skip_count,
-                       const void *ucp, int *min_dropped_frames) {
-   int n = 0;
-@@ -380,7 +387,9 @@ static int UnwindImpl(void **result, int *sizes, int max_depth, int skip_count,
+ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
+                       int max_depth, int skip_count, const void *ucp,
+                       int *min_dropped_frames) {
+@@ -390,7 +397,9 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
    }
    return n;
  }
@@ -829,7 +991,7 @@ index 7b26464e..2acf7129 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace debugging_internal {
-@@ -390,5 +399,6 @@ bool StackTraceWorksForTest() {
+@@ -400,5 +409,6 @@ bool StackTraceWorksForTest() {
  }  // namespace debugging_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -886,7 +1048,7 @@ index 6562c6c2..3793c77f 100644
  #endif  // ABSL_HAVE_ELF_MEM_IMAGE
  
 diff --git a/absl/debugging/stacktrace.cc b/absl/debugging/stacktrace.cc
-index ff8069f8..1465a49d 100644
+index f71e80cf..5abcd41a 100644
 --- a/absl/debugging/stacktrace.cc
 +++ b/absl/debugging/stacktrace.cc
 @@ -34,6 +34,7 @@
@@ -896,17 +1058,17 @@ index ff8069f8..1465a49d 100644
 +#ifndef PB_ENABLE_SGX
  #include "absl/debugging/stacktrace.h"
  
- #include <atomic>
-@@ -140,3 +141,4 @@ int DefaultStackUnwinder(void** pcs, int* sizes, int depth, int skip,
+ #include <stddef.h>
+@@ -257,3 +258,4 @@ ABSL_ATTRIBUTE_WEAK void internal_stacktrace::FixUpStack(void**, uintptr_t*,
  
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/flags/reflection.cc b/absl/flags/reflection.cc
-index dbce4032..98fb9726 100644
+index b8b4a2ea..dbce17f3 100644
 --- a/absl/flags/reflection.cc
 +++ b/absl/flags/reflection.cc
-@@ -31,6 +31,7 @@
+@@ -32,6 +32,7 @@
  #include "absl/strings/string_view.h"
  #include "absl/synchronization/mutex.h"
  
@@ -914,7 +1076,7 @@ index dbce4032..98fb9726 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace flags_internal {
-@@ -352,3 +353,4 @@ absl::flat_hash_map<absl::string_view, absl::CommandLineFlag*> GetAllFlags() {
+@@ -362,3 +363,4 @@ absl::flat_hash_map<absl::string_view, absl::CommandLineFlag*> GetAllFlags() {
  
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -939,7 +1101,7 @@ index e6baf5de..a1bca274 100644
  
  #endif  // ABSL_FLAGS_REFLECTION_H_
 diff --git a/absl/flags/usage_config.cc b/absl/flags/usage_config.cc
-index 5d7426db..e6ef1ac9 100644
+index 5922c5e2..70c94cfa 100644
 --- a/absl/flags/usage_config.cc
 +++ b/absl/flags/usage_config.cc
 @@ -16,7 +16,9 @@
@@ -952,7 +1114,7 @@ index 5d7426db..e6ef1ac9 100644
  #include <string>
  
  #include "absl/base/attributes.h"
-@@ -126,7 +128,9 @@ FlagsUsageConfig GetUsageConfig() {
+@@ -131,7 +133,9 @@ FlagsUsageConfig GetUsageConfig() {
  }
  
  void ReportUsageError(absl::string_view msg, bool is_fatal) {
@@ -962,8 +1124,39 @@ index 5d7426db..e6ef1ac9 100644
  
    if (is_fatal) {
      ABSL_INTERNAL_C_SYMBOL(AbslInternalReportFatalUsageError)(msg);
+diff --git a/absl/hash/internal/hash.h b/absl/hash/internal/hash.h
+index eb53823f..0a292bd4 100644
+--- a/absl/hash/internal/hash.h
++++ b/absl/hash/internal/hash.h
+@@ -90,7 +90,9 @@
+ #include "absl/utility/utility.h"
+ 
+ #if defined(__cpp_lib_filesystem) && __cpp_lib_filesystem >= 201703L
++#ifndef PB_ENABLE_SGX
+ #include <filesystem>  // NOLINT
++#endif //PB_ENABLE_SGX
+ #endif
+ 
+ namespace absl {
+@@ -654,6 +656,8 @@ H AbslHashValue(H hash_state, std::basic_string_view<Char> str) {
+     (!defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) ||         \
+      __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ >= 101500)
+ 
++#ifndef PB_ENABLE_SGX
++
+ #define ABSL_INTERNAL_STD_FILESYSTEM_PATH_HASH_AVAILABLE 1
+ 
+ // Support std::filesystem::path. The SFINAE is required because some string
+@@ -671,6 +675,7 @@ H AbslHashValue(H hash_state, const Path& path) {
+ }
+ 
+ #endif  // ABSL_INTERNAL_STD_FILESYSTEM_PATH_HASH_AVAILABLE
++#endif //PB_ENABLE_SGX
+ 
+ // -----------------------------------------------------------------------------
+ // AbslHashValue for Sequence Containers
 diff --git a/absl/log/initialize.cc b/absl/log/initialize.cc
-index a3f6d6c1..e3bacac7 100644
+index ef5d3146..663abbf0 100644
 --- a/absl/log/initialize.cc
 +++ b/absl/log/initialize.cc
 @@ -18,6 +18,7 @@
@@ -974,7 +1167,7 @@ index a3f6d6c1..e3bacac7 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -32,3 +33,4 @@ void InitializeLog() {
+@@ -36,3 +37,4 @@ void InitializeLog() { InitializeLogImpl(absl::LocalTimeZone()); }
  
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -999,10 +1192,20 @@ index f600eb60..9d6b1e13 100644
  
  #endif  // ABSL_LOG_INITIALIZE_H_
 diff --git a/absl/log/internal/check_op.cc b/absl/log/internal/check_op.cc
-index f4b67647..c98ab73a 100644
+index 23db63bf..521ea285 100644
 --- a/absl/log/internal/check_op.cc
 +++ b/absl/log/internal/check_op.cc
-@@ -19,7 +19,9 @@
+@@ -15,7 +15,9 @@
+ #include "absl/log/internal/check_op.h"
+ 
+ #include <cstring>
++#ifndef PB_ENABLE_SGX
+ #include <ostream>
++#endif //PB_ENABLE_SGX
+ #include <string>
+ #include <utility>
+ 
+@@ -28,7 +30,9 @@
  #ifdef _MSC_VER
  #define strcasecmp _stricmp
  #else
@@ -1011,8 +1214,8 @@ index f4b67647..c98ab73a 100644
 +#endif //PB_ENABLE_SGX
  #endif
  
- #include <sstream>
-@@ -53,16 +55,19 @@ CheckOpMessageBuilder::CheckOpMessageBuilder(const char* exprtext) {
+ namespace absl {
+@@ -58,10 +62,12 @@ CheckOpMessageBuilder::CheckOpMessageBuilder(
    stream_ << exprtext << " (";
  }
  
@@ -1023,30 +1226,50 @@ index f4b67647..c98ab73a 100644
  }
 +#endif //PB_ENABLE_SGX
  
- std::string* CheckOpMessageBuilder::NewString() {
+ const char* absl_nonnull CheckOpMessageBuilder::NewString() {
    stream_ << ")";
-   return new std::string(stream_.str());
+@@ -69,6 +75,7 @@ const char* absl_nonnull CheckOpMessageBuilder::NewString() {
+   return absl::IgnoreLeak(new std::string(std::move(stream_).str()))->c_str();
  }
  
 +#ifndef PB_ENABLE_SGX
  void MakeCheckOpValueString(std::ostream& os, const char v) {
    if (v >= 32 && v <= 126) {
      os << "'" << v << "'";
-@@ -94,6 +99,7 @@ void MakeCheckOpValueString(std::ostream& os, const void* p) {
+@@ -100,6 +107,7 @@ void MakeCheckOpValueString(std::ostream& os, const void* p) {
      os << p;
    }
  }
 +#endif //PB_ENABLE_SGX
  
  // Helper functions for string comparisons.
- #define DEFINE_CHECK_STROP_IMPL(name, func, expected)                      \
+ #define DEFINE_CHECK_STROP_IMPL(name, func, expected)                          \
+@@ -124,8 +132,10 @@ DEFINE_CHECK_STROP_IMPL(CHECK_STRCASENE, strcasecmp, false)
+ 
+ namespace detect_specialization {
+ 
++#ifndef PB_ENABLE_SGX
+ StringifySink::StringifySink(std::ostream& os) : os_(os) {}
+ 
++
+ void StringifySink::Append(absl::string_view text) { os_ << text; }
+ 
+ void StringifySink::Append(size_t length, char ch) {
+@@ -135,6 +145,7 @@ void StringifySink::Append(size_t length, char ch) {
+ void AbslFormatFlush(StringifySink* sink, absl::string_view text) {
+   sink->Append(text);
+ }
++#endif //PB_ENABLE_SGX
+ 
+ }  // namespace detect_specialization
+ 
 diff --git a/absl/log/internal/check_op.h b/absl/log/internal/check_op.h
-index 4907b89b..d2b9937f 100644
+index 72534028..b11e185a 100644
 --- a/absl/log/internal/check_op.h
 +++ b/absl/log/internal/check_op.h
-@@ -290,8 +290,10 @@ ABSL_ATTRIBUTE_RETURNS_NONNULL std::string* MakeCheckOpString(
- template <typename T1, typename T2>
- std::string* MakeCheckOpString(T1 v1, T2 v2, const char* exprtext) {
+@@ -360,8 +360,10 @@ template <typename T1, typename T2>
+ const char* absl_nonnull MakeCheckOpString(T1 v1, T2 v2,
+                                            const char* absl_nonnull exprtext) {
    CheckOpMessageBuilder comb(exprtext);
 +#ifndef PB_ENABLE_SGX
    MakeCheckOpValueString(comb.ForVar1(), v1);
@@ -1056,17 +1279,17 @@ index 4907b89b..d2b9937f 100644
  }
  
 diff --git a/absl/log/internal/conditions.h b/absl/log/internal/conditions.h
-index b89f1dfd..b11eeb49 100644
+index 6fb74b14..7f69dfe6 100644
 --- a/absl/log/internal/conditions.h
 +++ b/absl/log/internal/conditions.h
-@@ -214,7 +214,11 @@ class LogEveryNSecState final {
+@@ -236,7 +236,11 @@ class LogEveryNSecState final {
  // Helper routines to abort the application quietly
  
- ABSL_ATTRIBUTE_NORETURN inline void AbortQuietly() { abort(); }
+ [[noreturn]] inline void AbortQuietly() { abort(); }
 +#ifndef PB_ENABLE_SGX
- ABSL_ATTRIBUTE_NORETURN inline void ExitQuietly() { _exit(1); }
+ [[noreturn]] inline void ExitQuietly() { _exit(1); }
 +#else
-+ABSL_ATTRIBUTE_NORETURN inline void ExitQuietly() { abort(); }
++[[noreturn]] inline void ExitQuietly() { abort(); }
 +#endif //PB_ENABLE_SGX
  }  // namespace log_internal
  ABSL_NAMESPACE_END
@@ -1091,18 +1314,18 @@ index 379e9ab9..1963aa5a 100644
  
  #endif  // ABSL_LOG_INTERNAL_CONFIG_H_
 diff --git a/absl/log/internal/globals.cc b/absl/log/internal/globals.cc
-index 863b047f..df8bfec4 100644
+index 359858f1..408b2b5e 100644
 --- a/absl/log/internal/globals.cc
 +++ b/absl/log/internal/globals.cc
-@@ -24,6 +24,7 @@
- #include "absl/strings/string_view.h"
+@@ -29,6 +29,7 @@
+ #include "absl/strings/strip.h"
  #include "absl/time/time.h"
  
 +#ifndef PB_ENABLE_SGX
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace log_internal {
-@@ -123,3 +124,4 @@ bool SetSuppressSigabortTrace(bool on_off) {
+@@ -143,3 +144,4 @@ bool SetSuppressSigabortTrace(bool on_off) {
  }  // namespace log_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -1127,7 +1350,7 @@ index 27bc0d09..1c680248 100644
  
  #endif  // ABSL_LOG_INTERNAL_GLOBALS_H_
 diff --git a/absl/log/internal/log_format.cc b/absl/log/internal/log_format.cc
-index b8cd5ac4..f8d07136 100644
+index 23cef88a..ce7f3dee 100644
 --- a/absl/log/internal/log_format.cc
 +++ b/absl/log/internal/log_format.cc
 @@ -20,7 +20,9 @@
@@ -1148,7 +1371,7 @@ index b8cd5ac4..f8d07136 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace log_internal {
-@@ -201,3 +204,4 @@ size_t FormatLogPrefix(absl::LogSeverity severity, absl::Time timestamp,
+@@ -203,3 +206,4 @@ size_t FormatLogPrefix(absl::LogSeverity severity, absl::Time timestamp,
  }  // namespace log_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -1173,20 +1396,20 @@ index 95a45edf..f21f57fc 100644
  
  #endif  // ABSL_LOG_INTERNAL_LOG_FORMAT_H_
 diff --git a/absl/log/internal/log_message.cc b/absl/log/internal/log_message.cc
-index bdb10f2a..b2e8ea16 100644
+index 3aed3a2f..135f8355 100644
 --- a/absl/log/internal/log_message.cc
 +++ b/absl/log/internal/log_message.cc
-@@ -28,7 +28,9 @@
- #include <array>
+@@ -29,7 +29,9 @@
  #include <atomic>
+ #include <ios>
  #include <memory>
 +#ifndef PB_ENABLE_SGX
  #include <ostream>
 +#endif //PB_ENABLE_SGX
  #include <string>
+ #include <string_view>
  #include <tuple>
- 
-@@ -55,10 +57,12 @@
+@@ -61,10 +63,12 @@
  #include "absl/time/time.h"
  #include "absl/types/span.h"
  
@@ -1199,7 +1422,23 @@ index bdb10f2a..b2e8ea16 100644
  
  namespace absl {
  ABSL_NAMESPACE_BEGIN
-@@ -113,20 +117,26 @@ absl::string_view Basename(absl::string_view filepath) {
+@@ -114,6 +118,7 @@ bool PrintValue(absl::Span<char>& dst, absl::Span<const char> buf) {
+ }
+ 
+ // See `logging.proto.Severity`
++#ifndef PB_ENABLE_SGX
+ int32_t ProtoSeverity(absl::LogSeverity severity, int verbose_level) {
+   switch (severity) {
+     case absl::LogSeverity::kInfo:
+@@ -129,6 +134,7 @@ int32_t ProtoSeverity(absl::LogSeverity severity, int verbose_level) {
+       return 800;
+   }
+ }
++#endif //PB_ENABLE_SGX
+ 
+ absl::string_view Basename(absl::string_view filepath) {
+ #ifdef _WIN32
+@@ -143,20 +149,29 @@ absl::string_view Basename(absl::string_view filepath) {
  void WriteToString(const char* data, void* str) {
    reinterpret_cast<std::string*>(str)->append(data);
  }
@@ -1213,8 +1452,11 @@ index bdb10f2a..b2e8ea16 100644
  
  struct LogMessage::LogMessageData final {
 +#ifndef PB_ENABLE_SGX
-   LogMessageData(const char* file, int line, absl::LogSeverity severity,
-                  absl::Time timestamp);
+   LogMessageData(const char* absl_nonnull file, int line,
+                  absl::LogSeverity severity, absl::Time timestamp);
++#else
++  LogMessageData(const char* absl_nonnull file, int line,
++                 absl::LogSeverity severity);
 +#endif //PB_ENABLE_SGX
    LogMessageData(const LogMessageData&) = delete;
    LogMessageData& operator=(const LogMessageData&) = delete;
@@ -1226,12 +1468,12 @@ index bdb10f2a..b2e8ea16 100644
  
    // true => this was first fatal msg
    bool first_fatal;
-@@ -136,12 +146,16 @@ struct LogMessage::LogMessageData final {
+@@ -166,12 +181,16 @@ struct LogMessage::LogMessageData final {
    bool is_perror;
  
    // Extra `LogSink`s to log to, in addition to `global_sinks`.
 +#ifndef PB_ENABLE_SGX
-   absl::InlinedVector<absl::LogSink*, 16> extra_sinks;
+   absl::InlinedVector<absl::LogSink* absl_nonnull, 16> extra_sinks;
 +#endif //PB_ENABLE_SGX
    // If true, log to `extra_sinks` but not to `global_sinks` or hardcoded
    // non-sink targets (e.g. stderr, log files).
@@ -1243,34 +1485,64 @@ index bdb10f2a..b2e8ea16 100644
  
    // A `logging.proto.Event` proto message is built into `encoded_buf`.
    std::array<char, kLogMessageBufferSize> encoded_buf;
-@@ -158,6 +172,7 @@ struct LogMessage::LogMessageData final {
+@@ -189,7 +208,9 @@ struct LogMessage::LogMessageData final {
+     if (encoded_remaining_actual_do_not_use_directly.data() == nullptr) {
+       encoded_remaining_actual_do_not_use_directly =
+           absl::MakeSpan(encoded_buf);
++#ifndef PB_ENABLE_SGX
+       InitializeEncodingAndFormat();
++#endif //PB_ENABLE_SGX
+     }
+     return encoded_remaining_actual_do_not_use_directly;
+   }
+@@ -198,10 +219,13 @@ struct LogMessage::LogMessageData final {
+   // A formatted string message is built in `string_buf`.
+   std::array<char, kLogMessageBufferSize> string_buf;
+ 
++#ifndef PB_ENABLE_SGX
+   void InitializeEncodingAndFormat();
    void FinalizeEncodingAndFormat();
++#endif //PB_ENABLE_SGX
  };
  
 +#ifndef PB_ENABLE_SGX
- LogMessage::LogMessageData::LogMessageData(const char* file, int line,
-                                            absl::LogSeverity severity,
+ LogMessage::LogMessageData::LogMessageData(const char* absl_nonnull file,
+                                            int line, absl::LogSeverity severity,
                                             absl::Time timestamp)
-@@ -233,6 +248,10 @@ LogMessage::LogMessage(const char* file, int line, absl::LogSeverity severity)
+@@ -286,6 +310,24 @@ LogMessage::LogMessage(const char* absl_nonnull file, int line,
    // are fixable but probably not worth fixing.
    LogBacktraceIfNeeded();
  }
 +#else
-+LogMessage::LogMessage(const char* file, int line, absl::LogSeverity severity) {
++LogMessage::LogMessageData::LogMessageData(const char* absl_nonnull file,
++                                           int line,
++                                           absl::LogSeverity severity)
++    : extra_sinks_only(false) {
++  (void)file;
++  (void)line;
++  (void)severity;
++  encoded_remaining_actual_do_not_use_directly = {nullptr, 0};
++}
++
++LogMessage::LogMessage(const char* absl_nonnull file, int line, absl::LogSeverity severity)
++    : data_(absl::make_unique<LogMessageData>(file, line, severity)) {
++  data_->first_fatal = false;
++  data_->is_perror = false;
++  data_->fail_quietly = false;
 +}
 +#endif //PB_ENABLE_SGX
  
- LogMessage::~LogMessage() {
- #ifdef ABSL_MIN_LOG_LEVEL
-@@ -245,6 +264,7 @@ LogMessage::~LogMessage() {
-   Flush();
- }
+ LogMessage::LogMessage(const char* absl_nonnull file, int line, InfoTag)
+     : LogMessage(file, line, absl::LogSeverity::kInfo) {}
+@@ -297,6 +339,7 @@ LogMessage::LogMessage(const char* absl_nonnull file, int line, ErrorTag)
+ // This cannot go in the header since LogMessageData is defined in this file.
+ LogMessage::~LogMessage() = default;
  
 +#ifndef PB_ENABLE_SGX
  LogMessage& LogMessage::AtLocation(absl::string_view file, int line) {
    data_->entry.full_filename_ = file;
    data_->entry.base_filename_ = Basename(file);
-@@ -307,6 +327,7 @@ LogMessage& LogMessage::ToSinkOnly(absl::LogSink* sink) {
+@@ -359,6 +402,7 @@ LogMessage& LogMessage::ToSinkOnly(absl::LogSink* absl_nonnull sink) {
    data_->extra_sinks_only = true;
    return *this;
  }
@@ -1278,7 +1550,7 @@ index bdb10f2a..b2e8ea16 100644
  
  #ifdef __ELF__
  extern "C" void __gcov_dump() ABSL_ATTRIBUTE_WEAK;
-@@ -314,6 +335,7 @@ extern "C" void __gcov_flush() ABSL_ATTRIBUTE_WEAK;
+@@ -366,6 +410,7 @@ extern "C" void __gcov_flush() ABSL_ATTRIBUTE_WEAK;
  #endif
  
  void LogMessage::FailWithoutStackTrace() {
@@ -1286,15 +1558,16 @@ index bdb10f2a..b2e8ea16 100644
    // Now suppress repeated trace logging:
    log_internal::SetSuppressSigabortTrace(true);
  #if defined _DEBUG && defined COMPILER_MSVC
-@@ -331,6 +353,7 @@ void LogMessage::FailWithoutStackTrace() {
+@@ -381,7 +426,7 @@ void LogMessage::FailWithoutStackTrace() {
+     __gcov_flush();
+   }
  #endif
- 
-   abort();
+-
 +#endif //PB_ENABLE_SGX
+   abort();
  }
  
- void LogMessage::FailQuietly() {
-@@ -342,7 +365,11 @@ void LogMessage::FailQuietly() {
+@@ -394,7 +439,11 @@ void LogMessage::FailQuietly() {
    // of the program quickly, and it doesn't make much sense for FailQuietly to
    // offer different guarantees about exit behavior than Fail does. (And as a
    // consequence for QCHECK and CHECK to offer different exit behaviors)
@@ -1306,32 +1579,33 @@ index bdb10f2a..b2e8ea16 100644
  }
  
  LogMessage& LogMessage::operator<<(const std::string& v) {
-@@ -354,6 +381,7 @@ LogMessage& LogMessage::operator<<(absl::string_view v) {
-   CopyToEncodedBuffer(v, StringType::kNotLiteral);
+@@ -434,6 +483,7 @@ LogMessage& LogMessage::operator<<(wchar_t v) {
    return *this;
  }
+ 
 +#ifndef PB_ENABLE_SGX
  LogMessage& LogMessage::operator<<(std::ostream& (*m)(std::ostream& os)) {
    OstreamView view(*data_);
    data_->manipulated << m;
-@@ -364,6 +392,7 @@ LogMessage& LogMessage::operator<<(std::ios_base& (*m)(std::ios_base& os)) {
+@@ -444,6 +494,8 @@ LogMessage& LogMessage::operator<<(std::ios_base& (*m)(std::ios_base& os)) {
    data_->manipulated << m;
    return *this;
  }
 +#endif //PB_ENABLE_SGX
++
+ // NOLINTBEGIN(runtime/int)
+ // NOLINTBEGIN(google-runtime-int)
  template LogMessage& LogMessage::operator<<(const char& v);
- template LogMessage& LogMessage::operator<<(const signed char& v);
- template LogMessage& LogMessage::operator<<(const unsigned char& v);
-@@ -383,6 +412,7 @@ template LogMessage& LogMessage::operator<<(const double& v);
- template LogMessage& LogMessage::operator<<(const bool& v);
+@@ -466,6 +518,7 @@ template LogMessage& LogMessage::operator<<(const bool& v);
+ // NOLINTEND(runtime/int)
  
  void LogMessage::Flush() {
 +#ifndef PB_ENABLE_SGX
-   if (data_->entry.log_severity() < absl::MinLogLevel())
-     return;
+   if (data_->entry.log_severity() < absl::MinLogLevel()) return;
  
-@@ -410,10 +440,12 @@ void LogMessage::Flush() {
-                         static_cast<size_t>(data_->encoded_remaining.data() -
+   if (data_->is_perror) {
+@@ -492,10 +545,12 @@ void LogMessage::Flush() {
+                         static_cast<size_t>(data_->encoded_remaining().data() -
                                              data_->encoded_buf.data()));
    SendToLog();
 +#endif //PB_ENABLE_SGX
@@ -1341,22 +1615,22 @@ index bdb10f2a..b2e8ea16 100644
  
 +#ifndef PB_ENABLE_SGX
  LogMessage::OstreamView::OstreamView(LogMessageData& message_data)
-     : data_(message_data), encoded_remaining_copy_(data_.encoded_remaining) {
+     : data_(message_data), encoded_remaining_copy_(data_.encoded_remaining()) {
    // This constructor sets the `streambuf` up so that streaming into an attached
-@@ -514,6 +546,7 @@ void LogMessage::LogBacktraceIfNeeded() {
+@@ -596,6 +651,7 @@ void LogMessage::LogBacktraceIfNeeded() {
        &view.stream());
    view.stream() << ") ";
  }
 +#endif //PB_ENABLE_SGX
  
- // Encodes into `data_->encoded_remaining` a partial `logging.proto.Event`
+ // Encodes into `data_->encoded_remaining()` a partial `logging.proto.Event`
  // containing the specified string data using a `Value` field appropriate to
 diff --git a/absl/log/internal/log_message.h b/absl/log/internal/log_message.h
-index 3744276b..14b8bf21 100644
+index 1aaf05e3..c71ed589 100644
 --- a/absl/log/internal/log_message.h
 +++ b/absl/log/internal/log_message.h
-@@ -29,7 +29,9 @@
- 
+@@ -32,7 +32,9 @@
+ #include <cstddef>
  #include <ios>
  #include <memory>
 +#ifndef PB_ENABLE_SGX
@@ -1364,62 +1638,67 @@ index 3744276b..14b8bf21 100644
 +#endif //PB_ENABLE_SGX
  #include <streambuf>
  #include <string>
- 
-@@ -73,6 +75,7 @@ class LogMessage {
+ #include <string_view>
+@@ -94,6 +96,7 @@ class LogMessage {
    // not verbose.
    LogMessage& WithVerbosity(int verbose_level);
    // Uses the specified timestamp instead of one collected in the constructor.
-+#ifndef PB_ENABLE_SGX
++  #ifndef PB_ENABLE_SGX
    LogMessage& WithTimestamp(absl::Time timestamp);
    // Uses the specified thread ID instead of one collected in the constructor.
    LogMessage& WithThreadID(absl::LogEntry::tid_t tid);
-@@ -87,6 +90,7 @@ class LogMessage {
-   LogMessage& ToSinkAlso(absl::LogSink* sink);
-   // Sends this message to `*sink` and no others.  `sink` must not be null.
-   LogMessage& ToSinkOnly(absl::LogSink* sink);
-+#endif //PB_ENABLE_SGX
+@@ -108,6 +111,7 @@ class LogMessage {
+   LogMessage& ToSinkAlso(absl::LogSink* absl_nonnull sink);
+   // Sends this message to `*sink` and no others.
+   LogMessage& ToSinkOnly(absl::LogSink* absl_nonnull sink);
++  #endif //PB_ENABLE_SGX
  
    // Don't call this method from outside this library.
    LogMessage& InternalStream() { return *this; }
-@@ -134,8 +138,10 @@ class LogMessage {
-   LogMessage& operator<<(absl::string_view v);
+@@ -169,8 +173,10 @@ class LogMessage {
+   LogMessage& operator<<(wchar_t v);
  
    // Handle stream manipulators e.g. std::endl.
-+#ifndef PB_ENABLE_SGX
-   LogMessage& operator<<(std::ostream& (*m)(std::ostream& os));
-   LogMessage& operator<<(std::ios_base& (*m)(std::ios_base& os));
-+#endif //PB_ENABLE_SGX
++  #ifndef PB_ENABLE_SGX
+   LogMessage& operator<<(std::ostream& (*absl_nonnull m)(std::ostream& os));
+   LogMessage& operator<<(std::ios_base& (*absl_nonnull m)(std::ios_base& os));
++  #endif //PB_ENABLE_SGX
  
    // Literal strings.  This allows us to record C string literals as literals in
    // the logging.proto.Value.
-@@ -200,6 +206,7 @@ class LogMessage {
+@@ -233,6 +239,7 @@ class LogMessage {
    // `operator<<(std::ostream &, ...)` without any extra allocation or copying.
    // Space is reserved before the data to store the length field, which is
    // filled in by `~OstreamView`.
-+#ifndef PB_ENABLE_SGX
++  #ifndef PB_ENABLE_SGX
    class OstreamView final : public std::streambuf {
     public:
      explicit OstreamView(LogMessageData& message_data);
-@@ -214,6 +221,7 @@ class LogMessage {
+@@ -247,6 +254,7 @@ class LogMessage {
      absl::Span<char> message_start_;
      absl::Span<char> string_start_;
    };
-+#endif //PB_ENABLE_SGX
++  #endif //PB_ENABLE_SGX
  
    enum class StringType {
      kLiteral,
-@@ -285,8 +293,10 @@ template <typename T,
-           typename std::enable_if<!strings_internal::HasAbslStringify<T>::value,
-                                   int>::type>
+@@ -331,6 +339,7 @@ class StringifySink final {
+ // Note: the following is declared `ABSL_ATTRIBUTE_NOINLINE`
+ template <typename T>
  LogMessage& LogMessage::operator<<(const T& v) {
 +#ifndef PB_ENABLE_SGX
-   OstreamView view(*data_);
-   view.stream() << log_internal::NullGuard<T>().Guard(v);
+   if constexpr (absl::HasAbslStringify<T>::value) {
+     StringifySink sink(*this);
+     // Replace with public API.
+@@ -339,6 +348,7 @@ LogMessage& LogMessage::operator<<(const T& v) {
+     OstreamView view(*data_);
+     view.stream() << log_internal::NullGuard<T>().Guard(v);
+   }
 +#endif //PB_ENABLE_SGX
    return *this;
  }
  
-@@ -349,7 +359,9 @@ class LogMessageQuietlyFatal final : public LogMessage {
+@@ -445,7 +455,9 @@ class LogMessageQuietlyFatal final : public LogMessage {
  ABSL_NAMESPACE_END
  }  // namespace absl
  
@@ -1430,10 +1709,10 @@ index 3744276b..14b8bf21 100644
  
  #endif  // ABSL_LOG_INTERNAL_LOG_MESSAGE_H_
 diff --git a/absl/log/internal/log_sink_set.cc b/absl/log/internal/log_sink_set.cc
-index f9d030aa..19ef0c9c 100644
+index 3d5c6995..17508a58 100644
 --- a/absl/log/internal/log_sink_set.cc
 +++ b/absl/log/internal/log_sink_set.cc
-@@ -46,6 +46,7 @@
+@@ -47,6 +47,7 @@
  #include "absl/synchronization/mutex.h"
  #include "absl/types/span.h"
  
@@ -1466,52 +1745,39 @@ index 88ab073b..69ce300a 100644
  
  #endif  // ABSL_LOG_INTERNAL_LOG_SINK_SET_H_
 diff --git a/absl/log/internal/nullstream.h b/absl/log/internal/nullstream.h
-index 8ed63d52..7f5db5e7 100644
+index c87f9aaa..c5f0d934 100644
 --- a/absl/log/internal/nullstream.h
 +++ b/absl/log/internal/nullstream.h
-@@ -102,7 +102,11 @@ class NullStreamMaybeFatal final : public NullStream {
+@@ -103,9 +103,15 @@ class NullStreamMaybeFatal final : public NullStream {
    explicit NullStreamMaybeFatal(absl::LogSeverity severity)
        : fatal_(severity == absl::LogSeverity::kFatal) {}
    ~NullStreamMaybeFatal() {
 +#ifndef PB_ENABLE_SGX
-     if (fatal_) _exit(1);
+     if (fatal_) {
+       _exit(1);
+     }
 +#else
-+    if (fatal_) abort();
++    if (fatal_) {
++      abort();
++    }
 +#endif //PB_ENABLE_SGX
    }
  
   private:
-@@ -121,7 +125,11 @@ class NullStreamFatal final : public NullStream {
- #pragma warning(push)
- #pragma warning(disable : 4722)
- #endif
+@@ -118,7 +124,11 @@ class NullStreamMaybeFatal final : public NullStream {
+ class NullStreamFatal final : public NullStream {
+  public:
+   NullStreamFatal() = default;
 +#ifndef PB_ENABLE_SGX
-   ABSL_ATTRIBUTE_NORETURN ~NullStreamFatal() { _exit(1); }
+   [[noreturn]] ~NullStreamFatal() { _exit(1); }
 +#else
-+  ABSL_ATTRIBUTE_NORETURN ~NullStreamFatal() { abort(); }
++  [[noreturn]] ~NullStreamFatal() { abort(); }
 +#endif //PB_ENABLE_SGX
- #if defined(_MSC_VER) && !defined(__clang__)
- #pragma warning(pop)
- #endif
-diff --git a/absl/log/log_entry.cc b/absl/log/log_entry.cc
-index 19c3b3f1..e14f83e3 100644
---- a/absl/log/log_entry.cc
-+++ b/absl/log/log_entry.cc
-@@ -17,6 +17,7 @@
+ };
  
- #include "absl/base/config.h"
- 
-+#ifndef PB_ENABLE_SGX
- namespace absl {
- ABSL_NAMESPACE_BEGIN
- 
-@@ -27,3 +28,4 @@ constexpr int LogEntry::kNoVerboseLevel;
- 
- ABSL_NAMESPACE_END
- }  // namespace absl
-+#endif //PB_ENABLE_SGX
+ }  // namespace log_internal
 diff --git a/absl/log/log_entry.h b/absl/log/log_entry.h
-index 9e4ae8eb..6ca0b304 100644
+index 7a55dfe2..3ba64eb6 100644
 --- a/absl/log/log_entry.h
 +++ b/absl/log/log_entry.h
 @@ -35,6 +35,7 @@
@@ -1522,7 +1788,7 @@ index 9e4ae8eb..6ca0b304 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -216,5 +217,6 @@ class LogEntry final {
+@@ -217,5 +218,6 @@ class LogEntry final {
  
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -1545,7 +1811,7 @@ index 01d7ca82..5347eb6f 100644
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/log/log_sink.h b/absl/log/log_sink.h
-index 9bfa6f86..75f2ab68 100644
+index 2910070d..0768dc9c 100644
 --- a/absl/log/log_sink.h
 +++ b/absl/log/log_sink.h
 @@ -24,6 +24,7 @@
@@ -1556,7 +1822,7 @@ index 9bfa6f86..75f2ab68 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -60,5 +61,6 @@ class LogSink {
+@@ -67,5 +68,6 @@ class LogSink {
  
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -1564,10 +1830,10 @@ index 9bfa6f86..75f2ab68 100644
  
  #endif  // ABSL_LOG_LOG_SINK_H_
 diff --git a/absl/log/log_sink_registry.h b/absl/log/log_sink_registry.h
-index bf76ccee..80f3fc50 100644
+index a3fa9a3d..0e5f4c0a 100644
 --- a/absl/log/log_sink_registry.h
 +++ b/absl/log/log_sink_registry.h
-@@ -25,6 +25,7 @@
+@@ -26,6 +26,7 @@
  #include "absl/log/internal/log_sink_set.h"
  #include "absl/log/log_sink.h"
  
@@ -1575,7 +1841,7 @@ index bf76ccee..80f3fc50 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -57,5 +58,6 @@ inline void FlushLogSinks() { log_internal::FlushLogSinks(); }
+@@ -60,5 +61,6 @@ inline void FlushLogSinks() { log_internal::FlushLogSinks(); }
  
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -1583,7 +1849,7 @@ index bf76ccee..80f3fc50 100644
  
  #endif  // ABSL_LOG_LOG_SINK_REGISTRY_H_
 diff --git a/absl/numeric/int128.cc b/absl/numeric/int128.cc
-index e5526c6f..b0ff4e20 100644
+index 281bf127..700fc505 100644
 --- a/absl/numeric/int128.cc
 +++ b/absl/numeric/int128.cc
 @@ -18,7 +18,9 @@
@@ -1596,7 +1862,7 @@ index e5526c6f..b0ff4e20 100644
  #include <sstream>
  #include <string>
  #include <type_traits>
-@@ -154,6 +156,7 @@ uint128 operator%(uint128 lhs, uint128 rhs) {
+@@ -151,6 +153,7 @@ uint128 operator%(uint128 lhs, uint128 rhs) {
  }
  #endif  // !defined(ABSL_HAVE_INTRINSIC_INT128)
  
@@ -1604,7 +1870,7 @@ index e5526c6f..b0ff4e20 100644
  namespace {
  
  std::string Uint128ToFormattedString(uint128 v, std::ios_base::fmtflags flags) {
-@@ -224,6 +227,7 @@ std::ostream& operator<<(std::ostream& os, uint128 v) {
+@@ -225,6 +228,7 @@ std::ostream& operator<<(std::ostream& os, uint128 v) {
  
    return os << rep;
  }
@@ -1612,15 +1878,25 @@ index e5526c6f..b0ff4e20 100644
  
  namespace {
  
-@@ -285,6 +289,7 @@ int128 operator%(int128 lhs, int128 rhs) {
+@@ -286,6 +290,7 @@ int128 operator%(int128 lhs, int128 rhs) {
  }
  #endif  // ABSL_HAVE_INTRINSIC_INT128
+ 
++#ifndef PB_ENABLE_SGX
+ std::string int128::ToString() const {
+   std::string rep;
+   if (Int128High64(*this) < 0) rep = "-";
+@@ -293,7 +298,9 @@ std::string int128::ToString() const {
+                                       std::ios_base::dec));
+   return rep;
+ }
++#endif //PB_ENABLE_SGX
  
 +#ifndef PB_ENABLE_SGX
  std::ostream& operator<<(std::ostream& os, int128 v) {
    std::ios_base::fmtflags flags = os.flags();
    std::string rep;
-@@ -330,6 +335,7 @@ std::ostream& operator<<(std::ostream& os, int128 v) {
+@@ -339,6 +346,7 @@ std::ostream& operator<<(std::ostream& os, int128 v) {
  
    return os << rep;
  }
@@ -1648,25 +1924,173 @@ index 371f6c47..a9180f01 100644
  
  template <typename T>
  void SampleRecorder<T>::Unregister(T* sample) {
+diff --git a/absl/random/internal/randen_hwaes.cc b/absl/random/internal/randen_hwaes.cc
+index f535f4c5..0393f3bf 100644
+--- a/absl/random/internal/randen_hwaes.cc
++++ b/absl/random/internal/randen_hwaes.cc
+@@ -30,7 +30,7 @@
+ // ABSL_RANDEN_HWAES_IMPL indicates whether this file will contain
+ // a hardware accelerated implementation of randen, or whether it
+ // will contain stubs that exit the process.
+-#if ABSL_HAVE_ACCELERATED_AES
++#if ABSL_HAVE_ACCELERATED_AES && !defined(PB_ENABLE_SGX)
+ // The following platforms have implemented RandenHwAes.
+ #if defined(ABSL_ARCH_X86_64) || defined(ABSL_ARCH_X86_32) || \
+     defined(ABSL_ARCH_PPC) || defined(ABSL_ARCH_ARM) ||       \
+@@ -57,8 +57,12 @@ bool HasRandenHwAesImplementation() { return false; }
+ const void* RandenHwAes::GetKeys() {
+   // Attempted to dispatch to an unsupported dispatch target.
+   const int d = ABSL_RANDOM_INTERNAL_AES_DISPATCH;
++#ifndef PB_ENABLE_SGX
+   fprintf(stderr, "AES Hardware detection failed (%d).\n", d);
+   exit(1);
++#else
++  abort();
++#endif //PB_ENABLE_SGX
+   return nullptr;
+ }
+ 
+@@ -66,16 +70,25 @@ const void* RandenHwAes::GetKeys() {
+ void RandenHwAes::Absorb(const void*, void*) {
+   // Attempted to dispatch to an unsupported dispatch target.
+   const int d = ABSL_RANDOM_INTERNAL_AES_DISPATCH;
++#ifndef PB_ENABLE_SGX
+   fprintf(stderr, "AES Hardware detection failed (%d).\n", d);
+   exit(1);
++#else
++  abort();
++#endif //PB_ENABLE_SGX
++
+ }
+ 
+ // NOLINTNEXTLINE
+ void RandenHwAes::Generate(const void*, void*) {
+   // Attempted to dispatch to an unsupported dispatch target.
+   const int d = ABSL_RANDOM_INTERNAL_AES_DISPATCH;
++#ifndef PB_ENABLE_SGX
+   fprintf(stderr, "AES Hardware detection failed (%d).\n", d);
+   exit(1);
++#else
++  abort();
++#endif //PB_ENABLE_SGX
+ }
+ 
+ }  // namespace random_internal
+@@ -211,6 +224,7 @@ inline ABSL_TARGET_CRYPTO void SwapEndian(void*) {}
+ 
+ #elif defined(ABSL_ARCH_X86_64) || defined(ABSL_ARCH_X86_32)
+ // On x86 we rely on the aesni instructions
++#ifndef PB_ENABLE_SGX
+ #include <immintrin.h>
+ 
+ namespace {
+@@ -254,6 +268,7 @@ inline ABSL_TARGET_CRYPTO Vector128 AesRound(const Vector128& state,
+ inline ABSL_TARGET_CRYPTO void SwapEndian(void*) {}
+ 
+ }  // namespace
++#endif ////PB_ENABLE_SGX
+ 
+ #endif
+ 
+diff --git a/absl/random/internal/seed_material.cc b/absl/random/internal/seed_material.cc
+index 8099ec73..a02a143e 100644
+--- a/absl/random/internal/seed_material.cc
++++ b/absl/random/internal/seed_material.cc
+@@ -14,7 +14,9 @@
+ 
+ #include "absl/random/internal/seed_material.h"
+ 
++#ifndef PB_ENABLE_SGX
+ #include <fcntl.h>
++#endif //PB_ENABLE_SGX
+ 
+ #ifndef _WIN32
+ #include <unistd.h>
+@@ -79,6 +81,11 @@
+ // #pragma comment(lib, "bcrypt.lib")
+ #endif
+ 
++#ifdef PB_ENABLE_SGX
++#include "sgx_trts.h"
++#include "sgx_error.h"
++#endif //PB_ENABLE_SGX
++
+ namespace absl {
+ ABSL_NAMESPACE_BEGIN
+ namespace random_internal {
+@@ -167,6 +174,8 @@ bool ReadSeedMaterialFromGetEntropy(absl::Span<uint32_t> values) {
+ 
+ // On *nix, read entropy from /dev/urandom.
+ bool ReadSeedMaterialFromDevURandom(absl::Span<uint32_t> values) {
++
++#ifndef PB_ENABLE_SGX
+   const char kEntropyFile[] = "/dev/urandom";
+ 
+   auto buffer = reinterpret_cast<uint8_t*>(values.data());
+@@ -194,6 +203,13 @@ bool ReadSeedMaterialFromDevURandom(absl::Span<uint32_t> values) {
+ 
+   close(dev_urandom);
+   return buffer_size == 0;
++
++#else
++  auto buffer = reinterpret_cast<unsigned char *>(values.data());
++  size_t buffer_size = sizeof(uint32_t) * values.size();
++//sgx_status_t SGXAPI sgx_read_rand(unsigned char *rand, size_t length_in_bytes);
++  return SGX_SUCCESS == sgx_read_rand(buffer, buffer_size);
++#endif //PB_ENABLE_SGX
+ }
+ 
+ bool ReadSeedMaterialFromOSEntropyImpl(absl::Span<uint32_t> values) {
+diff --git a/absl/strings/ascii.cc b/absl/strings/ascii.cc
+index 4cd9ff94..2b218882 100644
+--- a/absl/strings/ascii.cc
++++ b/absl/strings/ascii.cc
+@@ -228,15 +228,25 @@ void AsciiStrToUpper(char* absl_nonnull dst, const char* absl_nullable src,
+ }
+ 
+ static constexpr size_t ValidateAsciiCasefold() {
++#if defined(PB_ENABLE_SGX) && defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 10)
++  constexpr size_t num_chars = 1 + CHAR_MAX;
++#else
+   constexpr size_t num_chars = 1 + CHAR_MAX - CHAR_MIN;
++#endif
++
+   size_t incorrect_index = 0;
+   char lowered[num_chars] = {};
+   char uppered[num_chars] = {};
+   for (unsigned int i = 0; i < num_chars; ++i) {
+     uppered[i] = lowered[i] = static_cast<char>(i);
+   }
++#if defined(PB_ENABLE_SGX) && defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 10)
++  AsciiStrCaseFoldImpl<false, /*Naive=*/true>(&lowered[0], &lowered[0], num_chars);
++  AsciiStrCaseFoldImpl<true, /*Naive=*/true>(&uppered[0], &uppered[0], num_chars);
++#else
+   AsciiStrCaseFold<false>(&lowered[0], &lowered[0], num_chars);
+   AsciiStrCaseFold<true>(&uppered[0], &uppered[0], num_chars);
++#endif //PB_ENABLE_SGX
+   for (size_t i = 0; i < num_chars; ++i) {
+     const char ch = static_cast<char>(i),
+                ch_upper = ('a' <= ch && ch <= 'z' ? 'A' + (ch - 'a') : ch),
 diff --git a/absl/strings/cord.cc b/absl/strings/cord.cc
-index 1d33dd83..cdc57c2e 100644
+index e53f914d..a5791bac 100644
 --- a/absl/strings/cord.cc
 +++ b/absl/strings/cord.cc
-@@ -1253,6 +1253,7 @@ absl::string_view Cord::FlattenSlowPath() {
+@@ -1453,6 +1453,7 @@ absl::string_view Cord::FlattenSlowPath() {
    }
  }
  
 +#ifndef PB_ENABLE_SGX
- static void DumpNode(CordRep* rep, bool include_data, std::ostream* os,
-                      int indent) {
-   const int kIndentStep = 1;
-@@ -1303,12 +1304,17 @@ static void DumpNode(CordRep* rep, bool include_data, std::ostream* os,
+ static void DumpNode(CordRep* absl_nonnull nonnull_rep, bool include_data,
+                      std::ostream* absl_nonnull os, int indent) {
+   CordRep* rep = nonnull_rep;
+@@ -1499,13 +1500,18 @@ static void DumpNode(CordRep* absl_nonnull nonnull_rep, bool include_data,
+     }
    }
-   ABSL_INTERNAL_CHECK(indents.empty(), "");
  }
 +#endif //PB_ENABLE_SGX
  
- static std::string ReportError(CordRep* root, CordRep* node) {
+ static std::string ReportError(CordRep* absl_nonnull root,
+                                CordRep* absl_nonnull node) {
 +#ifndef PB_ENABLE_SGX
    std::ostringstream buf;
    buf << "Error at node " << node << " in:";
@@ -1677,12 +2101,12 @@ index 1d33dd83..cdc57c2e 100644
 +#endif //PB_ENABLE_SGX
  }
  
- static bool VerifyNode(CordRep* root, CordRep* start_node,
+ static bool VerifyNode(CordRep* absl_nonnull root,
 diff --git a/absl/strings/internal/cord_rep_btree.cc b/absl/strings/internal/cord_rep_btree.cc
-index a86fdc0b..8ff8d341 100644
+index 33ea820d..adbfd501 100644
 --- a/absl/strings/internal/cord_rep_btree.cc
 +++ b/absl/strings/internal/cord_rep_btree.cc
-@@ -57,6 +57,7 @@ inline bool exhaustive_validation() {
+@@ -52,6 +52,7 @@ ABSL_CONST_INIT std::atomic<bool> cord_btree_exhaustive_validation(false);
  // Prints the entire tree structure or 'rep'. External callers should
  // not specify 'depth' and leave it to its default (0) value.
  // Rep may be a CordRepBtree tree, or a SUBSTRING / EXTERNAL / FLAT node.
@@ -1690,7 +2114,7 @@ index a86fdc0b..8ff8d341 100644
  void DumpAll(const CordRep* rep,
               bool include_contents,
               std::ostream& stream,
-@@ -111,6 +112,7 @@ void DumpAll(const CordRep* rep,
+@@ -106,6 +107,7 @@ void DumpAll(const CordRep* rep,
      maybe_dump_data(rep);
    }
  }
@@ -1698,15 +2122,15 @@ index a86fdc0b..8ff8d341 100644
  
  // TODO(b/192061034): add 'bytes to copy' logic to avoid large slop on substring
  // small data out of large reps, and general efficiency of 'always copy small
-@@ -362,6 +364,7 @@ struct StackOperations {
- 
- }  // namespace
+@@ -366,6 +368,7 @@ bool IsCordBtreeExhaustiveValidationEnabled() {
+   return cord_btree_exhaustive_validation.load(std::memory_order_relaxed);
+ }
  
 +#ifndef PB_ENABLE_SGX
  void CordRepBtree::Dump(const CordRep* rep, absl::string_view label,
                          bool include_contents, std::ostream& stream) {
    stream << "===================================\n";
-@@ -384,6 +387,7 @@ void CordRepBtree::Dump(const CordRep* rep, absl::string_view label,
+@@ -388,6 +391,7 @@ void CordRepBtree::Dump(const CordRep* rep, absl::string_view label,
  void CordRepBtree::Dump(const CordRep* rep, std::ostream& stream) {
    Dump(rep, absl::string_view(), false, stream);
  }
@@ -1714,7 +2138,7 @@ index a86fdc0b..8ff8d341 100644
  
  template <size_t size>
  static void DestroyTree(CordRepBtree* tree) {
-@@ -465,7 +469,9 @@ bool CordRepBtree::IsValid(const CordRepBtree* tree, bool shallow) {
+@@ -470,7 +474,9 @@ bool CordRepBtree::IsValid(const CordRepBtree* tree, bool shallow) {
  
  CordRepBtree* CordRepBtree::AssertValid(CordRepBtree* tree, bool shallow) {
    if (!IsValid(tree, shallow)) {
@@ -1724,7 +2148,7 @@ index a86fdc0b..8ff8d341 100644
      ABSL_RAW_LOG(FATAL, "CordRepBtree::CheckValid() FAILED");
    }
    return tree;
-@@ -474,7 +480,9 @@ CordRepBtree* CordRepBtree::AssertValid(CordRepBtree* tree, bool shallow) {
+@@ -479,7 +485,9 @@ CordRepBtree* CordRepBtree::AssertValid(CordRepBtree* tree, bool shallow) {
  const CordRepBtree* CordRepBtree::AssertValid(const CordRepBtree* tree,
                                                bool shallow) {
    if (!IsValid(tree, shallow)) {
@@ -1735,10 +2159,10 @@ index a86fdc0b..8ff8d341 100644
    }
    return tree;
 diff --git a/absl/strings/internal/cord_rep_btree.h b/absl/strings/internal/cord_rep_btree.h
-index 4209e512..15322e13 100644
+index ab259afe..d4748075 100644
 --- a/absl/strings/internal/cord_rep_btree.h
 +++ b/absl/strings/internal/cord_rep_btree.h
-@@ -334,11 +334,14 @@ class CordRepBtree : public CordRep {
+@@ -342,11 +342,14 @@ class CordRepBtree : public CordRep {
  
    // Diagnostics: dump the contents of this tree to `stream`.
    // This function is intended for debugging and testing purposes only.
@@ -1753,212 +2177,33 @@ index 4209e512..15322e13 100644
  
    // Adds the edge `edge` to this node if possible. `owned` indicates if the
    // current node is potentially shared or not with other threads. Returns:
-diff --git a/absl/strings/internal/cord_rep_ring.cc b/absl/strings/internal/cord_rep_ring.cc
-index af2fc768..d8ef47c8 100644
---- a/absl/strings/internal/cord_rep_ring.cc
-+++ b/absl/strings/internal/cord_rep_ring.cc
-@@ -16,7 +16,9 @@
- #include <cassert>
- #include <cstddef>
- #include <cstdint>
-+#ifndef PB_ENABLE_SGX
- #include <iostream>
-+#endif //PB_ENABLE_SGX
- #include <limits>
- #include <memory>
- #include <string>
-@@ -78,6 +80,7 @@ void UnrefEntries(const CordRepRing* rep, index_type head, index_type tail) {
- 
- }  // namespace
- 
-+#ifndef PB_ENABLE_SGX
- std::ostream& operator<<(std::ostream& s, const CordRepRing& rep) {
-   // Note: 'pos' values are defined as size_t (for overflow reasons), but that
-   // prints really awkward for small prepended values such as -5. ssize_t is not
-@@ -100,6 +103,7 @@ std::ostream& operator<<(std::ostream& s, const CordRepRing& rep) {
-   } while (head != rep.tail());
-   return s << "}\n";
- }
-+#endif //PB_ENABLE_SGX
- 
- void CordRepRing::AddDataOffset(index_type index, size_t n) {
-   entry_data_offset()[index] += static_cast<offset_type>(n);
-@@ -133,6 +137,7 @@ class CordRepRing::Filler {
- constexpr size_t CordRepRing::kMaxCapacity;
- #endif
- 
-+#ifndef PB_ENABLE_SGX
- bool CordRepRing::IsValid(std::ostream& output) const {
-   if (capacity_ == 0) {
-     output << "capacity == 0";
-@@ -190,6 +195,7 @@ bool CordRepRing::IsValid(std::ostream& output) const {
- 
-   return true;
- }
-+#endif //PB_ENABLE_SGX
- 
- #ifdef EXTRA_CORD_RING_VALIDATION
- CordRepRing* CordRepRing::Validate(CordRepRing* rep, const char* file,
-diff --git a/absl/strings/internal/cord_rep_ring.h b/absl/strings/internal/cord_rep_ring.h
-index 2000e21e..fda2fba4 100644
---- a/absl/strings/internal/cord_rep_ring.h
-+++ b/absl/strings/internal/cord_rep_ring.h
-@@ -102,7 +102,9 @@ class CordRepRing : public CordRep {
-   // Returns true if this instance is valid, false if some or all of the
-   // invariants are broken. Intended for debug purposes only.
-   // `output` receives an explanation of the broken invariants.
-+#ifndef PB_ENABLE_SGX
-   bool IsValid(std::ostream& output) const;
-+#endif //PB_ENABLE_SGX
- 
-   // Returns the size in bytes for a CordRepRing with `capacity' entries.
-   static constexpr size_t AllocSize(size_t capacity);
-@@ -346,7 +348,9 @@ class CordRepRing : public CordRep {
- 
-   // Dump this instance's data tp stream `s` in human readable format, excluding
-   // the actual data content itself. Intended for debug purposes only.
-+#ifndef PB_ENABLE_SGX
-   friend std::ostream& operator<<(std::ostream& s, const CordRepRing& rep);
-+#endif //PB_ENABLE_SGX
- 
-  private:
-   enum class AddMode { kAppend, kPrepend };
-@@ -598,7 +602,9 @@ inline bool CordRepRing::IsFlat(size_t offset, size_t len,
-   return false;
- }
- 
-+#ifndef PB_ENABLE_SGX
- std::ostream& operator<<(std::ostream& s, const CordRepRing& rep);
-+#endif //PB_ENABLE_SGX
- 
- }  // namespace cord_internal
- ABSL_NAMESPACE_END
-diff --git a/absl/strings/internal/cordz_handle.cc b/absl/strings/internal/cordz_handle.cc
-index a73fefed..0d657f3b 100644
---- a/absl/strings/internal/cordz_handle.cc
-+++ b/absl/strings/internal/cordz_handle.cc
-@@ -28,7 +28,11 @@ ABSL_CONST_INIT CordzHandle::Queue CordzHandle::global_queue_(absl::kConstInit);
- 
- CordzHandle::CordzHandle(bool is_snapshot) : is_snapshot_(is_snapshot) {
-   if (is_snapshot) {
-+#ifndef PB_ENABLE_SGX
-     SpinLockHolder lock(&queue_->mutex);
-+#else
-+    absl::MutexLock lock(&queue_->mutex);
-+#endif //PB_ENABLE_SGX
-     CordzHandle* dq_tail = queue_->dq_tail.load(std::memory_order_acquire);
-     if (dq_tail != nullptr) {
-       dq_prev_ = dq_tail;
-@@ -43,7 +47,11 @@ CordzHandle::~CordzHandle() {
-   if (is_snapshot_) {
-     std::vector<CordzHandle*> to_delete;
-     {
-+#ifndef PB_ENABLE_SGX
-       SpinLockHolder lock(&queue_->mutex);
-+#else
-+      absl::MutexLock lock(&queue_->mutex);
-+#endif //PB_ENABLE_SGX
-       CordzHandle* next = dq_next_;
-       if (dq_prev_ == nullptr) {
-         // We were head of the queue, delete every CordzHandle until we reach
-@@ -78,7 +86,11 @@ void CordzHandle::Delete(CordzHandle* handle) {
-     handle->ODRCheck();
-     Queue* const queue = handle->queue_;
-     if (!handle->SafeToDelete()) {
-+#ifndef PB_ENABLE_SGX
-       SpinLockHolder lock(&queue->mutex);
-+#else
-+      absl::MutexLock lock(&queue->mutex);
-+#endif //PB_ENABLE_SGX
-       CordzHandle* dq_tail = queue->dq_tail.load(std::memory_order_acquire);
-       if (dq_tail != nullptr) {
-         handle->dq_prev_ = dq_tail;
-@@ -93,7 +105,11 @@ void CordzHandle::Delete(CordzHandle* handle) {
- 
- std::vector<const CordzHandle*> CordzHandle::DiagnosticsGetDeleteQueue() {
-   std::vector<const CordzHandle*> handles;
-+#ifndef PB_ENABLE_SGX
-   SpinLockHolder lock(&global_queue_.mutex);
-+#else
-+  absl::MutexLock lock(&global_queue_.mutex);
-+#endif //PB_ENABLE_SGX
-   CordzHandle* dq_tail = global_queue_.dq_tail.load(std::memory_order_acquire);
-   for (const CordzHandle* p = dq_tail; p; p = p->dq_prev_) {
-     handles.push_back(p);
-@@ -108,7 +124,11 @@ bool CordzHandle::DiagnosticsHandleIsSafeToInspect(
-   if (handle == nullptr) return true;
-   if (handle->is_snapshot_) return false;
-   bool snapshot_found = false;
-+#ifndef PB_ENABLE_SGX
-   SpinLockHolder lock(&queue_->mutex);
-+#else
-+  absl::MutexLock lock(&queue_->mutex);
-+#endif //PB_ENABLE_SGX
-   for (const CordzHandle* p = queue_->dq_tail; p; p = p->dq_prev_) {
-     if (p == handle) return !snapshot_found;
-     if (p == this) snapshot_found = true;
-@@ -125,7 +145,11 @@ CordzHandle::DiagnosticsGetSafeToInspectDeletedHandles() {
-     return handles;
-   }
- 
-+#ifndef PB_ENABLE_SGX
-   SpinLockHolder lock(&queue_->mutex);
-+#else
-+  absl::MutexLock lock(&queue_->mutex);
-+#endif //PB_ENABLE_SGX
-   for (const CordzHandle* p = dq_next_; p != nullptr; p = p->dq_next_) {
-     if (!p->is_snapshot()) {
-       handles.push_back(p);
-diff --git a/absl/strings/internal/cordz_handle.h b/absl/strings/internal/cordz_handle.h
-index 3c800b43..9a036f7b 100644
---- a/absl/strings/internal/cordz_handle.h
-+++ b/absl/strings/internal/cordz_handle.h
-@@ -82,11 +82,19 @@ class CordzHandle {
-   // Global queue data. CordzHandle stores a pointer to the global queue
-   // instance to harden against ODR violations.
-   struct Queue {
-+#ifndef PB_ENABLE_SGX
-     constexpr explicit Queue(absl::ConstInitType)
-         : mutex(absl::kConstInit,
-                 absl::base_internal::SCHEDULE_COOPERATIVE_AND_KERNEL) {}
-+#else
-+    constexpr explicit Queue(absl::ConstInitType) {}
-+#endif //PB_ENABLE_SGX
- 
-+#ifndef PB_ENABLE_SGX
-     absl::base_internal::SpinLock mutex;
-+#else
-+    absl::Mutex mutex;
-+#endif //PB_ENABLE_SGX
-     std::atomic<CordzHandle*> dq_tail ABSL_GUARDED_BY(mutex){nullptr};
- 
-     // Returns true if this delete queue is empty. This method does not acquire
 diff --git a/absl/strings/internal/cordz_info.cc b/absl/strings/internal/cordz_info.cc
-index 530f33be..b36eb4f5 100644
+index 4baaecdc..6498279f 100644
 --- a/absl/strings/internal/cordz_info.cc
 +++ b/absl/strings/internal/cordz_info.cc
-@@ -306,6 +306,7 @@ CordzInfo::CordzInfo(CordRep* rep,
-                      const CordzInfo* src,
-                      MethodIdentifier method)
+@@ -302,6 +302,7 @@ size_t CordzInfo::FillParentStack(const CordzInfo* src, void** stack) {
+ CordzInfo::CordzInfo(CordRep* rep, const CordzInfo* src,
+                      MethodIdentifier method, int64_t sampling_stride)
      : rep_(rep),
 +#ifndef PB_ENABLE_SGX
        stack_depth_(
            static_cast<size_t>(absl::GetStackTrace(stack_,
                                                    /*max_depth=*/kMaxStackDepth,
-@@ -314,6 +315,12 @@ CordzInfo::CordzInfo(CordRep* rep,
-       method_(method),
+@@ -311,6 +312,13 @@ CordzInfo::CordzInfo(CordRep* rep, const CordzInfo* src,
        parent_method_(GetParentMethod(src)),
-       create_time_(absl::Now()) {
+       create_time_(absl::Now()),
+       sampling_stride_(sampling_stride) {
 +#else
 +      stack_depth_(0),
 +      parent_stack_depth_(FillParentStack(src, parent_stack_)),
 +      method_(method),
-+      parent_method_(GetParentMethod(src)) {
-+#endif //PB_ENABLE_SGX
++      parent_method_(GetParentMethod(src)),
++      sampling_stride_(sampling_stride) {
++#endif //PB_ENABLE_SGX        
    update_tracker_.LossyAdd(method);
    if (src) {
      // Copy parent counters.
-@@ -330,7 +337,11 @@ CordzInfo::~CordzInfo() {
+@@ -327,7 +335,11 @@ CordzInfo::~CordzInfo() {
  }
  
  void CordzInfo::Track() {
@@ -1970,7 +2215,7 @@ index 530f33be..b36eb4f5 100644
  
    CordzInfo* const head = list_->head.load(std::memory_order_acquire);
    if (head != nullptr) {
-@@ -343,7 +354,11 @@ void CordzInfo::Track() {
+@@ -340,7 +352,11 @@ void CordzInfo::Track() {
  void CordzInfo::Untrack() {
    ODRCheck();
    {
@@ -1982,7 +2227,7 @@ index 530f33be..b36eb4f5 100644
  
      CordzInfo* const head = list_->head.load(std::memory_order_acquire);
      CordzInfo* const next = ci_next_.load(std::memory_order_acquire);
-@@ -394,6 +409,7 @@ void CordzInfo::Unlock() ABSL_UNLOCK_FUNCTION(mutex_) {
+@@ -391,6 +407,7 @@ void CordzInfo::Unlock() ABSL_UNLOCK_FUNCTION(mutex_) {
    }
  }
  
@@ -1990,7 +2235,7 @@ index 530f33be..b36eb4f5 100644
  absl::Span<void* const> CordzInfo::GetStack() const {
    return absl::MakeConstSpan(stack_, stack_depth_);
  }
-@@ -401,6 +417,7 @@ absl::Span<void* const> CordzInfo::GetStack() const {
+@@ -398,6 +415,7 @@ absl::Span<void* const> CordzInfo::GetStack() const {
  absl::Span<void* const> CordzInfo::GetParentStack() const {
    return absl::MakeConstSpan(parent_stack_, parent_stack_depth_);
  }
@@ -1999,10 +2244,10 @@ index 530f33be..b36eb4f5 100644
  CordzStatistics CordzInfo::GetCordzStatistics() const {
    CordzStatistics stats;
 diff --git a/absl/strings/internal/cordz_info.h b/absl/strings/internal/cordz_info.h
-index 17eaa91c..6fb18fb6 100644
+index 2dc9d16d..caeab63a 100644
 --- a/absl/strings/internal/cordz_info.h
 +++ b/absl/strings/internal/cordz_info.h
-@@ -188,11 +188,19 @@ class ABSL_LOCKABLE CordzInfo : public CordzHandle {
+@@ -191,11 +191,19 @@ class ABSL_LOCKABLE CordzInfo : public CordzHandle {
    // Global cordz info list. CordzInfo stores a pointer to the global list
    // instance to harden against ODR violations.
    struct List {
@@ -2022,21 +2267,21 @@ index 17eaa91c..6fb18fb6 100644
      std::atomic<CordzInfo*> head ABSL_GUARDED_BY(mutex){nullptr};
    };
  
-@@ -249,7 +257,9 @@ class ABSL_LOCKABLE CordzInfo : public CordzHandle {
+@@ -252,7 +260,9 @@ class ABSL_LOCKABLE CordzInfo : public CordzHandle {
    const MethodIdentifier method_;
    const MethodIdentifier parent_method_;
    CordzUpdateTracker update_tracker_;
 +#ifndef PB_ENABLE_SGX
    const absl::Time create_time_;
 +#endif //PB_ENABLE_SGX
+   const int64_t sampling_stride_;
  };
  
- inline ABSL_ATTRIBUTE_ALWAYS_INLINE void CordzInfo::MaybeTrackCord(
 diff --git a/absl/strings/internal/str_format/bind.cc b/absl/strings/internal/str_format/bind.cc
-index 77a42223..dab3bfca 100644
+index 87e23b56..b5b6cc3c 100644
 --- a/absl/strings/internal/str_format/bind.cc
 +++ b/absl/strings/internal/str_format/bind.cc
-@@ -156,6 +156,7 @@ class SummarizingConverter {
+@@ -172,6 +172,7 @@ class SummarizingConverter {
    bool ConvertOne(const BoundConversion& bound, string_view /*conv*/) const {
      UntypedFormatSpecImpl spec("%d");
  
@@ -2044,7 +2289,7 @@ index 77a42223..dab3bfca 100644
      std::ostringstream ss;
      ss << "{" << Streamable(spec, {*bound.arg()}) << ":"
         << FormatConversionSpecImplFriend::FlagsToString(bound);
-@@ -163,6 +164,7 @@ class SummarizingConverter {
+@@ -179,6 +180,7 @@ class SummarizingConverter {
      if (bound.precision() >= 0) ss << "." << bound.precision();
      ss << bound.conversion_char() << "}";
      Append(ss.str());
@@ -2052,7 +2297,7 @@ index 77a42223..dab3bfca 100644
      return true;
    }
  
-@@ -201,10 +203,12 @@ bool FormatUntyped(FormatRawSinkImpl raw_sink,
+@@ -217,10 +219,12 @@ bool FormatUntyped(FormatRawSinkImpl raw_sink,
    return ConvertAll(format, args, Converter(&sink));
  }
  
@@ -2065,7 +2310,7 @@ index 77a42223..dab3bfca 100644
  
  std::string& AppendPack(std::string* out, const UntypedFormatSpecImpl format,
                          absl::Span<const FormatArgImpl> args) {
-@@ -224,6 +228,7 @@ std::string FormatPack(const UntypedFormatSpecImpl format,
+@@ -240,6 +244,7 @@ std::string FormatPack(UntypedFormatSpecImpl format,
    return out;
  }
  
@@ -2073,7 +2318,7 @@ index 77a42223..dab3bfca 100644
  int FprintF(std::FILE* output, const UntypedFormatSpecImpl format,
              absl::Span<const FormatArgImpl> args) {
    FILERawSink sink(output);
-@@ -241,6 +246,7 @@ int FprintF(std::FILE* output, const UntypedFormatSpecImpl format,
+@@ -257,6 +262,7 @@ int FprintF(std::FILE* output, const UntypedFormatSpecImpl format,
    }
    return static_cast<int>(sink.count());
  }
@@ -2082,12 +2327,12 @@ index 77a42223..dab3bfca 100644
  int SnprintF(char* output, size_t size, const UntypedFormatSpecImpl format,
               absl::Span<const FormatArgImpl> args) {
 diff --git a/absl/strings/internal/str_format/bind.h b/absl/strings/internal/str_format/bind.h
-index b73c5028..34ac918c 100644
+index 120bc355..548d3a37 100644
 --- a/absl/strings/internal/str_format/bind.h
 +++ b/absl/strings/internal/str_format/bind.h
-@@ -189,11 +189,13 @@ class Streamable {
-     }
-   }
+@@ -183,11 +183,13 @@ class Streamable {
+              absl::Span<const FormatArgImpl> args)
+       : format_(format), args_(args.begin(), args.end()) {}
  
 +#ifndef PB_ENABLE_SGX
    std::ostream& Print(std::ostream& os) const;
@@ -2099,8 +2344,8 @@ index b73c5028..34ac918c 100644
  
   private:
    const UntypedFormatSpecImpl& format_;
-@@ -221,8 +223,10 @@ std::string& AppendPack(std::string* out, UntypedFormatSpecImpl format,
- std::string FormatPack(const UntypedFormatSpecImpl format,
+@@ -209,8 +211,10 @@ std::string& AppendPack(std::string* out, UntypedFormatSpecImpl format,
+ std::string FormatPack(UntypedFormatSpecImpl format,
                         absl::Span<const FormatArgImpl> args);
  
 +#ifndef PB_ENABLE_SGX
@@ -2111,19 +2356,19 @@ index b73c5028..34ac918c 100644
               absl::Span<const FormatArgImpl> args);
  
 diff --git a/absl/strings/internal/str_format/extension.h b/absl/strings/internal/str_format/extension.h
-index 603bd49d..cf1a6573 100644
+index 173284c6..105914fa 100644
 --- a/absl/strings/internal/str_format/extension.h
 +++ b/absl/strings/internal/str_format/extension.h
-@@ -21,7 +21,9 @@
+@@ -20,7 +20,9 @@
  #include <cstddef>
  #include <cstdint>
  #include <cstring>
 +#ifndef PB_ENABLE_SGX
  #include <ostream>
 +#endif //PB_ENABLE_SGX
+ #include <string>
  
  #include "absl/base/config.h"
- #include "absl/base/port.h"
 @@ -154,9 +156,11 @@ constexpr bool FlagsContains(Flags haystack, Flags needle) {
  
  std::string FlagsToString(Flags v);
@@ -2151,10 +2396,10 @@ index 603bd49d..cf1a6573 100644
  struct FormatConversionSpecImplFriend;
  
 diff --git a/absl/strings/internal/str_format/output.cc b/absl/strings/internal/str_format/output.cc
-index c4b24706..1b74bf6f 100644
+index 068091c1..d89d8060 100644
 --- a/absl/strings/internal/str_format/output.cc
 +++ b/absl/strings/internal/str_format/output.cc
-@@ -39,6 +39,7 @@ void BufferRawSink::Write(string_view v) {
+@@ -41,6 +41,7 @@ void BufferRawSink::Write(string_view v) {
    total_written_ += v.size();
  }
  
@@ -2162,7 +2407,7 @@ index c4b24706..1b74bf6f 100644
  void FILERawSink::Write(string_view v) {
    while (!v.empty() && !error_) {
      // Reset errno to zero in case the libc implementation doesn't set errno
-@@ -66,6 +67,7 @@ void FILERawSink::Write(string_view v) {
+@@ -68,6 +69,7 @@ void FILERawSink::Write(string_view v) {
      }
    }
  }
@@ -2203,10 +2448,10 @@ index 15e751ab..662d1f53 100644
  inline void AbslFormatFlush(BufferRawSink* sink, string_view v) {
    sink->Write(v);
 diff --git a/absl/strings/numbers.cc b/absl/strings/numbers.cc
-index 2987158e..9114daf1 100644
+index a83fd2ca..02d1afd7 100644
 --- a/absl/strings/numbers.cc
 +++ b/absl/strings/numbers.cc
-@@ -492,7 +492,11 @@ size_t numbers_internal::SixDigitsToBuffer(double d, char* const buffer) {
+@@ -555,7 +555,11 @@ size_t numbers_internal::SixDigitsToBuffer(double d,
                         // passed in.
  
    if (std::isnan(d)) {
@@ -2218,7 +2463,7 @@ index 2987158e..9114daf1 100644
      return 3;
    }
    if (d == 0) {  // +0 and -0 are handled here
-@@ -506,7 +510,11 @@ size_t numbers_internal::SixDigitsToBuffer(double d, char* const buffer) {
+@@ -569,7 +573,11 @@ size_t numbers_internal::SixDigitsToBuffer(double d,
      d = -d;
    }
    if (d > std::numeric_limits<double>::max()) {
@@ -2231,7 +2476,7 @@ index 2987158e..9114daf1 100644
    }
  
 diff --git a/absl/strings/numbers.h b/absl/strings/numbers.h
-index 86c84ed3..1d0ea577 100644
+index 9c679746..2f23075d 100644
 --- a/absl/strings/numbers.h
 +++ b/absl/strings/numbers.h
 @@ -23,6 +23,10 @@
@@ -2246,14 +2491,13 @@ index 86c84ed3..1d0ea577 100644
  #include <tmmintrin.h>
  #endif
 diff --git a/absl/strings/str_format.h b/absl/strings/str_format.h
-index 3536b70e..daae7b7d 100644
+index ffa7f113..bef508c9 100644
 --- a/absl/strings/str_format.h
 +++ b/absl/strings/str_format.h
-@@ -404,13 +404,14 @@ ABSL_MUST_USE_RESULT str_format_internal::Streamable StreamFormat(
- //   absl::PrintF("The capital of Mongolia is %s", s);
+@@ -416,12 +416,14 @@ template <typename... Args>
  //
  //   Outputs: "The capital of Mongolia is Ulaanbaatar"
--//
+ //
 +#ifndef PB_ENABLE_SGX
  template <typename... Args>
  int PrintF(const FormatSpec<Args...>& format, const Args&... args) {
@@ -2265,15 +2509,15 @@ index 3536b70e..daae7b7d 100644
  
  // FPrintF()
  //
-@@ -425,6 +426,7 @@ int PrintF(const FormatSpec<Args...>& format, const Args&... args) {
+@@ -436,6 +438,7 @@ int PrintF(const FormatSpec<Args...>& format, const Args&... args) {
  //
  //   Outputs: "The capital of Mongolia is Ulaanbaatar"
  //
 +#ifndef PB_ENABLE_SGX
  template <typename... Args>
- int FPrintF(std::FILE* output, const FormatSpec<Args...>& format,
+ int FPrintF(std::FILE* absl_nonnull output, const FormatSpec<Args...>& format,
              const Args&... args) {
-@@ -432,6 +434,7 @@ int FPrintF(std::FILE* output, const FormatSpec<Args...>& format,
+@@ -443,6 +446,7 @@ int FPrintF(std::FILE* absl_nonnull output, const FormatSpec<Args...>& format,
        output, str_format_internal::UntypedFormatSpecImpl::Extract(format),
        {str_format_internal::FormatArgImpl(args)...});
  }
@@ -2302,42 +2546,45 @@ index 0dfd795e..45cfff3e 100644
  ABSL_NAMESPACE_END
  }  // namespace absl
 diff --git a/absl/synchronization/blocking_counter.cc b/absl/synchronization/blocking_counter.cc
-index d2f82da3..e0698700 100644
+index a530baf4..212fb8ff 100644
 --- a/absl/synchronization/blocking_counter.cc
 +++ b/absl/synchronization/blocking_counter.cc
-@@ -47,6 +47,7 @@ bool BlockingCounter::DecrementCount() {
+@@ -49,6 +49,7 @@ bool BlockingCounter::DecrementCount() {
    return false;
  }
  
 +#ifndef PB_ENABLE_SGX
  void BlockingCounter::Wait() {
-   MutexLock l(&this->lock_);
- 
-@@ -62,6 +63,7 @@ void BlockingCounter::Wait() {
-   // Therefore, the thread calling this method is free to delete the object
-   // after we return from this method.
+   base_internal::TraceWait(this, TraceObjectKind());
+   {
+@@ -68,6 +69,7 @@ void BlockingCounter::Wait() {
+   }
+   base_internal::TraceContinue(this, TraceObjectKind());
  }
 +#endif //PB_ENABLE_SGX
  
  ABSL_NAMESPACE_END
  }  // namespace absl
 diff --git a/absl/synchronization/internal/create_thread_identity.cc b/absl/synchronization/internal/create_thread_identity.cc
-index 44e6129b..69ddc9d4 100644
+index 93cd376b..a97f0aac 100644
 --- a/absl/synchronization/internal/create_thread_identity.cc
 +++ b/absl/synchronization/internal/create_thread_identity.cc
-@@ -69,9 +69,11 @@ static intptr_t RoundUp(intptr_t addr, intptr_t align) {
+@@ -72,12 +72,14 @@ static intptr_t RoundUp(intptr_t addr, intptr_t align) {
    return (addr + align - 1) & ~(align - 1);
  }
  
 +#ifndef PB_ENABLE_SGX
  void OneTimeInitThreadIdentity(base_internal::ThreadIdentity* identity) {
    PerThreadSem::Init(identity);
+   identity->ticker.store(0, std::memory_order_relaxed);
+   identity->wait_start.store(0, std::memory_order_relaxed);
+   identity->is_idle.store(false, std::memory_order_relaxed);
  }
 +#endif //PB_ENABLE_SGX
  
  static void ResetThreadIdentityBetweenReuse(
      base_internal::ThreadIdentity* identity) {
-@@ -97,6 +99,7 @@ static void ResetThreadIdentityBetweenReuse(
+@@ -103,6 +105,7 @@ static void ResetThreadIdentityBetweenReuse(
    identity->next = nullptr;
  }
  
@@ -2345,7 +2592,7 @@ index 44e6129b..69ddc9d4 100644
  static base_internal::ThreadIdentity* NewThreadIdentity() {
    base_internal::ThreadIdentity* identity = nullptr;
  
-@@ -135,6 +138,7 @@ base_internal::ThreadIdentity* CreateThreadIdentity() {
+@@ -144,6 +147,7 @@ base_internal::ThreadIdentity* CreateThreadIdentity() {
    base_internal::SetCurrentThreadIdentity(identity, ReclaimThreadIdentity);
    return identity;
  }
@@ -2354,13 +2601,13 @@ index 44e6129b..69ddc9d4 100644
  }  // namespace synchronization_internal
  ABSL_NAMESPACE_END
 diff --git a/absl/synchronization/internal/futex.h b/absl/synchronization/internal/futex.h
-index cb97da09..dcd366a5 100644
+index 573c01b7..a1eb3486 100644
 --- a/absl/synchronization/internal/futex.h
 +++ b/absl/synchronization/internal/futex.h
-@@ -19,13 +19,17 @@
- #ifdef _WIN32
- #include <windows.h>
- #else
+@@ -17,13 +17,17 @@
+ #include "absl/base/config.h"
+ 
+ #ifndef _WIN32
 +#ifndef PB_ENABLE_SGX
  #include <sys/time.h>
 +#endif //PB_ENABLE_SGX
@@ -2375,11 +2622,28 @@ index cb97da09..dcd366a5 100644
  #endif
  
  #include <errno.h>
+diff --git a/absl/synchronization/internal/kernel_timeout.cc b/absl/synchronization/internal/kernel_timeout.cc
+index 252397ab..aeef1fe8 100644
+--- a/absl/synchronization/internal/kernel_timeout.cc
++++ b/absl/synchronization/internal/kernel_timeout.cc
+@@ -31,6 +31,7 @@
+ #include "absl/base/config.h"
+ #include "absl/time/time.h"
+ 
++#ifndef PB_ENABLE_SGX
+ namespace absl {
+ ABSL_NAMESPACE_BEGIN
+ namespace synchronization_internal {
+@@ -218,3 +219,4 @@ std::chrono::nanoseconds KernelTimeout::ToChronoDuration() const {
+ }  // namespace synchronization_internal
+ ABSL_NAMESPACE_END
+ }  // namespace absl
++#endif //PB_ENABLE_SGX
 diff --git a/absl/synchronization/internal/kernel_timeout.h b/absl/synchronization/internal/kernel_timeout.h
-index f5c2c0ef..bf86e0a8 100644
+index 06404a75..425b842d 100644
 --- a/absl/synchronization/internal/kernel_timeout.h
 +++ b/absl/synchronization/internal/kernel_timeout.h
-@@ -35,6 +35,7 @@
+@@ -30,6 +30,7 @@
  #include "absl/time/clock.h"
  #include "absl/time/time.h"
  
@@ -2387,7 +2651,7 @@ index f5c2c0ef..bf86e0a8 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace synchronization_internal {
-@@ -166,5 +167,6 @@ inline int64_t KernelTimeout::MakeAbsNanos() const {
+@@ -174,5 +175,6 @@ class KernelTimeout {
  }  // namespace synchronization_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -2395,7 +2659,7 @@ index f5c2c0ef..bf86e0a8 100644
  
  #endif  // ABSL_SYNCHRONIZATION_INTERNAL_KERNEL_TIMEOUT_H_
 diff --git a/absl/synchronization/internal/per_thread_sem.cc b/absl/synchronization/internal/per_thread_sem.cc
-index 469e8f32..3d572e1d 100644
+index c9b8dc1e..c56da804 100644
 --- a/absl/synchronization/internal/per_thread_sem.cc
 +++ b/absl/synchronization/internal/per_thread_sem.cc
 @@ -24,6 +24,7 @@
@@ -2406,7 +2670,7 @@ index 469e8f32..3d572e1d 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace synchronization_internal {
-@@ -98,5 +99,6 @@ ABSL_ATTRIBUTE_WEAK bool ABSL_INTERNAL_C_SYMBOL(AbslInternalPerThreadSemWait)(
+@@ -102,5 +103,6 @@ ABSL_ATTRIBUTE_WEAK bool ABSL_INTERNAL_C_SYMBOL(AbslInternalPerThreadSemWait)(
  }
  
  }  // extern "C"
@@ -2414,7 +2678,7 @@ index 469e8f32..3d572e1d 100644
  
  #endif  // ABSL_LOW_LEVEL_ALLOC_MISSING
 diff --git a/absl/synchronization/internal/per_thread_sem.h b/absl/synchronization/internal/per_thread_sem.h
-index 90a88809..9b505446 100644
+index 144ab3cd..a5e22f53 100644
 --- a/absl/synchronization/internal/per_thread_sem.h
 +++ b/absl/synchronization/internal/per_thread_sem.h
 @@ -31,6 +31,7 @@
@@ -2425,99 +2689,93 @@ index 90a88809..9b505446 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -106,5 +107,6 @@ bool absl::synchronization_internal::PerThreadSem::Wait(
+@@ -115,5 +116,6 @@ bool absl::synchronization_internal::PerThreadSem::Wait(
      absl::synchronization_internal::KernelTimeout t) {
    return ABSL_INTERNAL_C_SYMBOL(AbslInternalPerThreadSemWait)(t);
  }
 +#endif //PB_ENABLE_SGX
  
  #endif  // ABSL_SYNCHRONIZATION_INTERNAL_PER_THREAD_SEM_H_
-diff --git a/absl/synchronization/internal/waiter.cc b/absl/synchronization/internal/waiter.cc
-index f2051d67..8080f052 100644
---- a/absl/synchronization/internal/waiter.cc
-+++ b/absl/synchronization/internal/waiter.cc
-@@ -20,17 +20,23 @@
- #include <windows.h>
- #else
+diff --git a/absl/synchronization/internal/pthread_waiter.h b/absl/synchronization/internal/pthread_waiter.h
+index 23db76ad..d01e47dd 100644
+--- a/absl/synchronization/internal/pthread_waiter.h
++++ b/absl/synchronization/internal/pthread_waiter.h
+@@ -16,6 +16,7 @@
+ #ifndef ABSL_SYNCHRONIZATION_INTERNAL_PTHREAD_WAITER_H_
+ #define ABSL_SYNCHRONIZATION_INTERNAL_PTHREAD_WAITER_H_
+ 
++#ifndef PB_ENABLE_SGX
+ #if !defined(_WIN32) && !defined(__MINGW32__)
  #include <pthread.h>
-+#ifndef PB_ENABLE_SGX
- #include <sys/time.h>
-+#endif //PB_ENABLE_SGX
- #include <unistd.h>
- #endif
  
- #ifdef __linux__
-+#ifndef PB_ENABLE_SGX
- #include <linux/futex.h>
- #include <sys/syscall.h>
-+#endif //PB_ENABLE_SGX
- #endif
+@@ -56,5 +57,6 @@ ABSL_NAMESPACE_END
+ }  // namespace absl
  
- #ifdef ABSL_HAVE_SEMAPHORE_H
-+#ifndef PB_ENABLE_SGX
- #include <semaphore.h>
-+#endif //PB_ENABLE_SGX
- #endif
+ #endif  // !defined(_WIN32) && !defined(__MINGW32__)
++#endif // PB_ENABLE_SGX
  
- #include <errno.h>
-@@ -219,6 +225,7 @@ void Waiter::InternalCondVarPoke() {
- 
- #elif ABSL_WAITER_MODE == ABSL_WAITER_MODE_SEM
- 
-+#ifndef PB_ENABLE_SGX
- Waiter::Waiter() {
-   if (sem_init(&sem_, 0, 0) != 0) {
-     ABSL_RAW_LOG(FATAL, "sem_init failed with errno %d\n", errno);
-@@ -279,6 +286,7 @@ void Waiter::Poke() {
-     ABSL_RAW_LOG(FATAL, "sem_post failed with errno %d\n", errno);
-   }
- }
-+#endif //PB_ENABLE_SGX
- 
- #elif ABSL_WAITER_MODE == ABSL_WAITER_MODE_WIN32
- 
-diff --git a/absl/synchronization/internal/waiter.h b/absl/synchronization/internal/waiter.h
-index b8adfeb5..98cae503 100644
---- a/absl/synchronization/internal/waiter.h
-+++ b/absl/synchronization/internal/waiter.h
-@@ -25,11 +25,15 @@
- #endif
- 
- #ifdef __linux__
-+#ifndef PB_ENABLE_SGX
- #include <linux/futex.h>
-+#endif //PB_ENABLE_SGX
- #endif
+ #endif  // ABSL_SYNCHRONIZATION_INTERNAL_PTHREAD_WAITER_H_
+diff --git a/absl/synchronization/internal/sem_waiter.h b/absl/synchronization/internal/sem_waiter.h
+index c22746f9..513cba7f 100644
+--- a/absl/synchronization/internal/sem_waiter.h
++++ b/absl/synchronization/internal/sem_waiter.h
+@@ -19,6 +19,7 @@
+ #include "absl/base/config.h"
  
  #ifdef ABSL_HAVE_SEMAPHORE_H
 +#ifndef PB_ENABLE_SGX
  #include <semaphore.h>
-+#endif //PB_ENABLE_SGX
- #endif
  
  #include <atomic>
-@@ -74,7 +78,9 @@ class Waiter {
-   // Blocks the calling thread until a matching call to `Post()` or
-   // `t` has passed. Returns `true` if woken (`Post()` called),
-   // `false` on timeout.
-+#ifndef PB_ENABLE_SGX
-   bool Wait(KernelTimeout t);
-+#endif //PB_ENABLE_SGX
+@@ -59,6 +60,7 @@ class SemWaiter : public WaiterCrtp<SemWaiter> {
+ }  // namespace synchronization_internal
+ ABSL_NAMESPACE_END
+ }  // namespace absl
++#endif // PB_ENABLE_SGX 
  
-   // Restart the caller of `Wait()` as with a normal semaphore.
-   void Post();
-@@ -125,7 +131,9 @@ class Waiter {
-   int wakeup_count_;  // Unclaimed wakeups.
+ #endif  // ABSL_HAVE_SEMAPHORE_H
  
- #elif ABSL_WAITER_MODE == ABSL_WAITER_MODE_SEM
+diff --git a/absl/synchronization/internal/stdcpp_waiter.h b/absl/synchronization/internal/stdcpp_waiter.h
+index e592a27b..52bae654 100644
+--- a/absl/synchronization/internal/stdcpp_waiter.h
++++ b/absl/synchronization/internal/stdcpp_waiter.h
+@@ -16,6 +16,7 @@
+ #ifndef ABSL_SYNCHRONIZATION_INTERNAL_STDCPP_WAITER_H_
+ #define ABSL_SYNCHRONIZATION_INTERNAL_STDCPP_WAITER_H_
+ 
++#ifndef PB_ENABLE_SGX  
+ #include <condition_variable>  // NOLINT(build/c++11)
+ #include <mutex>  // NOLINT(build/c++11)
+ 
+@@ -52,5 +53,6 @@ class StdcppWaiter : public WaiterCrtp<StdcppWaiter> {
+ }  // namespace synchronization_internal
+ ABSL_NAMESPACE_END
+ }  // namespace absl
++#endif // PB_ENABLE_SGX 
+ 
+ #endif  // ABSL_SYNCHRONIZATION_INTERNAL_STDCPP_WAITER_H_
+diff --git a/absl/synchronization/internal/waiter.h b/absl/synchronization/internal/waiter.h
+index 6ba204be..24715944 100644
+--- a/absl/synchronization/internal/waiter.h
++++ b/absl/synchronization/internal/waiter.h
+@@ -16,6 +16,8 @@
+ #ifndef ABSL_SYNCHRONIZATION_INTERNAL_WAITER_H_
+ #define ABSL_SYNCHRONIZATION_INTERNAL_WAITER_H_
+ 
 +#ifndef PB_ENABLE_SGX
-   sem_t sem_;
-+#endif //PB_ENABLE_SGX
-   // This seems superfluous, but for Poke() we need to cause spurious
-   // wakeups on the semaphore. Hence we can't actually use the
-   // semaphore's count.
++
+ #include "absl/base/config.h"
+ #include "absl/synchronization/internal/futex_waiter.h"
+ #include "absl/synchronization/internal/pthread_waiter.h"
+@@ -65,5 +67,6 @@ using Waiter = StdcppWaiter;
+ }  // namespace synchronization_internal
+ ABSL_NAMESPACE_END
+ }  // namespace absl
++#endif  // PB_ENABLE_SGX
+ 
+ #endif  // ABSL_SYNCHRONIZATION_INTERNAL_WAITER_H_
 diff --git a/absl/synchronization/mutex.cc b/absl/synchronization/mutex.cc
-index 064ccb74..e201d002 100644
+index 5091b8fd..9e6c9680 100644
 --- a/absl/synchronization/mutex.cc
 +++ b/absl/synchronization/mutex.cc
 @@ -20,10 +20,12 @@
@@ -2534,7 +2792,7 @@ index 064ccb74..e201d002 100644
  #endif
  
  #include <assert.h>
-@@ -70,6 +72,7 @@ using absl::synchronization_internal::GetOrCreateCurrentThreadIdentity;
+@@ -69,6 +71,7 @@ using absl::synchronization_internal::GetOrCreateCurrentThreadIdentity;
  using absl::synchronization_internal::GraphCycles;
  using absl::synchronization_internal::GraphId;
  using absl::synchronization_internal::InvalidGraphId;
@@ -2542,7 +2800,7 @@ index 064ccb74..e201d002 100644
  using absl::synchronization_internal::KernelTimeout;
  using absl::synchronization_internal::PerThreadSem;
  
-@@ -78,10 +81,12 @@ ABSL_ATTRIBUTE_WEAK void ABSL_INTERNAL_C_SYMBOL(AbslInternalMutexYield)() {
+@@ -77,10 +80,12 @@ ABSL_ATTRIBUTE_WEAK void ABSL_INTERNAL_C_SYMBOL(AbslInternalMutexYield)() {
    std::this_thread::yield();
  }
  }  // extern "C"
@@ -2555,7 +2813,7 @@ index 064ccb74..e201d002 100644
  namespace {
  
  #if defined(ABSL_HAVE_THREAD_SANITIZER)
-@@ -1503,8 +1508,10 @@ static bool TryAcquireWithSpinning(std::atomic<intptr_t>* mu) {
+@@ -1527,8 +1532,10 @@ static bool TryAcquireWithSpinning(std::atomic<intptr_t>* mu) {
    } while (--c > 0);
    return false;
  }
@@ -2566,7 +2824,7 @@ index 064ccb74..e201d002 100644
    ABSL_TSAN_MUTEX_PRE_LOCK(this, 0);
    GraphId id = DebugOnlyDeadlockCheck(this);
    intptr_t v = mu_.load(std::memory_order_relaxed);
-@@ -1520,9 +1527,13 @@ void Mutex::Lock() {
+@@ -1544,9 +1551,13 @@ void Mutex::Lock() {
    }
    DebugOnlyLockEnter(this, id);
    ABSL_TSAN_MUTEX_POST_LOCK(this, 0, 0);
@@ -2580,7 +2838,7 @@ index 064ccb74..e201d002 100644
    ABSL_TSAN_MUTEX_PRE_LOCK(this, __tsan_mutex_read_lock);
    GraphId id = DebugOnlyDeadlockCheck(this);
    intptr_t v = mu_.load(std::memory_order_relaxed);
-@@ -1535,8 +1546,12 @@ void Mutex::ReaderLock() {
+@@ -1566,8 +1577,12 @@ void Mutex::ReaderLock() {
    }
    DebugOnlyLockEnter(this, id);
    ABSL_TSAN_MUTEX_POST_LOCK(this, __tsan_mutex_read_lock, 0);
@@ -2590,10 +2848,10 @@ index 064ccb74..e201d002 100644
  }
  
 +#ifndef PB_ENABLE_SGX
- void Mutex::LockWhen(const Condition &cond) {
-   ABSL_TSAN_MUTEX_PRE_LOCK(this, 0);
-   GraphId id = DebugOnlyDeadlockCheck(this);
-@@ -1709,8 +1724,10 @@ bool Mutex::ReaderTryLock() {
+ bool Mutex::LockWhenCommon(const Condition& cond,
+                            synchronization_internal::KernelTimeout t,
+                            bool write) {
+@@ -1705,8 +1720,10 @@ ABSL_ATTRIBUTE_NOINLINE bool Mutex::ReaderTryLockSlow() {
                              0);
    return false;
  }
@@ -2604,7 +2862,7 @@ index 064ccb74..e201d002 100644
    ABSL_TSAN_MUTEX_PRE_UNLOCK(this, 0);
    DebugOnlyLockLeave(this);
    intptr_t v = mu_.load(std::memory_order_relaxed);
-@@ -1749,8 +1766,12 @@ void Mutex::Unlock() {
+@@ -1763,8 +1780,12 @@ void Mutex::Unlock() {
      this->UnlockSlow(nullptr /*no waitp*/);  // take slow path
    }
    ABSL_TSAN_MUTEX_POST_UNLOCK(this, 0);
@@ -2616,8 +2874,8 @@ index 064ccb74..e201d002 100644
 +#ifndef PB_ENABLE_SGX
  // Requires v to represent a reader-locked state.
  static bool ExactlyOneReader(intptr_t v) {
-   assert((v & (kMuWriter|kMuReader)) == kMuReader);
-@@ -1761,8 +1782,10 @@ static bool ExactlyOneReader(intptr_t v) {
+   assert((v & (kMuWriter | kMuReader)) == kMuReader);
+@@ -1775,8 +1796,10 @@ static bool ExactlyOneReader(intptr_t v) {
    constexpr intptr_t kMuMultipleWaitersMask = kMuHigh ^ kMuOne;
    return (v & kMuMultipleWaitersMask) == 0;
  }
@@ -2628,9 +2886,9 @@ index 064ccb74..e201d002 100644
    ABSL_TSAN_MUTEX_PRE_UNLOCK(this, __tsan_mutex_read_lock);
    DebugOnlyLockLeave(this);
    intptr_t v = mu_.load(std::memory_order_relaxed);
-@@ -1779,10 +1802,14 @@ void Mutex::ReaderUnlock() {
+@@ -1796,10 +1819,14 @@ void Mutex::ReaderUnlock() {
+     }
    }
-   this->UnlockSlow(nullptr /*no waitp*/);  // take slow path
    ABSL_TSAN_MUTEX_POST_UNLOCK(this, __tsan_mutex_read_lock);
 +#else
 +  mu_.unlock();
@@ -2643,7 +2901,7 @@ index 064ccb74..e201d002 100644
  static intptr_t ClearDesignatedWakerMask(int flag) {
    assert(flag >= 0);
    assert(flag <= 1);
-@@ -2464,16 +2491,20 @@ void Mutex::Fer(PerThreadSynch *w) {
+@@ -2492,15 +2519,19 @@ void Mutex::Fer(PerThreadSynch* w) {
      c = synchronization_internal::MutexDelay(c, GENTLE);
    }
  }
@@ -2652,10 +2910,9 @@ index 064ccb74..e201d002 100644
  void Mutex::AssertHeld() const {
 +#ifndef PB_ENABLE_SGX
    if ((mu_.load(std::memory_order_relaxed) & kMuWriter) == 0) {
-     SynchEvent *e = GetSynchEvent(this);
+     SynchEvent* e = GetSynchEvent(this);
      ABSL_RAW_LOG(FATAL, "thread should hold write lock on Mutex %p %s",
-                  static_cast<const void *>(this),
-                  (e == nullptr ? "" : e->name));
+                  static_cast<const void*>(this), (e == nullptr ? "" : e->name));
    }
 +#endif //PB_ENABLE_SGX
  }
@@ -2663,8 +2920,8 @@ index 064ccb74..e201d002 100644
 +#ifndef PB_ENABLE_SGX
  void Mutex::AssertReaderHeld() const {
    if ((mu_.load(std::memory_order_relaxed) & (kMuReader | kMuWriter)) == 0) {
-     SynchEvent *e = GetSynchEvent(this);
-@@ -2830,6 +2861,7 @@ bool Condition::GuaranteedEqual(const Condition *a, const Condition *b) {
+     SynchEvent* e = GetSynchEvent(this);
+@@ -2816,6 +2847,7 @@ bool Condition::GuaranteedEqual(const Condition* a, const Condition* b) {
    return a->eval_ == b->eval_ && a->arg_ == b->arg_ &&
           !memcmp(a->callback_, b->callback_, sizeof(a->callback_));
  }
@@ -2673,10 +2930,10 @@ index 064ccb74..e201d002 100644
  ABSL_NAMESPACE_END
  }  // namespace absl
 diff --git a/absl/synchronization/mutex.h b/absl/synchronization/mutex.h
-index f793cc0e..8e09ef7c 100644
+index 78b1c7a0..daefe7eb 100644
 --- a/absl/synchronization/mutex.h
 +++ b/absl/synchronization/mutex.h
-@@ -78,8 +78,10 @@
+@@ -80,8 +80,10 @@
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
@@ -2687,7 +2944,7 @@ index f793cc0e..8e09ef7c 100644
  
  // -----------------------------------------------------------------------------
  // Mutex
-@@ -138,7 +140,11 @@ class ABSL_LOCKABLE Mutex {
+@@ -157,7 +159,11 @@ class ABSL_LOCKABLE ABSL_ATTRIBUTE_WARN_UNUSED Mutex {
    // To create `Mutex` instances with static storage duration
    // (e.g. a namespace-scoped or global variable), see
    // `Mutex::Mutex(absl::kConstInit)` below instead.
@@ -2699,7 +2956,7 @@ index f793cc0e..8e09ef7c 100644
  
    // Creates a mutex with static storage duration.  A global variable
    // constructed this way avoids the lifetime issues that can occur on program
-@@ -153,7 +159,11 @@ class ABSL_LOCKABLE Mutex {
+@@ -172,7 +178,11 @@ class ABSL_LOCKABLE ABSL_ATTRIBUTE_WARN_UNUSED Mutex {
    //   }
    explicit constexpr Mutex(absl::ConstInitType);
  
@@ -2711,17 +2968,16 @@ index f793cc0e..8e09ef7c 100644
  
    // Mutex::Lock()
    //
-@@ -306,7 +316,8 @@ class ABSL_LOCKABLE Mutex {
-   // same mode in which it was previously held. If the condition is initially
+@@ -326,6 +336,8 @@ class ABSL_LOCKABLE ABSL_ATTRIBUTE_WARN_UNUSED Mutex {
    // `true`, `Await()` *may* skip the release/re-acquire step.
    //
--  // `Await()` requires that this thread holds this `Mutex` in some mode.
-+  // `Await()` requires that this thread holds this `Mutex` in some mode.i
-+#ifndef PB_ENABLE_SGX
-   void Await(const Condition &cond);
- 
-   // Mutex::LockWhen()
-@@ -460,10 +471,16 @@ class ABSL_LOCKABLE Mutex {
+   // `Await()` requires that this thread holds this `Mutex` in some mode.
++
++  #ifndef PB_ENABLE_SGX
+   void Await(const Condition& cond) {
+     AwaitCommon(cond, synchronization_internal::KernelTimeout::Never());
+   }
+@@ -505,10 +517,16 @@ class ABSL_LOCKABLE ABSL_ATTRIBUTE_WARN_UNUSED Mutex {
    // call has been made may cause arbitrary program behaviour including
    // crashes and deadlocks.
    static void InternalAttemptToUseMutexInFatalSignalHandler();
@@ -2737,8 +2993,8 @@ index f793cc0e..8e09ef7c 100644
 +#ifndef PB_ENABLE_SGX
    // Post()/Wait() versus associated PerThreadSem; in class for required
    // friendship with PerThreadSem.
-   static void IncrementSynchSem(Mutex *mu, base_internal::PerThreadSynch *w);
-@@ -500,6 +517,7 @@ class ABSL_LOCKABLE Mutex {
+   static void IncrementSynchSem(Mutex* absl_nonnull mu,
+@@ -556,6 +574,7 @@ class ABSL_LOCKABLE ABSL_ATTRIBUTE_WARN_UNUSED Mutex {
  
    Mutex(const Mutex&) = delete;
    Mutex& operator=(const Mutex&) = delete;
@@ -2746,31 +3002,31 @@ index f793cc0e..8e09ef7c 100644
  };
  
  // -----------------------------------------------------------------------------
-@@ -538,6 +556,7 @@ class ABSL_SCOPED_LOCKABLE MutexLock {
+@@ -595,6 +614,7 @@ class ABSL_SCOPED_LOCKABLE MutexLock {
    // Like above, but calls `mu->LockWhen(cond)` instead. That is, in addition to
    // the above, the condition given by `cond` is also guaranteed to hold when
    // this object is constructed.
 +#ifndef PB_ENABLE_SGX
-   explicit MutexLock(Mutex *mu, const Condition &cond)
+   explicit MutexLock(Mutex* absl_nonnull mu, const Condition& cond)
        ABSL_EXCLUSIVE_LOCK_FUNCTION(mu)
        : mu_(mu) {
-@@ -548,6 +567,7 @@ class ABSL_SCOPED_LOCKABLE MutexLock {
-   MutexLock(MutexLock&&) = delete;  // NOLINT(runtime/mutex)
+@@ -605,6 +625,7 @@ class ABSL_SCOPED_LOCKABLE MutexLock {
+   MutexLock(MutexLock&&) = delete;       // NOLINT(runtime/mutex)
    MutexLock& operator=(const MutexLock&) = delete;
    MutexLock& operator=(MutexLock&&) = delete;
 +#endif //PB_ENABLE_SGX
  
    ~MutexLock() ABSL_UNLOCK_FUNCTION() { this->mu_->Unlock(); }
  
-@@ -565,6 +585,7 @@ class ABSL_SCOPED_LOCKABLE ReaderMutexLock {
+@@ -623,6 +644,7 @@ class ABSL_SCOPED_LOCKABLE ReaderMutexLock {
      mu->ReaderLock();
    }
  
 +#ifndef PB_ENABLE_SGX
-   explicit ReaderMutexLock(Mutex *mu, const Condition &cond)
+   explicit ReaderMutexLock(Mutex* absl_nonnull mu, const Condition& cond)
        ABSL_SHARED_LOCK_FUNCTION(mu)
        : mu_(mu) {
-@@ -575,6 +596,7 @@ class ABSL_SCOPED_LOCKABLE ReaderMutexLock {
+@@ -633,6 +655,7 @@ class ABSL_SCOPED_LOCKABLE ReaderMutexLock {
    ReaderMutexLock(ReaderMutexLock&&) = delete;
    ReaderMutexLock& operator=(const ReaderMutexLock&) = delete;
    ReaderMutexLock& operator=(ReaderMutexLock&&) = delete;
@@ -2778,15 +3034,15 @@ index f793cc0e..8e09ef7c 100644
  
    ~ReaderMutexLock() ABSL_UNLOCK_FUNCTION() { this->mu_->ReaderUnlock(); }
  
-@@ -593,6 +615,7 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
+@@ -652,6 +675,7 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
      mu->WriterLock();
    }
  
 +#ifndef PB_ENABLE_SGX
-   explicit WriterMutexLock(Mutex *mu, const Condition &cond)
+   explicit WriterMutexLock(Mutex* absl_nonnull mu, const Condition& cond)
        ABSL_EXCLUSIVE_LOCK_FUNCTION(mu)
        : mu_(mu) {
-@@ -603,6 +626,7 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
+@@ -662,6 +686,7 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
    WriterMutexLock(WriterMutexLock&&) = delete;
    WriterMutexLock& operator=(const WriterMutexLock&) = delete;
    WriterMutexLock& operator=(WriterMutexLock&&) = delete;
@@ -2794,58 +3050,60 @@ index f793cc0e..8e09ef7c 100644
  
    ~WriterMutexLock() ABSL_UNLOCK_FUNCTION() { this->mu_->WriterUnlock(); }
  
-@@ -662,6 +686,7 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
+@@ -721,6 +746,8 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
  // that they are constructed with the same parameters (same pointer to function
  // + arg, or same pointer to object + method), so that the mutex implementation
  // can avoid redundantly evaluating the same condition for each thread.
++
 +#ifndef PB_ENABLE_SGX
  class Condition {
   public:
    // A Condition that returns the result of "(*func)(arg)"
-@@ -793,6 +818,7 @@ class Condition {
+@@ -890,6 +917,7 @@ class Condition {
    // Used only to create kTrue.
-   constexpr Condition() = default;
+   constexpr Condition() : eval_(AlwaysTrue), arg_(nullptr) {}
  };
 +#endif //PB_ENABLE_SGX
  
  // -----------------------------------------------------------------------------
  // CondVar
-@@ -829,6 +855,7 @@ class Condition {
+@@ -926,6 +954,8 @@ class Condition {
  // With this implementation it is efficient to use `Signal()/SignalAll()` inside
  // the locked region; this usage can make reasoning about your program easier.
  //
++
 +#ifndef PB_ENABLE_SGX
  class CondVar {
   public:
    // A `CondVar` allocated on the heap or on the stack can use the this
-@@ -902,6 +929,7 @@ class CondVar {
+@@ -1004,6 +1034,7 @@ class CondVar {
    CondVar(const CondVar&) = delete;
    CondVar& operator=(const CondVar&) = delete;
  };
 +#endif //PB_ENABLE_SGX
  
- 
  // Variants of MutexLock.
-@@ -921,6 +949,7 @@ class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
+ //
+@@ -1023,6 +1054,7 @@ class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
      }
    }
  
 +#ifndef PB_ENABLE_SGX
-   explicit MutexLockMaybe(Mutex *mu, const Condition &cond)
+   explicit MutexLockMaybe(Mutex* absl_nullable mu, const Condition& cond)
        ABSL_EXCLUSIVE_LOCK_FUNCTION(mu)
        : mu_(mu) {
-@@ -928,6 +957,7 @@ class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
+@@ -1030,6 +1062,7 @@ class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
        this->mu_->LockWhen(cond);
      }
    }
 +#endif //PB_ENABLE_SGX
  
    ~MutexLockMaybe() ABSL_UNLOCK_FUNCTION() {
-     if (this->mu_ != nullptr) { this->mu_->Unlock(); }
-@@ -935,16 +965,19 @@ class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
+     if (this->mu_ != nullptr) {
+@@ -1039,16 +1072,20 @@ class ABSL_SCOPED_LOCKABLE MutexLockMaybe {
  
   private:
-   Mutex *const mu_;
+   Mutex* absl_nullable const mu_;
 +#ifndef PB_ENABLE_SGX
    MutexLockMaybe(const MutexLockMaybe&) = delete;
    MutexLockMaybe(MutexLockMaybe&&) = delete;
@@ -2858,11 +3116,12 @@ index f793cc0e..8e09ef7c 100644
  //
  // ReleasableMutexLock is like MutexLock, but permits `Release()` of its
  // mutex before destruction. `Release()` may be called at most once.
++
 +#ifndef PB_ENABLE_SGX
  class ABSL_SCOPED_LOCKABLE ReleasableMutexLock {
   public:
-   explicit ReleasableMutexLock(Mutex *mu) ABSL_EXCLUSIVE_LOCK_FUNCTION(mu)
-@@ -975,9 +1008,15 @@ class ABSL_SCOPED_LOCKABLE ReleasableMutexLock {
+   explicit ReleasableMutexLock(Mutex* absl_nonnull mu)
+@@ -1082,9 +1119,15 @@ class ABSL_SCOPED_LOCKABLE ReleasableMutexLock {
  inline Mutex::Mutex() : mu_(0) {
    ABSL_TSAN_MUTEX_CREATE(this, __tsan_mutex_not_static);
  }
@@ -2875,10 +3134,20 @@ index f793cc0e..8e09ef7c 100644
 +#endif //PB_ENABLE_SGX
  
 +#ifndef PB_ENABLE_SGX
+ #if !defined(__APPLE__) && !defined(ABSL_BUILD_DLL)
+ ABSL_ATTRIBUTE_ALWAYS_INLINE
+ inline Mutex::~Mutex() { Dtor(); }
+@@ -1099,7 +1142,9 @@ inline Mutex::~Mutex() { Dtor(); }
+ ABSL_ATTRIBUTE_ALWAYS_INLINE
+ inline void Mutex::Dtor() {}
+ #endif
++#endif //PB_ENABLE_SGX
+ 
++#ifndef PB_ENABLE_SGX
  inline CondVar::CondVar() : cv_(0) {}
  
  // static
-@@ -1112,6 +1151,7 @@ enum class OnDeadlockCycle {
+@@ -1230,6 +1275,7 @@ enum class OnDeadlockCycle {
  // will be maintained internally, and detected cycles will be reported in
  // the manner chosen here.
  void SetMutexDeadlockDetectionMode(OnDeadlockCycle mode);
@@ -2886,10 +3155,11 @@ index f793cc0e..8e09ef7c 100644
  
  ABSL_NAMESPACE_END
  }  // namespace absl
-@@ -1122,8 +1162,10 @@ ABSL_NAMESPACE_END
+@@ -1240,8 +1286,11 @@ ABSL_NAMESPACE_END
  // --detect-odr-violations ignores symbols not mangled with C++ names.
  // By changing our extension points to be extern "C", we dodge this
  // check.
++
 +#ifndef PB_ENABLE_SGX
  extern "C" {
  void ABSL_INTERNAL_C_SYMBOL(AbslInternalMutexYield)();
@@ -2898,19 +3168,19 @@ index f793cc0e..8e09ef7c 100644
  
  #endif  // ABSL_SYNCHRONIZATION_MUTEX_H_
 diff --git a/absl/synchronization/notification.cc b/absl/synchronization/notification.cc
-index 165ba669..8dc2d86b 100644
+index a5853ab3..4cbb9d6c 100644
 --- a/absl/synchronization/notification.cc
 +++ b/absl/synchronization/notification.cc
-@@ -44,6 +44,7 @@ Notification::~Notification() {
+@@ -46,6 +46,7 @@ Notification::~Notification() {
    MutexLock l(&this->mutex_);
  }
  
 +#ifndef PB_ENABLE_SGX
  void Notification::WaitForNotification() const {
+   base_internal::TraceWait(this, TraceObjectKind());
    if (!HasBeenNotifiedInternal(&this->notified_yet_)) {
-     this->mutex_.LockWhen(Condition(&HasBeenNotifiedInternal,
-@@ -72,6 +73,7 @@ bool Notification::WaitForNotificationWithDeadline(absl::Time deadline) const {
-   }
+@@ -80,6 +81,7 @@ bool Notification::WaitForNotificationWithDeadline(absl::Time deadline) const {
+   base_internal::TraceContinue(notified ? this : nullptr, TraceObjectKind());
    return notified;
  }
 +#endif //PB_ENABLE_SGX
@@ -2918,10 +3188,10 @@ index 165ba669..8dc2d86b 100644
  ABSL_NAMESPACE_END
  }  // namespace absl
 diff --git a/absl/synchronization/notification.h b/absl/synchronization/notification.h
-index 8986d9a4..7ee16b0c 100644
+index 1ceffdb6..55ed16f1 100644
 --- a/absl/synchronization/notification.h
 +++ b/absl/synchronization/notification.h
-@@ -83,21 +83,27 @@ class Notification {
+@@ -88,21 +88,27 @@ class Notification {
    // Blocks the calling thread until the notification's "notified" state is
    // `true`. Note that if `Notify()` has been previously called on this
    // notification, this function will immediately return.
@@ -2950,10 +3220,10 @@ index 8986d9a4..7ee16b0c 100644
    // Notification::Notify()
    //
 diff --git a/absl/time/civil_time.cc b/absl/time/civil_time.cc
-index 65df39d7..a2dcacb5 100644
+index 1773366b..801366e7 100644
 --- a/absl/time/civil_time.cc
 +++ b/absl/time/civil_time.cc
-@@ -21,6 +21,7 @@
+@@ -22,6 +22,7 @@
  #include "absl/strings/str_cat.h"
  #include "absl/time/time.h"
  
@@ -2961,13 +3231,13 @@ index 65df39d7..a2dcacb5 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -197,3 +198,4 @@ std::string AbslUnparseFlag(CivilYear c) { return FormatCivilTime(c); }
+@@ -198,3 +199,4 @@ std::string AbslUnparseFlag(CivilYear c) { return FormatCivilTime(c); }
  
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/time/clock.cc b/absl/time/clock.cc
-index 2bf53d9c..4589cea6 100644
+index ecd539e5..3b796758 100644
 --- a/absl/time/clock.cc
 +++ b/absl/time/clock.cc
 @@ -34,6 +34,7 @@
@@ -2978,16 +3248,16 @@ index 2bf53d9c..4589cea6 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  Time Now() {
-@@ -589,3 +590,4 @@ ABSL_ATTRIBUTE_WEAK void ABSL_INTERNAL_C_SYMBOL(AbslInternalSleepFor)(
+@@ -602,3 +603,4 @@ ABSL_ATTRIBUTE_WEAK void ABSL_INTERNAL_C_SYMBOL(AbslInternalSleepFor)(
  }
  
  }  // extern "C"
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/time/clock.h b/absl/time/clock.h
-index 5fe244d6..e3459917 100644
+index 41d2cf27..f1c88cbf 100644
 --- a/absl/time/clock.h
 +++ b/absl/time/clock.h
-@@ -25,6 +25,7 @@
+@@ -28,6 +28,7 @@
  #include "absl/base/macros.h"
  #include "absl/time/time.h"
  
@@ -2995,7 +3265,7 @@ index 5fe244d6..e3459917 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -70,5 +71,6 @@ void ABSL_INTERNAL_C_SYMBOL(AbslInternalSleepFor)(absl::Duration duration);
+@@ -74,5 +75,6 @@ ABSL_DLL void ABSL_INTERNAL_C_SYMBOL(AbslInternalSleepFor)(
  inline void absl::SleepFor(absl::Duration duration) {
    ABSL_INTERNAL_C_SYMBOL(AbslInternalSleepFor)(duration);
  }
@@ -3003,7 +3273,7 @@ index 5fe244d6..e3459917 100644
  
  #endif  // ABSL_TIME_CLOCK_H_
 diff --git a/absl/time/duration.cc b/absl/time/duration.cc
-index 911e80f8..c2dd6a9d 100644
+index 38c4b639..981ddabd 100644
 --- a/absl/time/duration.cc
 +++ b/absl/time/duration.cc
 @@ -73,6 +73,7 @@
@@ -3014,16 +3284,16 @@ index 911e80f8..c2dd6a9d 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -953,3 +954,4 @@ std::string UnparseFlag(Duration d) { return FormatDuration(d); }
+@@ -916,3 +917,4 @@ std::string UnparseFlag(Duration d) { return FormatDuration(d); }
  
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/time/format.cc b/absl/time/format.cc
-index 15a26b14..d5f9bce2 100644
+index bd06f8fb..55c0638c 100644
 --- a/absl/time/format.cc
 +++ b/absl/time/format.cc
-@@ -24,6 +24,7 @@
+@@ -25,6 +25,7 @@
  
  namespace cctz = absl::time_internal::cctz;
  
@@ -3031,13 +3301,13 @@ index 15a26b14..d5f9bce2 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -159,3 +160,4 @@ std::string UnparseFlag(absl::Time t) {
+@@ -160,3 +161,4 @@ std::string UnparseFlag(absl::Time t) {
  
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/time/internal/cctz/include/cctz/time_zone.h b/absl/time/internal/cctz/include/cctz/time_zone.h
-index 6e382dc6..0ea5c04c 100644
+index 5b232f51..e240b0aa 100644
 --- a/absl/time/internal/cctz/include/cctz/time_zone.h
 +++ b/absl/time/internal/cctz/include/cctz/time_zone.h
 @@ -20,6 +20,7 @@
@@ -3048,7 +3318,7 @@ index 6e382dc6..0ea5c04c 100644
  #include <chrono>
  #include <cstdint>
  #include <limits>
-@@ -455,5 +456,6 @@ inline bool join_seconds(const time_point<seconds>& sec, const femtoseconds&,
+@@ -456,5 +457,6 @@ inline bool join_seconds(const time_point<seconds>& sec, const femtoseconds&,
  }  // namespace time_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -3056,12 +3326,12 @@ index 6e382dc6..0ea5c04c 100644
  
  #endif  // ABSL_TIME_INTERNAL_CCTZ_TIME_ZONE_H_
 diff --git a/absl/time/internal/cctz/src/time_zone_fixed.cc b/absl/time/internal/cctz/src/time_zone_fixed.cc
-index f2b3294e..e4e02359 100644
+index ed7f9cb9..6e716339 100644
 --- a/absl/time/internal/cctz/src/time_zone_fixed.cc
 +++ b/absl/time/internal/cctz/src/time_zone_fixed.cc
 @@ -14,6 +14,7 @@
  
- #include "time_zone_fixed.h"
+ #include "absl/time/internal/cctz/src/time_zone_fixed.h"
  
 +#ifndef PB_ENABLE_SGX
  #include <algorithm>
@@ -3092,7 +3362,7 @@ index e74a0bbd..e2acd9b6 100644
  
  #endif  // ABSL_TIME_INTERNAL_CCTZ_TIME_ZONE_FIXED_H_
 diff --git a/absl/time/internal/cctz/src/time_zone_format.cc b/absl/time/internal/cctz/src/time_zone_format.cc
-index 2e5f5329..cf83882e 100644
+index 0e5f32f1..5f98d44a 100644
 --- a/absl/time/internal/cctz/src/time_zone_format.cc
 +++ b/absl/time/internal/cctz/src/time_zone_format.cc
 @@ -109,6 +109,7 @@ weekday FromTmWday(int tm_wday) {
@@ -3111,7 +3381,23 @@ index 2e5f5329..cf83882e 100644
  
  // Returns the week of the year [0:53] given a civil day and the day on
  // which weeks are defined to start.
-@@ -330,6 +332,7 @@ const std::int_fast64_t kExp10[kDigits10_64 + 1] = {
+@@ -211,6 +213,7 @@ char* FormatOffset(char* ep, int offset, const char* mode) {
+   return ep;
+ }
+ 
++#ifndef PB_ENABLE_SGX
+ // Formats a std::tm using strftime(3).
+ void FormatTM(std::string* out, const std::string& fmt, const std::tm& tm) {
+   // strftime(3) returns the number of characters placed in the output
+@@ -227,6 +230,7 @@ void FormatTM(std::string* out, const std::string& fmt, const std::tm& tm) {
+     }
+   }
+ }
++#endif //PB_ENABLE_SGX
+ 
+ // Used for %E#S/%E#f specifiers and for data values in parse().
+ template <typename T>
+@@ -330,6 +334,7 @@ const std::int_fast64_t kExp10[kDigits10_64 + 1] = {
  // not support the tm_gmtoff and tm_zone extensions to std::tm.
  //
  // Requires that zero() <= fs < seconds(1).
@@ -3119,7 +3405,7 @@ index 2e5f5329..cf83882e 100644
  std::string format(const std::string& format, const time_point<seconds>& tp,
                     const detail::femtoseconds& fs, const time_zone& tz) {
    std::string result;
-@@ -575,6 +578,7 @@ std::string format(const std::string& format, const time_point<seconds>& tp,
+@@ -575,6 +580,7 @@ std::string format(const std::string& format, const time_point<seconds>& tp,
  
    return result;
  }
@@ -3127,7 +3413,7 @@ index 2e5f5329..cf83882e 100644
  
  namespace {
  
-@@ -620,6 +624,7 @@ const char* ParseZone(const char* dp, std::string* zone) {
+@@ -620,6 +626,7 @@ const char* ParseZone(const char* dp, std::string* zone) {
    return dp;
  }
  
@@ -3135,7 +3421,7 @@ index 2e5f5329..cf83882e 100644
  const char* ParseSubSeconds(const char* dp, detail::femtoseconds* subseconds) {
    if (dp != nullptr) {
      std::int_fast64_t v = 0;
-@@ -652,6 +657,7 @@ const char* ParseTM(const char* dp, const char* fmt, std::tm* tm) {
+@@ -652,6 +659,7 @@ const char* ParseTM(const char* dp, const char* fmt, std::tm* tm) {
    }
    return dp;
  }
@@ -3143,7 +3429,7 @@ index 2e5f5329..cf83882e 100644
  
  // Sets year, tm_mon and tm_mday given the year, week_num, and tm_wday,
  // and the day on which weeks are defined to start.  Returns false if year
-@@ -689,6 +695,7 @@ bool FromWeek(int week_num, weekday week_start, year_t* year, std::tm* tm) {
+@@ -689,6 +697,7 @@ bool FromWeek(int week_num, weekday week_start, year_t* year, std::tm* tm) {
  //
  // We also handle the %z specifier to accommodate platforms that do not
  // support the tm_gmtoff extension to std::tm.  %Z is parsed but ignored.
@@ -3151,7 +3437,7 @@ index 2e5f5329..cf83882e 100644
  bool parse(const std::string& format, const std::string& input,
             const time_zone& tz, time_point<seconds>* sec,
             detail::femtoseconds* fs, std::string* err) {
-@@ -1021,6 +1028,7 @@ bool parse(const std::string& format, const std::string& input,
+@@ -1021,6 +1030,7 @@ bool parse(const std::string& format, const std::string& input,
    *fs = subseconds;
    return true;
  }
@@ -3159,11 +3445,38 @@ index 2e5f5329..cf83882e 100644
  
  }  // namespace detail
  }  // namespace cctz
+diff --git a/absl/time/internal/cctz/src/time_zone_if.cc b/absl/time/internal/cctz/src/time_zone_if.cc
+index 09f83e82..ea6efa77 100644
+--- a/absl/time/internal/cctz/src/time_zone_if.cc
++++ b/absl/time/internal/cctz/src/time_zone_if.cc
+@@ -23,6 +23,7 @@ ABSL_NAMESPACE_BEGIN
+ namespace time_internal {
+ namespace cctz {
+ 
++#ifndef PB_ENABLE_SGX
+ std::unique_ptr<TimeZoneIf> TimeZoneIf::UTC() { return TimeZoneInfo::UTC(); }
+ 
+ std::unique_ptr<TimeZoneIf> TimeZoneIf::Make(const std::string& name) {
+@@ -37,6 +38,7 @@ std::unique_ptr<TimeZoneIf> TimeZoneIf::Make(const std::string& name) {
+   // Otherwise use the "zoneinfo" implementation.
+   return TimeZoneInfo::Make(name);
+ }
++#endif //PB_ENABLE_SGX
+ 
+ // Defined out-of-line to avoid emitting a weak vtable in all TUs.
+ TimeZoneIf::~TimeZoneIf() {}
 diff --git a/absl/time/internal/cctz/src/time_zone_if.h b/absl/time/internal/cctz/src/time_zone_if.h
-index 7d3e42d3..8276042d 100644
+index bec9beb5..fecdbf1f 100644
 --- a/absl/time/internal/cctz/src/time_zone_if.h
 +++ b/absl/time/internal/cctz/src/time_zone_if.h
-@@ -38,6 +38,7 @@ class TimeZoneIf {
+@@ -34,11 +34,14 @@ namespace cctz {
+ class TimeZoneIf {
+  public:
+   // Factory functions for TimeZoneIf implementations.
++#ifndef PB_ENABLE_SGX
+   static std::unique_ptr<TimeZoneIf> UTC();  // never fails
+   static std::unique_ptr<TimeZoneIf> Make(const std::string& name);
++#endif //PB_ENABLE_SGX
  
    virtual ~TimeZoneIf();
  
@@ -3171,7 +3484,7 @@ index 7d3e42d3..8276042d 100644
    virtual time_zone::absolute_lookup BreakTime(
        const time_point<seconds>& tp) const = 0;
    virtual time_zone::civil_lookup MakeTime(const civil_second& cs) const = 0;
-@@ -46,6 +47,7 @@ class TimeZoneIf {
+@@ -47,6 +50,7 @@ class TimeZoneIf {
                                time_zone::civil_transition* trans) const = 0;
    virtual bool PrevTransition(const time_point<seconds>& tp,
                                time_zone::civil_transition* trans) const = 0;
@@ -3179,7 +3492,7 @@ index 7d3e42d3..8276042d 100644
  
    virtual std::string Version() const = 0;
    virtual std::string Description() const = 0;
-@@ -58,6 +60,7 @@ class TimeZoneIf {
+@@ -61,6 +65,7 @@ class TimeZoneIf {
  // Unix epoch.  We assume that the std::chrono::system_clock and the
  // Unix clock are second aligned, and that the results are representable.
  // (That is, that they share an epoch, which is required since C++20.)
@@ -3187,7 +3500,7 @@ index 7d3e42d3..8276042d 100644
  inline std::int_fast64_t ToUnixSeconds(const time_point<seconds>& tp) {
    return (tp - std::chrono::time_point_cast<seconds>(
                     std::chrono::system_clock::from_time_t(0)))
-@@ -68,6 +71,7 @@ inline time_point<seconds> FromUnixSeconds(std::int_fast64_t t) {
+@@ -71,6 +76,7 @@ inline time_point<seconds> FromUnixSeconds(std::int_fast64_t t) {
               std::chrono::system_clock::from_time_t(0)) +
           seconds(t);
  }
@@ -3196,35 +3509,35 @@ index 7d3e42d3..8276042d 100644
  }  // namespace cctz
  }  // namespace time_internal
 diff --git a/absl/time/internal/cctz/src/time_zone_impl.cc b/absl/time/internal/cctz/src/time_zone_impl.cc
-index f34e3aec..6fcc1d56 100644
+index 5f2f49e4..7863cbe2 100644
 --- a/absl/time/internal/cctz/src/time_zone_impl.cc
 +++ b/absl/time/internal/cctz/src/time_zone_impl.cc
 @@ -24,6 +24,7 @@
  #include "absl/base/config.h"
- #include "time_zone_fixed.h"
+ #include "absl/time/internal/cctz/src/time_zone_fixed.h"
  
 +#ifndef PB_ENABLE_SGX
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace time_internal {
-@@ -111,3 +112,4 @@ const time_zone::Impl* time_zone::Impl::UTCImpl() {
+@@ -113,3 +114,4 @@ const time_zone::Impl* time_zone::Impl::UTCImpl() {
  }  // namespace time_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/time/internal/cctz/src/time_zone_impl.h b/absl/time/internal/cctz/src/time_zone_impl.h
-index 7d747ba9..0fac999e 100644
+index da3aec52..5cf07b31 100644
 --- a/absl/time/internal/cctz/src/time_zone_impl.h
 +++ b/absl/time/internal/cctz/src/time_zone_impl.h
 @@ -24,6 +24,7 @@
- #include "time_zone_if.h"
- #include "time_zone_info.h"
+ #include "absl/time/internal/cctz/src/time_zone_if.h"
+ #include "absl/time/internal/cctz/src/time_zone_info.h"
  
 +#ifndef PB_ENABLE_SGX
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  namespace time_internal {
-@@ -89,5 +90,6 @@ class time_zone::Impl {
+@@ -93,5 +94,6 @@ class time_zone::Impl {
  }  // namespace time_internal
  ABSL_NAMESPACE_END
  }  // namespace absl
@@ -3232,10 +3545,10 @@ index 7d747ba9..0fac999e 100644
  
  #endif  // ABSL_TIME_INTERNAL_CCTZ_TIME_ZONE_IMPL_H_
 diff --git a/absl/time/internal/cctz/src/time_zone_info.cc b/absl/time/internal/cctz/src/time_zone_info.cc
-index 787426f7..ea7cf9e5 100644
+index f8484c90..47e3cdeb 100644
 --- a/absl/time/internal/cctz/src/time_zone_info.cc
 +++ b/absl/time/internal/cctz/src/time_zone_info.cc
-@@ -179,6 +179,7 @@ std::int_fast64_t TransOffset(bool leap_year, int jan1_weekday,
+@@ -223,6 +223,7 @@ std::int_fast64_t TransOffset(bool leap_year, int jan1_weekday,
    return (days * kSecsPerDay) + pt.time.offset;
  }
  
@@ -3243,7 +3556,7 @@ index 787426f7..ea7cf9e5 100644
  inline time_zone::civil_lookup MakeUnique(const time_point<seconds>& tp) {
    time_zone::civil_lookup cl;
    cl.kind = time_zone::civil_lookup::UNIQUE;
-@@ -209,6 +210,7 @@ inline time_zone::civil_lookup MakeRepeated(const Transition& tr,
+@@ -253,6 +254,7 @@ inline time_zone::civil_lookup MakeRepeated(const Transition& tr,
    cl.post = FromUnixSeconds(tr.unix_time + (cs - tr.civil_sec));
    return cl;
  }
@@ -3251,23 +3564,7 @@ index 787426f7..ea7cf9e5 100644
  
  inline civil_second YearShift(const civil_second& cs, year_t shift) {
    return civil_second(cs.year() + shift, cs.month(), cs.day(), cs.hour(),
-@@ -218,6 +220,7 @@ inline civil_second YearShift(const civil_second& cs, year_t shift) {
- }  // namespace
- 
- // What (no leap-seconds) UTC+seconds zoneinfo would look like.
-+#ifndef PB_ENABLE_SGX
- bool TimeZoneInfo::ResetToBuiltinUTC(const seconds& offset) {
-   transition_types_.resize(1);
-   TransitionType& tt(transition_types_.back());
-@@ -263,6 +266,7 @@ bool TimeZoneInfo::ResetToBuiltinUTC(const seconds& offset) {
-   transitions_.shrink_to_fit();
-   return true;
- }
-+#endif //PB_ENABLE_SGX
- 
- // Builds the in-memory header using the raw bytes from the file.
- bool TimeZoneInfo::Header::Build(const tzhead& tzh) {
-@@ -343,6 +347,7 @@ bool TimeZoneInfo::GetTransitionType(std::int_fast32_t utc_offset, bool is_dst,
+@@ -309,6 +311,7 @@ bool TimeZoneInfo::EquivTransitions(std::uint_fast8_t tt1_index,
  
  // Use the POSIX-TZ-environment-variable-style string to handle times
  // in years after the last transition stored in the zoneinfo data.
@@ -3275,7 +3572,7 @@ index 787426f7..ea7cf9e5 100644
  bool TimeZoneInfo::ExtendTransitions() {
    extended_ = false;
    if (future_spec_.empty()) return true;  // last transition prevails
-@@ -970,6 +975,7 @@ time_zone::civil_lookup TimeZoneInfo::MakeTime(const civil_second& cs) const {
+@@ -992,6 +995,7 @@ time_zone::civil_lookup TimeZoneInfo::MakeTime(const civil_second& cs) const {
    // In between transitions.
    return MakeUnique(tr->unix_time + (cs - tr->civil_sec));
  }
@@ -3283,7 +3580,7 @@ index 787426f7..ea7cf9e5 100644
  
  std::string TimeZoneInfo::Version() const { return version_; }
  
-@@ -981,6 +987,7 @@ std::string TimeZoneInfo::Description() const {
+@@ -1003,6 +1007,7 @@ std::string TimeZoneInfo::Description() const {
    return oss.str();
  }
  
@@ -3291,7 +3588,7 @@ index 787426f7..ea7cf9e5 100644
  bool TimeZoneInfo::NextTransition(const time_point<seconds>& tp,
                                    time_zone::civil_transition* trans) const {
    if (transitions_.empty()) return false;
-@@ -1041,6 +1048,7 @@ bool TimeZoneInfo::PrevTransition(const time_point<seconds>& tp,
+@@ -1063,6 +1068,7 @@ bool TimeZoneInfo::PrevTransition(const time_point<seconds>& tp,
    trans->to = tr->civil_sec;
    return true;
  }
@@ -3300,18 +3597,18 @@ index 787426f7..ea7cf9e5 100644
  }  // namespace cctz
  }  // namespace time_internal
 diff --git a/absl/time/internal/cctz/src/time_zone_info.h b/absl/time/internal/cctz/src/time_zone_info.h
-index 2467ff55..1b913f04 100644
+index efe2f9cb..9d93f999 100644
 --- a/absl/time/internal/cctz/src/time_zone_info.h
 +++ b/absl/time/internal/cctz/src/time_zone_info.h
-@@ -72,6 +72,7 @@ class TimeZoneInfo : public TimeZoneIf {
-   bool Load(const std::string& name);
+@@ -70,6 +70,7 @@ class TimeZoneInfo : public TimeZoneIf {
+   static std::unique_ptr<TimeZoneInfo> Make(const std::string& name);
  
    // TimeZoneIf implementations.
 +#ifndef PB_ENABLE_SGX
    time_zone::absolute_lookup BreakTime(
        const time_point<seconds>& tp) const override;
    time_zone::civil_lookup MakeTime(const civil_second& cs) const override;
-@@ -79,6 +80,7 @@ class TimeZoneInfo : public TimeZoneIf {
+@@ -77,6 +78,7 @@ class TimeZoneInfo : public TimeZoneIf {
                        time_zone::civil_transition* trans) const override;
    bool PrevTransition(const time_point<seconds>& tp,
                        time_zone::civil_transition* trans) const override;
@@ -3319,13 +3616,14 @@ index 2467ff55..1b913f04 100644
    std::string Version() const override;
    std::string Description() const override;
  
-@@ -101,16 +103,20 @@ class TimeZoneInfo : public TimeZoneIf {
+@@ -91,17 +93,21 @@ class TimeZoneInfo : public TimeZoneIf {
                          std::uint_fast8_t tt2_index) const;
    bool ExtendTransitions();
  
 +#ifndef PB_ENABLE_SGX
    bool ResetToBuiltinUTC(const seconds& offset);
 +#endif //PB_ENABLE_SGX
+   bool Load(const std::string& name);
    bool Load(ZoneInfoSource* zip);
  
    // Helpers for BreakTime() and MakeTime().
@@ -3341,31 +3639,31 @@ index 2467ff55..1b913f04 100644
    std::vector<Transition> transitions_;  // ordered by unix_time and civil_sec
    std::vector<TransitionType> transition_types_;  // distinct transition types
 diff --git a/absl/time/internal/cctz/src/time_zone_libc.cc b/absl/time/internal/cctz/src/time_zone_libc.cc
-index 887dd097..18577d33 100644
+index 362da1ab..8f21d953 100644
 --- a/absl/time/internal/cctz/src/time_zone_libc.cc
 +++ b/absl/time/internal/cctz/src/time_zone_libc.cc
-@@ -109,6 +109,7 @@ auto tm_zone(const T& tm) -> decltype(tm.__tm_zone) {
- #endif  // tm_zone
+@@ -120,6 +120,7 @@ auto tm_zone(const T& tm) -> decltype(tm.__tm_zone) {
  #endif
+ using tm_gmtoff_t = decltype(tm_gmtoff(std::tm{}));
  
 +#ifndef PB_ENABLE_SGX
  inline std::tm* gm_time(const std::time_t* timep, std::tm* result) {
  #if defined(_WIN32) || defined(_WIN64)
    return gmtime_s(result, timep) ? nullptr : result;
-@@ -124,10 +125,12 @@ inline std::tm* local_time(const std::time_t* timep, std::tm* result) {
+@@ -135,10 +136,12 @@ inline std::tm* local_time(const std::time_t* timep, std::tm* result) {
    return localtime_r(timep, result);
  #endif
  }
 +#endif //PB_ENABLE_SGX
  
- // Converts a civil second and "dst" flag into a time_t and UTC offset.
+ // Converts a civil second and "dst" flag into a time_t and a struct tm.
  // Returns false if time_t cannot represent the requested civil second.
  // Caller must have already checked that cs.year() will fit into a tm_year.
 +#ifndef PB_ENABLE_SGX
- bool make_time(const civil_second& cs, int is_dst, std::time_t* t, int* off) {
-   std::tm tm;
-   tm.tm_year = static_cast<int>(cs.year() - year_t{1900});
-@@ -180,12 +183,14 @@ std::time_t find_trans(std::time_t lo, std::time_t hi, int offset) {
+ bool make_time(const civil_second& cs, int is_dst, std::time_t* t,
+                std::tm* tm) {
+   tm->tm_year = static_cast<int>(cs.year() - year_t{1900});
+@@ -190,6 +193,7 @@ std::time_t find_trans(std::time_t lo, std::time_t hi, tm_gmtoff_t offset) {
    }
    return hi;
  }
@@ -3373,14 +3671,15 @@ index 887dd097..18577d33 100644
  
  }  // namespace
  
- TimeZoneLibC::TimeZoneLibC(const std::string& name)
-     : local_(name == "localtime") {}
+@@ -197,6 +201,7 @@ std::unique_ptr<TimeZoneLibC> TimeZoneLibC::Make(const std::string& name) {
+   return std::unique_ptr<TimeZoneLibC>(new TimeZoneLibC(name));
+ }
  
 +#ifndef PB_ENABLE_SGX
  time_zone::absolute_lookup TimeZoneLibC::BreakTime(
      const time_point<seconds>& tp) const {
    time_zone::absolute_lookup al;
-@@ -300,6 +305,7 @@ bool TimeZoneLibC::PrevTransition(const time_point<seconds>&,
+@@ -315,6 +320,7 @@ bool TimeZoneLibC::PrevTransition(const time_point<seconds>&,
                                    time_zone::civil_transition*) const {
    return false;
  }
@@ -3389,18 +3688,18 @@ index 887dd097..18577d33 100644
  std::string TimeZoneLibC::Version() const {
    return std::string();  // unknown
 diff --git a/absl/time/internal/cctz/src/time_zone_libc.h b/absl/time/internal/cctz/src/time_zone_libc.h
-index 1da9039a..46795013 100644
+index f1ed5cd0..8314ea26 100644
 --- a/absl/time/internal/cctz/src/time_zone_libc.h
 +++ b/absl/time/internal/cctz/src/time_zone_libc.h
-@@ -33,6 +33,7 @@ class TimeZoneLibC : public TimeZoneIf {
-   explicit TimeZoneLibC(const std::string& name);
+@@ -34,6 +34,7 @@ class TimeZoneLibC : public TimeZoneIf {
+   static std::unique_ptr<TimeZoneLibC> Make(const std::string& name);
  
    // TimeZoneIf implementations.
 +#ifndef PB_ENABLE_SGX
    time_zone::absolute_lookup BreakTime(
        const time_point<seconds>& tp) const override;
    time_zone::civil_lookup MakeTime(const civil_second& cs) const override;
-@@ -40,6 +41,7 @@ class TimeZoneLibC : public TimeZoneIf {
+@@ -41,6 +42,7 @@ class TimeZoneLibC : public TimeZoneIf {
                        time_zone::civil_transition* trans) const override;
    bool PrevTransition(const time_point<seconds>& tp,
                        time_zone::civil_transition* trans) const override;
@@ -3409,18 +3708,18 @@ index 1da9039a..46795013 100644
    std::string Description() const override;
  
 diff --git a/absl/time/internal/cctz/src/time_zone_lookup.cc b/absl/time/internal/cctz/src/time_zone_lookup.cc
-index f6983aeb..7c0ef374 100644
+index 90b29721..0964ead2 100644
 --- a/absl/time/internal/cctz/src/time_zone_lookup.cc
 +++ b/absl/time/internal/cctz/src/time_zone_lookup.cc
-@@ -76,6 +76,7 @@ int __system_property_get(const char* name, char* value) {
+@@ -147,6 +147,7 @@ std::string win32_local_time_zone() {
+ #endif  // USE_WIN32_LOCAL_TIME_ZONE
  }  // namespace
- #endif
  
 +#ifndef PB_ENABLE_SGX
  std::string time_zone::name() const { return effective_impl().Name(); }
  
  time_zone::absolute_lookup time_zone::lookup(
-@@ -230,6 +231,7 @@ time_zone local_time_zone() {
+@@ -307,6 +308,7 @@ time_zone local_time_zone() {
    // offset because the load_time_zone() failed and we're using UTC.
    return tz;
  }
@@ -3442,7 +3741,7 @@ index 42072000..2a1aa514 100644
  #include <cstdint>
  
 diff --git a/absl/time/time.cc b/absl/time/time.cc
-index 7256a699..c9b259d3 100644
+index d983c12b..c8483d3d 100644
 --- a/absl/time/time.cc
 +++ b/absl/time/time.cc
 @@ -46,6 +46,7 @@
@@ -3453,13 +3752,13 @@ index 7256a699..c9b259d3 100644
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -498,3 +499,4 @@ struct tm ToTM(absl::Time t, absl::TimeZone tz) {
+@@ -505,3 +506,4 @@ struct tm ToTM(absl::Time t, absl::TimeZone tz) {
  
  ABSL_NAMESPACE_END
  }  // namespace absl
 +#endif //PB_ENABLE_SGX
 diff --git a/absl/time/time.h b/absl/time/time.h
-index cc390082..ea4a3124 100644
+index 53bca90d..938a3b16 100644
 --- a/absl/time/time.h
 +++ b/absl/time/time.h
 @@ -63,7 +63,9 @@
@@ -3472,21 +3771,19 @@ index cc390082..ea4a3124 100644
  #else
  // We don't include `winsock2.h` because it drags in `windows.h` and friends,
  // and they define conflicting macros like OPAQUE, ERROR, and more. This has the
-@@ -89,6 +91,7 @@ struct timeval;
- #include "absl/time/civil_time.h"
- #include "absl/time/internal/cctz/include/cctz/time_zone.h"
+@@ -107,6 +109,7 @@ struct timeval;
+ #define ABSL_INTERNAL_TIME_HAS_THREE_WAY_COMPARISON 1
+ #endif
  
 +#ifndef PB_ENABLE_SGX
  namespace absl {
  ABSL_NAMESPACE_BEGIN
  
-@@ -1711,5 +1714,6 @@ ABSL_ATTRIBUTE_CONST_FUNCTION constexpr Time FromTimeT(time_t t) {
- 
- ABSL_NAMESPACE_END
+@@ -1923,3 +1926,4 @@ ABSL_NAMESPACE_END
  }  // namespace absl
-+#endif //PB_ENABLE_SGX
  
  #endif  // ABSL_TIME_TIME_H_
++#endif //PB_ENABLE_SGX
 -- 
-2.34.1
+2.43.0
 

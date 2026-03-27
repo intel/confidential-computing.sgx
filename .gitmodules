@@ -17,7 +17,7 @@
 [submodule "external/protobuf/protobuf_code"]
 	path = external/protobuf/protobuf_code
 	url = https://github.com/protocolbuffers/protobuf.git
-	branch = 23.x
+	branch = 33.x
 [submodule "external/sgx-emm/emm_src"]
 	path = external/sgx-emm/emm_src
 	url = https://github.com/intel/sgx-emm.git
@@ -27,3 +27,9 @@
 [submodule "external/libcxxrt/libcxxrt_code"]
 	path = external/libcxxrt/libcxxrt_code
 	url = https://github.com/libcxxrt/libcxxrt.git
+[submodule "external/protobuf/abseil-cpp"]
+	path = external/protobuf/abseil-cpp
+	url = https://github.com/abseil/abseil-cpp.git
+	# Version choice is linked to protobuf requirements (i.e. it's 'dependencies.cmake').
+	branch = lts_2025_05_12
+

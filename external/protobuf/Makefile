@@ -35,7 +35,7 @@ PB_DIR = protobuf_code
 LIBPB = $(PB_DIR)/final_tlibPB/build/libprotobuf.a
 PROTOCPB = $(PB_DIR)/final_protocPB/build/protoc
 INCLUDEPB = $(PB_DIR)/src/google/protobuf
-ABSEIL_DIR = third_party/abseil-cpp
+ABSEIL_DIR = abseil-cpp
 DEST_LIBRARY_NAME = libsgx_protobuf.a
 
 PB_CONFIG = -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_WORKS=TRUE -DCMAKE_CXX_COMPILER_WORKS=TRUE
@@ -68,32 +68,29 @@ endif
 $(BUILD_DIR):
 	@$(MKDIR) $@
 
+# TODO refactor to remove duplication with the main Makefile.
+# The main Makefile should call this target instead.
 .PHONY: protobuf_code
 protobuf_code:
-ifeq ($(shell git rev-parse --is-inside-work-tree), true)
+	# Current protobuf and current patch uses Abseil with tag 20250512.1.
 	$(RM) -r $(PB_DIR)/
+	$(RM) -r $(ABSEIL_DIR)/
 	git submodule update -f --init $(PB_DIR)
-else
-	$(RM) -r $(PB_DIR)/
-	git clone https://github.com/protocolbuffers/protobuf.git -b v23.2 --depth 1 $(PB_DIR)
-endif
-
+	git submodule update -f --init $(ABSEIL_DIR)
 
 $(LIBPB): $(CHECK_SOURCE)
-ifeq ("$(wildcard $(PB_DIR)/src/file_lists_for_sgx.cmake)", "")
-	cd $(PB_DIR) && \
-		git apply ../sgx_protobuf.patch && \
-		git apply ../0001-bumped-protobuf-to-1.33.0.patch && \
-		git submodule update --init --recursive && \
-		cd $(ABSEIL_DIR) && \
-		git apply ../../../sgx_abseil.patch && \
-		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch && \
-		git apply ../../../0001-abseil-fix-missing-abort.patch && \
-		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC15.patch && \
-		cd ../../..
-endif
-	$(MKDIR) protobuf_code/final_tlibPB/build && cd protobuf_code/final_tlibPB/build && cmake $(PB_CONFIG) -Dprotobuf_BUILD_TESTS=FALSE -DSGX=TRUE ../../ -B . && make libprotobuf
+	@if ! grep -q "sgx_protobuf" $(PB_DIR)/.sgx_patched 2>/dev/null; then \
+		cd $(PB_DIR) && \
+		git apply ../sgx_protobuf.patch >/dev/null 2>&1 || git apply ../sgx_protobuf.patch --check -R && \
+		git submodule update --init --recursive; \
+	fi
 
+	@if ! grep -q "sgx_abseil" $(ABSEIL_DIR)/.sgx_patched 2>/dev/null; then \
+		cd $(ABSEIL_DIR) && \
+		git apply ../sgx_abseil.patch >/dev/null 2>&1 || git apply ../sgx_abseil.patch --check -R; \
+	fi
+    
+	$(MKDIR) protobuf_code/final_tlibPB/build && cd protobuf_code/final_tlibPB/build && cmake $(PB_CONFIG) -Dprotobuf_BUILD_TESTS=FALSE -DSGX=TRUE ../../ -B . && make libprotobuf
 ifeq ($(BUILD_PROTOC), 1)
 $(PROTOCPB): $(CHECK_SOURCE)
 	$(MKDIR) protobuf_code/final_protocPB/build && cd protobuf_code/final_protocPB/build && cmake -Dprotobuf_BUILD_TESTS=FALSE -DSGX=FALSE -DCMAKE_SKIP_RPATH=TRUE ../../ -B . && make protoc

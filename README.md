@@ -159,11 +159,20 @@ Build the Intel(R) SGX SDK and Intel(R) SGX PSW Package
   Ensure that you have downloaded latest Intel(R) SGX SDK Installer from the [Intel(R) SGX SDK](https://software.intel.com/en-us/sgx-sdk/download) and followed the Installation Guide in the same page to install latest Intel(R) SGX SDK Installer.
 
 - Download the source code and prepare the submodules and prebuilt binaries:
-```
-   $ git clone https://github.com/intel/confidential-computing.sgx.git sgx-source
-   $ cd sgx-source && make preparation
-```
-  The above ``make preparation`` would trigger the script ``download_prebuilt.sh`` to download the prebuilt binaries. You may need to set an https proxy for the `wget` tool used by the script (such as ``export https_proxy=http://test-proxy:test-port``)
+  ```
+     $ git clone https://github.com/intel/confidential-computing.sgx.git sgx-source
+     $ cd sgx-source && make preparation
+  ```
+  The above ``make preparation`` would:
+    1) update git submodules and apply patches if necessary;
+    2) trigger the script ``download_prebuilt.sh`` to download the prebuilt binaries. You may need to set an https proxy for the `wget` tool used by the script (such as ``export https_proxy=http://test-proxy:test-port``).
+
+> [!NOTE]
+>
+> When pulling a new release, run ``make distclean`` if patched submodules changed. This will deinit all submodules and prevent patch conflicts like: ``error: Your local changes to the following files would be overwritten by checkout``.
+> ```
+>   $ make distclean
+> ```
 
 - (*Optional*) If the binutils on your current operating system distribution doesn't support mitigation options, copy the mitigation tools corresponding to current OS distribution from external/toolset/{current_distr} to /usr/local/bin and make sure they have execute permission:
   ```
@@ -174,6 +183,9 @@ Build the Intel(R) SGX SDK and Intel(R) SGX PSW Package
 
 
 ### Build the Intel(R) SGX SDK and Intel(R) SGX SDK Installer
+> [!NOTE]
+> After pulling a new release, run ``make distclean`` and ``make preparation`` again to update changed submodules.
+
 - To build Intel(R) SGX SDK with default configuration, enter the following command:
 ```
   $ make sdk

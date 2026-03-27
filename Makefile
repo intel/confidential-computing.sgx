@@ -55,16 +55,20 @@ preparation:
 	git apply ../0001-Add-a-macro-to-disable-time-support-in-jwt-for-SGX.patch -R --check
 	./external/dcap_source/QuoteVerification/prepare_sgxssl.sh nobuild
 	cd external/openmp/openmp_code && git apply ../0001-Enable-OpenMP-in-SGX.patch >/dev/null 2>&1 ||  git apply ../0001-Enable-OpenMP-in-SGX.patch --check -R
-	cd external/protobuf/protobuf_code && \
+
+	# TODO refactor to remove duplication with the ./external/protobuf/Makefile.
+	# This Makefile should call ./external/protobuf/Makefile targets instead.
+	# If you are adding a new patch over this one, write your patch's name to .sgx_patched
+	@if ! grep -q "sgx_protobuf" external/protobuf/protobuf_code/.sgx_patched 2>/dev/null; then \
+		cd external/protobuf/protobuf_code && \
 		git apply ../sgx_protobuf.patch >/dev/null 2>&1 || git apply ../sgx_protobuf.patch --check -R && \
-		git apply ../0001-bumped-protobuf-to-1.33.0.patch >/dev/null 2>&1 || git apply ../0001-bumped-protobuf-to-1.33.0.patch --check -R && \
-		git submodule update --init --recursive && \
-		cd third_party/abseil-cpp && \
-		git reset --hard && \
-		git apply ../../../sgx_abseil.patch >/dev/null 2>&1 || git apply ../../../sgx_abseil.patch --check -R && \
-		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch >/dev/null 2>&1 || git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC14.patch --check -R && \
-		git apply ../../../0001-abseil-fix-missing-abort.patch >/dev/null 2>&1 || git apply ../../../0001-abseil-fix-missing-abort.patch --check -R && \
-		git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC15.patch >/dev/null 2>&1 || git apply ../../../0001-fix-to-make-SGX-Linux-build-on-GCC15.patch --check -R
+		git submodule update --init --recursive; \
+	fi
+	# If you are adding a new patch over this one, write your patch's name to .sgx_patched
+	@if ! grep -q "sgx_abseil" external/protobuf/abseil-cpp/.sgx_patched 2>/dev/null; then \
+		cd external/protobuf/abseil-cpp && \
+		git apply ../sgx_abseil.patch >/dev/null 2>&1 || git apply ../sgx_abseil.patch --check -R; \
+	fi
 	./external/sgx-emm/create_symlink.sh
 	cd external/cbor && cp -r libcbor sgx_libcbor
 	cd external/cbor/libcbor && git apply ../raw_cbor.patch >/dev/null 2>&1 || git apply ../raw_cbor.patch --check -R
@@ -557,4 +561,4 @@ distclean:
 	$(RM) -rf external/dcap_source/QuoteGeneration/'Intel redistributable binary.txt'
 	$(RM) -rf external/dcap_source/QuoteVerification/sgxssl/
 	git submodule deinit  --all -f
-	$(RM) -rf dcap-trunk external/dcap_source external/openmp/openmp_code external/protobuf/protobuf_code
+	$(RM) -rf dcap-trunk external/dcap_source external/openmp/openmp_code external/protobuf/protobuf_code external/protobuf/abseil-cpp
