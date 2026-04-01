@@ -1,7 +1,13 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5c0a784..0a4c4fc 100644
+index 5c0a784..5ed3a67 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ project(libcbor)
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
+ include(CTest)
 @@ -25,7 +25,7 @@ if(CBOR_CUSTOM_ALLOC)
          "Please remove CBOR_CUSTOM_ALLOC from your build configuation.")
  endif(CBOR_CUSTOM_ALLOC)
@@ -34,7 +40,7 @@ index 5c0a784..0a4c4fc 100644
  if(use_lto)
      set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 72a0c90..69e82ac 100644
+index 72a0c90..de62164 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -8,9 +8,13 @@ set(CMAKE_SKIP_BUILD_RPATH FALSE)

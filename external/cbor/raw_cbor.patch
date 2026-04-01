@@ -1,7 +1,13 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 04122d9..387ebc8 100644
+index 5c0a784..0ea20af 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ project(libcbor)
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
+ include(CTest)
 @@ -34,7 +34,7 @@ if(WITH_TESTS)
      add_definitions(-DWITH_TESTS)
  endif(WITH_TESTS)

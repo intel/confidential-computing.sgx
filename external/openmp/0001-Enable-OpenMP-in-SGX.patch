@@ -1,44 +1,11 @@
-From bff36a2672ae0905af3e3af7822e7155911310dc Mon Sep 17 00:00:00 2001
-From: Zhang Lili <lili.z.zhang@intel.com>
-Date: Thu, 15 Jul 2021 16:19:43 +0000
-Subject: [PATCH] Enable OpenMP in SGX
-
-Signed-off-by: Zhang Lili <lili.z.zhang@intel.com>
----
- final/CMakeLists.txt                        |  5 +-
- final/runtime/CMakeLists.txt                | 12 +++-
- final/runtime/cmake/LibompDefinitions.cmake |  1 +
- final/runtime/cmake/LibompHandleFlags.cmake |  7 ++
- final/runtime/cmake/config-ix.cmake         |  2 +-
- final/runtime/src/CMakeLists.txt            |  5 ++
- final/runtime/src/kmp.h                     | 42 ++++++++++-
- final/runtime/src/kmp_affinity.h            |  4 ++
- final/runtime/src/kmp_config.h.cmake        | 12 ++++
- final/runtime/src/kmp_csupport.cpp          | 12 ++++
- final/runtime/src/kmp_environment.cpp       | 11 ++-
- final/runtime/src/kmp_ftn_entry.h           | 10 +++
- final/runtime/src/kmp_global.cpp            |  5 ++
- final/runtime/src/kmp_i18n.cpp              | 24 +++++--
- final/runtime/src/kmp_io.cpp                |  6 ++
- final/runtime/src/kmp_lock.h                |  3 +
- final/runtime/src/kmp_os.h                  | 12 ++++
- final/runtime/src/kmp_runtime.cpp           | 28 ++++++--
- final/runtime/src/kmp_settings.cpp          | 15 ++++
- final/runtime/src/kmp_utility.cpp           |  6 ++
- final/runtime/src/kmp_wrapper_getpid.h      |  4 ++
- final/runtime/src/kmp_wrapper_malloc.h      |  2 +
- final/runtime/src/sgx_stub.cpp              | 63 ++++++++++++++++
- final/runtime/src/sgx_stub.h                | 51 +++++++++++++
- final/runtime/src/z_Linux_util.cpp          | 79 +++++++++++++++++++--
- 25 files changed, 400 insertions(+), 21 deletions(-)
- create mode 100644 final/runtime/src/sgx_stub.cpp
- create mode 100644 final/runtime/src/sgx_stub.h
-
 diff --git a/final/CMakeLists.txt b/final/CMakeLists.txt
-index 597eedc..8d820a1 100644
+index 597eedc..1240260 100644
 --- a/final/CMakeLists.txt
 +++ b/final/CMakeLists.txt
-@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+@@ -1,8 +1,11 @@
+-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+ 
  # Add cmake directory to search for custom cmake functions.
  set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
  
@@ -57,6 +24,16 @@ index 597eedc..8d820a1 100644
  # Currently libomptarget cannot be compiled on Windows or MacOS X.
  # Since the device plugins are only supported on Linux anyway,
  # there is no point in trying to compile libomptarget on other OSes.
+diff --git a/final/cmake/DetectTestCompiler/CMakeLists.txt b/final/cmake/DetectTestCompiler/CMakeLists.txt
+index c2f408c..2099359 100644
+--- a/final/cmake/DetectTestCompiler/CMakeLists.txt
++++ b/final/cmake/DetectTestCompiler/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ project(DetectTestCompiler C CXX)
+ 
+ include(CheckCCompilerFlag)
 diff --git a/final/runtime/CMakeLists.txt b/final/runtime/CMakeLists.txt
 index 447b3cd..3d3018c 100644
 --- a/final/runtime/CMakeLists.txt
@@ -109,6 +86,19 @@ index 447b3cd..3d3018c 100644
  
  # TSAN-support
  set(LIBOMP_TSAN_SUPPORT FALSE CACHE BOOL
+diff --git a/final/runtime/cmake/LibompCheckLinkerFlag.cmake b/final/runtime/cmake/LibompCheckLinkerFlag.cmake
+index 75a38e3..bd60692 100644
+--- a/final/runtime/cmake/LibompCheckLinkerFlag.cmake
++++ b/final/runtime/cmake/LibompCheckLinkerFlag.cmake
+@@ -18,7 +18,7 @@ function(libomp_check_linker_flag flag boolean)
+   set(library_source
+     "int foo(int a) { return a*a; }")
+   set(cmake_source
+-    "cmake_minimum_required(VERSION 2.8)
++    "cmake_minimum_required(VERSION 3.5)
+      project(foo C)
+      set(CMAKE_SHARED_LINKER_FLAGS \"${flag}\")
+      add_library(foo SHARED src_to_link.c)")
 diff --git a/final/runtime/cmake/LibompDefinitions.cmake b/final/runtime/cmake/LibompDefinitions.cmake
 index c4cfbb9..5fb8732 100644
 --- a/final/runtime/cmake/LibompDefinitions.cmake
@@ -1406,6 +1396,3 @@ index aa0302c..f4823b8 100644
  #ifdef USE_LOAD_BALANCE
  
  #if KMP_OS_DARWIN || KMP_OS_NETBSD
--- 
-2.17.1
-
