@@ -62,19 +62,16 @@ static ae_error_t init_log_file(void)
 static const char *get_sgx_status_t_string(sgx_status_t status);
 static const char *get_ae_error_t_string(ae_error_t ae_error);
 static const char *get_aesm_error_t_string(aesm_error_t aesm_error);
-static const char *get_tlv_enum_type_t_string(uint8_t type);
 
 const char *support_tags[] = {
     "sgx",
     "aesm",//matching longer tag before shorter one so aesm should be arranged before ae
-    "ae",
-    "tlv"
+    "ae"
 };
 #define COUNT_TAGS (sizeof(support_tags)/sizeof(support_tags[0]))
 #define TAG_SGX  0
 #define TAG_AESM 1
 #define TAG_AE   2
-#define TAG_TLV  3
 
 #define MAX_BUF_SIZE 4096
 std::string internal_log_msg_trans(const std::string& s)
@@ -113,11 +110,6 @@ std::string internal_log_msg_trans(const std::string& s)
                     case TAG_AE:
                         output += "(ae_error_t:";
                         output += get_ae_error_t_string((ae_error_t)number);
-                        output += ":";
-                        break;
-                    case TAG_TLV:
-                        output += "(TLV:";
-                        output += get_tlv_enum_type_t_string((uint8_t)number);
                         output += ":";
                         break;
                     default:
@@ -254,41 +246,6 @@ void aesm_dbg_format_hex(const uint8_t *data, uint32_t data_len, char *out_buf, 
 
 
 #define CASE_ENUM_RET_STRING(x) case x: return #x;
-
-//(tlv%d)
-static const char *get_tlv_enum_type_t_string(uint8_t type)
-{
-    switch (type){
-        CASE_ENUM_RET_STRING(TLV_CIPHER_TEXT)
-        CASE_ENUM_RET_STRING(TLV_BLOCK_CIPHER_TEXT)
-        CASE_ENUM_RET_STRING(TLV_BLOCK_CIPHER_INFO)
-        CASE_ENUM_RET_STRING(TLV_MESSAGE_AUTHENTICATION_CODE)
-        CASE_ENUM_RET_STRING(TLV_NONCE)
-        CASE_ENUM_RET_STRING(TLV_EPID_GID)
-        CASE_ENUM_RET_STRING(TLV_EPID_SIG_RL)
-        CASE_ENUM_RET_STRING(TLV_EPID_GROUP_CERT)
-        CASE_ENUM_RET_STRING(TLV_DEVICE_ID)
-        CASE_ENUM_RET_STRING(TLV_PS_ID)
-        CASE_ENUM_RET_STRING(TLV_EPID_JOIN_PROOF)
-        CASE_ENUM_RET_STRING(TLV_EPID_SIG)
-        CASE_ENUM_RET_STRING(TLV_EPID_MEMBERSHIP_CREDENTIAL)
-        CASE_ENUM_RET_STRING(TLV_EPID_PSVN)
-        CASE_ENUM_RET_STRING(TLV_QUOTE)
-        CASE_ENUM_RET_STRING(TLV_X509_CERT_TLV)
-        CASE_ENUM_RET_STRING(TLV_X509_CSR_TLV)
-        CASE_ENUM_RET_STRING(TLV_ES_SELECTOR)
-        CASE_ENUM_RET_STRING(TLV_ES_INFORMATION)
-        CASE_ENUM_RET_STRING(TLV_FLAGS)
-        CASE_ENUM_RET_STRING(TLV_QUOTE_SIG)
-        CASE_ENUM_RET_STRING(TLV_PEK)
-        CASE_ENUM_RET_STRING(TLV_SIGNATURE)
-        CASE_ENUM_RET_STRING(TLV_PLATFORM_INFO)
-        CASE_ENUM_RET_STRING(TLV_PWK2)
-        CASE_ENUM_RET_STRING(TLV_SE_REPORT)
-    default:
-        return "Unknown TLV";
-    }
-}
 
 //(ae%d)
 static const char *get_ae_error_t_string(ae_error_t ae_error)
