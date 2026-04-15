@@ -33,6 +33,7 @@
 #include "sgx_tcrypto.h"
 #include "se_cpu_feature.h"
 #include "se_cdefs.h"
+#include "sgx_error.h"
 
 // add a version to tcrypto.
 SGX_ACCESS_VERSION(tcrypto, 1)
@@ -45,9 +46,12 @@ extern "C" void const_init_exception_handler(void);
 unsigned long openssl_last_err = 0;
 
 /* Crypto Library Initialization
-* Parameters:
-*	Return: sgx_status_t  - SGX_SUCCESS or failure as defined sgx_error.h
-*	Inputs: uint64_t cpu_feature_indicator - Bit array of host CPU feature bits */
+ * Parameters:
+ *   Return: sgx_status_t - SGX_SUCCESS or failure as defined in sgx_error.h
+ *   Inputs:
+ *     uint64_t cpu_feature_indicator - Bit array of host CPU feature bits
+ *     uint32_t *cpuid_table - Optional CPUID table used to initialize exception handler
+ */
 extern "C" sgx_status_t sgx_init_crypto_lib(uint64_t cpu_feature_indicator, uint32_t *cpuid_table)
 {
     volatile int dead_code_flag = 0;
@@ -59,5 +63,7 @@ extern "C" sgx_status_t sgx_init_crypto_lib(uint64_t cpu_feature_indicator, uint
     if (dead_code_flag) {
 		const_init_exception_handler();
 	}
+
+	return SGX_SUCCESS;
 }
 
