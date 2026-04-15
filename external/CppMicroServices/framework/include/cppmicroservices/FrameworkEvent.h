@@ -25,6 +25,7 @@
 
 #include "cppmicroservices/FrameworkExport.h"
 
+#include <cstdint>
 #include <iostream>
 #include <memory>
 

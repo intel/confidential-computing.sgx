@@ -25,6 +25,7 @@
 
 #include "cppmicroservices/FrameworkConfig.h"
 
+#include <cstdint>
 #include <string>
 
 namespace cppmicroservices {
