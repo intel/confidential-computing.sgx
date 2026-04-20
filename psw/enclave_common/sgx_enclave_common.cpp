@@ -34,6 +34,7 @@
 #include <sys/types.h>
 #include <dlfcn.h>
 #include <map>
+#include <algorithm>
 #include <functional>
 #include <algorithm>
 #include "sgx_enclave_common.h"
