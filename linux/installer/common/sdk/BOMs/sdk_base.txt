@@ -90,7 +90,7 @@ DeliveryName	InstallName	FileCheckSum	FileFeature	FileOwner
 <deliverydir>/common/inc/sgx_quote_4.h	<installdir>/package/include/sgx_quote_4.h	0	main	STP
 <deliverydir>/common/inc/sgx_quote_5.h	<installdir>/package/include/sgx_quote_5.h	0	main	STP
 <deliverydir>/common/inc/sgx_ql_quote.h	<installdir>/package/include/sgx_ql_quote.h	0	main	STP
-<deliverydir>/common/inc/sgx_dcap_qal.h	<installdir>/package/include/sgx_dcap_qal.h	0	main	STP
+<deliverydir>/common/inc/sgx_dcap_qal_types.h	<installdir>/package/include/sgx_dcap_qal_types.h	0	main	STP
 <deliverydir>/common/inc/sgx_qve_header.h	<installdir>/package/include/sgx_qve_header.h	0	main	STP
 <deliverydir>/sdk/tvl/sgx_dcap_tvl.h	<installdir>/package/include/sgx_dcap_tvl.h	0	main	STP
 <deliverydir>/sdk/tvl/sgx_dcap_tvl.edl	<installdir>/package/include/sgx_dcap_tvl.edl	0	main	STP

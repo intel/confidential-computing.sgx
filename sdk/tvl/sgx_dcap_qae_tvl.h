@@ -37,7 +37,8 @@
 #ifndef __QAE_VERIFICATION_INPUT_T
 #define __QAE_VERIFICATION_INPUT_T
 
-#include "sgx_dcap_qal.h"
+#include <time.h>
+#include "sgx_dcap_qal_types.h"
 
 #ifndef _MSC_VER
 

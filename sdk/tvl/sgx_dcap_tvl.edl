@@ -34,7 +34,7 @@ enclave {
     include "sgx_qve_header.h"
     include "sgx_ql_quote.h"
 #ifdef __GNUC__
-    include "sgx_dcap_qal.h"
+    include "sgx_dcap_qal_types.h"
     include "sgx_dcap_qae_tvl.h"
 #endif
 

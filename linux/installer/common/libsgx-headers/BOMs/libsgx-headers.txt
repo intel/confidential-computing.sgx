@@ -15,4 +15,4 @@ DeliveryName	InstallName	FileCheckSum	FileFeature	FileOwner
 <deliverydir>/common/inc/sgx_ql_quote.h	<installdir>/include/sgx_ql_quote.h	0	main	STP
 <deliverydir>/common/inc/sgx_pce.h	<installdir>/include/sgx_pce.h	0	main	STP
 <deliverydir>/common/inc/sgx_qve_header.h	<installdir>/include/sgx_qve_header.h	0	main	STP
-<deliverydir>/common/inc/sgx_dcap_qal.h	<installdir>/include/sgx_dcap_qal.h	0	main	STP
+<deliverydir>/common/inc/sgx_dcap_qal_types.h	<installdir>/include/sgx_dcap_qal_types.h	0	main	STP
