@@ -75,14 +75,14 @@ static std::vector<std::string> get_bundles()
     std::vector<std::string> files;
     if (bundle_dir.empty())
     {
-        char buf[PATH_MAX] = {0};
+        char buf[PATH_MAX + 1] = {0};
         Dl_info dl_info;
         if (0 == dladdr(__builtin_return_address(0), &dl_info) ||
             NULL == dl_info.dli_fname)
         return files;
         if (strnlen(dl_info.dli_fname, sizeof(buf)) >= sizeof(buf))
         return files;
-        (void)strncpy(buf, dl_info.dli_fname, sizeof(buf));
+        (void)strncpy(buf, dl_info.dli_fname, sizeof(buf) - 1);
         std::string aesm_path(buf);
 
         size_t i = aesm_path.rfind(PATH_SEPARATOR, aesm_path.length());
