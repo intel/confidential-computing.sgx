@@ -152,14 +152,11 @@ DeliveryName	InstallName	FileCheckSum	FileFeature	FileOwner
 <deliverydir>/SampleCode/PowerTransition/App/rwlock.cpp	<installdir>/package/SampleCode/PowerTransition/App/rwlock.cpp	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/App/rwlock.h	<installdir>/package/SampleCode/PowerTransition/App/rwlock.h	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/Common/types.h	<installdir>/package/SampleCode/PowerTransition/Common/types.h	0	main	STP
-<deliverydir>/SampleCode/PowerTransition/.cproject	<installdir>/package/SampleCode/PowerTransition/.cproject	0	main	STP
-<deliverydir>/SampleCode/PowerTransition/.settings/language.settings.xml	<installdir>/package/SampleCode/PowerTransition/.settings/language.settings.xml	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/Enclave/Enclave.config.xml	<installdir>/package/SampleCode/PowerTransition/Enclave/Enclave.config.xml	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/Enclave/Enclave.cpp	<installdir>/package/SampleCode/PowerTransition/Enclave/Enclave.cpp	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/Enclave/Enclave.edl	<installdir>/package/SampleCode/PowerTransition/Enclave/Enclave.edl	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/Enclave/Enclave.lds	<installdir>/package/SampleCode/PowerTransition/Enclave/Enclave.lds	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/Makefile	<installdir>/package/SampleCode/PowerTransition/Makefile	0	main	STP
-<deliverydir>/SampleCode/PowerTransition/.project	<installdir>/package/SampleCode/PowerTransition/.project	0	main	STP
 <deliverydir>/SampleCode/PowerTransition/README.txt	<installdir>/package/SampleCode/PowerTransition/README.txt	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/App/App.cpp	<installdir>/package/SampleCode/SampleEnclave/App/App.cpp	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/App/App.h	<installdir>/package/SampleCode/SampleEnclave/App/App.h	0	main	STP
@@ -170,8 +167,6 @@ DeliveryName	InstallName	FileCheckSum	FileFeature	FileOwner
 <deliverydir>/SampleCode/SampleEnclave/App/TrustedLibrary/Libc.cpp	<installdir>/package/SampleCode/SampleEnclave/App/TrustedLibrary/Libc.cpp	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/App/TrustedLibrary/Libcxx.cpp	<installdir>/package/SampleCode/SampleEnclave/App/TrustedLibrary/Libcxx.cpp	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/App/TrustedLibrary/Thread.cpp	<installdir>/package/SampleCode/SampleEnclave/App/TrustedLibrary/Thread.cpp	0	main	STP
-<deliverydir>/SampleCode/SampleEnclave/.cproject	<installdir>/package/SampleCode/SampleEnclave/.cproject	0	main	STP
-<deliverydir>/SampleCode/SampleEnclave/.settings/language.settings.xml	<installdir>/package/SampleCode/SampleEnclave/.settings/language.settings.xml	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/Enclave/Edger8rSyntax/Arrays.cpp	<installdir>/package/SampleCode/SampleEnclave/Enclave/Edger8rSyntax/Arrays.cpp	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/Enclave/Edger8rSyntax/Arrays.edl	<installdir>/package/SampleCode/SampleEnclave/Enclave/Edger8rSyntax/Arrays.edl	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/Enclave/Edger8rSyntax/Functions.cpp	<installdir>/package/SampleCode/SampleEnclave/Enclave/Edger8rSyntax/Functions.cpp	0	main	STP
@@ -198,7 +193,6 @@ DeliveryName	InstallName	FileCheckSum	FileFeature	FileOwner
 <deliverydir>/SampleCode/SampleEnclave/Enclave/TrustedLibrary/Thread.edl	<installdir>/package/SampleCode/SampleEnclave/Enclave/TrustedLibrary/Thread.edl	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/Include/user_types.h	<installdir>/package/SampleCode/SampleEnclave/Include/user_types.h	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/Makefile	<installdir>/package/SampleCode/SampleEnclave/Makefile	0	main	STP
-<deliverydir>/SampleCode/SampleEnclave/.project	<installdir>/package/SampleCode/SampleEnclave/.project	0	main	STP
 <deliverydir>/SampleCode/SampleEnclave/README.txt	<installdir>/package/SampleCode/SampleEnclave/README.txt	0	main	STP
 <deliverydir>/SampleCode/SampleEnclaveGMIPP/App/App.cpp	<installdir>/package/SampleCode/SampleEnclaveGMIPP/App/App.cpp	0	main	STP
 <deliverydir>/SampleCode/SampleEnclaveGMIPP/App/App.h	<installdir>/package/SampleCode/SampleEnclaveGMIPP/App/App.h	0	main	STP
@@ -307,9 +301,6 @@ DeliveryName	InstallName	FileCheckSum	FileFeature	FileOwner
 <deliverydir>/SampleCode/Cxx11SGXDemo/Enclave/TrustedLibrary/Libcxx.edl	<installdir>/package/SampleCode/Cxx11SGXDemo/Enclave/TrustedLibrary/Libcxx.edl	0	main	STP
 <deliverydir>/SampleCode/Cxx11SGXDemo/Makefile	<installdir>/package/SampleCode/Cxx11SGXDemo/Makefile	0	main	STP
 <deliverydir>/SampleCode/Cxx11SGXDemo/README.txt	<installdir>/package/SampleCode/Cxx11SGXDemo/README.txt	0	main	STP
-<deliverydir>/SampleCode/Cxx11SGXDemo/.project	<installdir>/package/SampleCode/Cxx11SGXDemo/.project	0	main	STP
-<deliverydir>/SampleCode/Cxx11SGXDemo/.cproject	<installdir>/package/SampleCode/Cxx11SGXDemo/.cproject	0	main	STP
-<deliverydir>/SampleCode/Cxx11SGXDemo/.settings/language.settings.xml	<installdir>/package/SampleCode/Cxx11SGXDemo/.settings/language.settings.xml	0	main	STP
 <deliverydir>/SampleCode/Cxx14SGXDemo/App/App.cpp	<installdir>/package/SampleCode/Cxx14SGXDemo/App/App.cpp	0	main	STP
 <deliverydir>/SampleCode/Cxx14SGXDemo/App/App.h	<installdir>/package/SampleCode/Cxx14SGXDemo/App/App.h	0	main	STP
 <deliverydir>/SampleCode/Cxx14SGXDemo/App/TrustedLibrary/Libcxx.cpp	<installdir>/package/SampleCode/Cxx14SGXDemo/App/TrustedLibrary/Libcxx.cpp	0	main	STP
