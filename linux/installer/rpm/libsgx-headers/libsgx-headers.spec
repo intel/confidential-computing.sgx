@@ -14,6 +14,11 @@ Group:          Development
 License:        BSD License
 URL:            https://github.com/intel/confidential-computing.sgx
 Source0:        %{name}-%{version}.tar.gz
+# Headers moved from libsgx-dcap-quote-verify-devel into this package in 1.26.
+# Obsoletes: replaces the old package on upgrade; Conflicts: prevents co-installation.
+# Safe because all files from the old package are now owned here.
+Obsoletes:      libsgx-dcap-quote-verify-devel < 1.26
+Conflicts:      libsgx-dcap-quote-verify-devel < 1.26
 
 %description
 Intel(R) Software Guard Extensions Basic Headers

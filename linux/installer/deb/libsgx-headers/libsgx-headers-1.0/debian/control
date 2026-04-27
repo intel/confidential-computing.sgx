@@ -9,4 +9,9 @@ Homepage: https://github.com/intel/confidential-computing.sgx
 Package: libsgx-headers
 Section: devel
 Architecture: amd64
+# Headers moved from libsgx-dcap-quote-verify-dev into this package in 1.26.
+# Replaces: lets dpkg overwrite the old files on upgrade; Breaks: prevents
+# co-installation.  Safe because all files from the old package are now owned here.
+Replaces: libsgx-dcap-quote-verify-dev (<< 1.26)
+Breaks: libsgx-dcap-quote-verify-dev (<< 1.26)
 Description: Intel(R) Software Guard Extensions Basic Headers for Developers
