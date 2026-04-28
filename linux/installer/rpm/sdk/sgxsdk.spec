@@ -67,10 +67,19 @@ grep -v "^%{_install_path}" >> %{_specdir}/listfiles || :
 
 
 * @date@ Intel Confidential Computing Team <confidential.computing@intel.com> - @version@-1
+- Release v2.29
+  See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.29 for full release notes.
+
+- Key changes:
+  1. ADDED `sgx_dcap_constant_val.h` header (from TVL) that includes common QvE and QAE identity verification constants.
+  2. ADDED `sgx_dcap_qal_types.h` header containing common QAL types.
+     Origin: extracted from `sgx_dcap_qal.h` (part of libsgx-dcap-quote-verify-devel package)
+
+* Tue Mar 03 2026 Intel Confidential Computing Team <confidential.computing@intel.com> - 2-28.100.1-1
 - Release v2.28
   See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 
-- Notable changes:
+- Key changes:
   1. [BREAKING] Removed deprecated functionality based on EPID (Enhanced Privacy ID):
      - Following headers and supporting libraries have been removed: 
          sgx_uae_epid.h (+ libsgx_epid.so/libsgx_epid_sim.so)

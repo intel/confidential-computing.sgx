@@ -39,17 +39,30 @@ done
 
 %changelog
 * @date@ Intel Confidential Computing Team <confidential.computing@intel.com> - @version@-1
-- Remove EPID (Enhanced Privacy ID) attestation support:
-  - Removed EPID-based attestation functionality, including remote attestation
-  - Removed deprecated header files: sgx_uae_epid.h, sgx_key_exchange.h
-  - Removed support for Quote versions 1 and 2 (EPID-based quotes)
-  - Users should migrate to ECDSA-based attestation (Quote version 3+)
-- Remove deprecated Launch Enclave (LE) mechanism:
-  - Removed reference Launch Enclave implementation and related tools
-  - Removed Launch Enclave service bundle from AESM (Architectural Enclave Service Manager)
-  - Updated build system to remove LE-related compilation flags and targets
-  - Removed LE-related packages from installer scripts
+- Release v2.29
+  See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.29 for full release notes.
+
+- Key changes:
+  1. MOVED `sgx_qve_header.h` file from libsgx-dcap-quote-verify-devel to this package
+  2. ADDED `sgx_dcap_qal_types.h` header containing common QAL types.
+     Origin: extracted from `sgx_dcap_qal.h` (part of libsgx-dcap-quote-verify-devel package)
+
+* Tue Mar 03 2026 Intel Confidential Computing Team <confidential.computing@intel.com> - 2-28.100.1-1
+- Release v2.28
+  See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
+
+- Key changes:
+  1. Remove EPID (Enhanced Privacy ID) attestation support:
+     * Removed EPID-based attestation functionality, including remote attestation
+     * Removed deprecated header files: sgx_uae_epid.h, sgx_key_exchange.h
+     * Removed support for Quote versions 1 and 2 (EPID-based quotes)
+     * Users should migrate to ECDSA-based attestation (Quote version 3+)
+  2. Remove deprecated Launch Enclave (LE) mechanism:
+     * Removed reference Launch Enclave implementation and related tools
+     * Removed Launch Enclave service bundle from AESM (Architectural Enclave Service Manager)
+     * Updated build system to remove LE-related compilation flags and targets
+     * Removed LE-related packages from installer scripts
 
 * Thu Dec 18 2025 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.27.100.1-1
-- Release v2.27.100.1
+- Release v2.27
   See release notes at https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.27 for more details and historical changelog 
