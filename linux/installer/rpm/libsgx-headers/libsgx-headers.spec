@@ -52,16 +52,7 @@ done
   See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 
 - Key changes:
-  1. Remove EPID (Enhanced Privacy ID) attestation support:
-     * Removed EPID-based attestation functionality, including remote attestation
-     * Removed deprecated header files: sgx_uae_epid.h, sgx_key_exchange.h
-     * Removed support for Quote versions 1 and 2 (EPID-based quotes)
-     * Users should migrate to ECDSA-based attestation (Quote version 3+)
-  2. Remove deprecated Launch Enclave (LE) mechanism:
-     * Removed reference Launch Enclave implementation and related tools
-     * Removed Launch Enclave service bundle from AESM (Architectural Enclave Service Manager)
-     * Updated build system to remove LE-related compilation flags and targets
-     * Removed LE-related packages from installer scripts
+  1. Deprecated EPID (Enhanced Privacy ID) and Launch Enclave (LE) related error codes
 
 * Thu Dec 18 2025 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.27.100.1-1
 - Release v2.27

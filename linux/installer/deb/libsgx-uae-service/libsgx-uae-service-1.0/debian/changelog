@@ -1,10 +1,17 @@
 libsgx-uae-service (9.9.9.9-1) unstable; urgency=low
 
+  * Release v2.29
+    See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.29 for full release notes.
+
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Fri, 01 Jan 2100 00:00:00 +0000
+
+libsgx-uae-service (2.28.100.1-all1) unstable; urgency=low
+
   * Release v2.28
     See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 
-  * Breaking changes:
-    1. Removed deprecated functionality based on EPID (Enhanced Privacy ID), including EPID remote attestation.
+  * Key changes:
+    1. [BREAKING] Removed deprecated functionality based on EPID (Enhanced Privacy ID), including EPID remote attestation.
          Note support remains for ECDSA-based attestation and universal quoting APIs (i.e. sgx_get_quote_ex()).
        - The following definitions have been removed:
            sgx_calc_quote_size()
@@ -16,7 +23,7 @@ libsgx-uae-service (9.9.9.9-1) unstable; urgency=low
            sgx_report_attestation_status()
        - The following dev header has been removed: sgx_uae_epid.h
 
-    2. Removed code supporting the deprecated Launch Enclave, whitelist management and "out-of-tree" driver.
+    2. [BREAKING] Removed code supporting the deprecated Launch Enclave, whitelist management and "out-of-tree" driver.
        Recommended launch mechanism continues to be the Flexible Launch Control via the in-kernel SGX driver.
        - The following launch-related UAE APIs were deprecated and will now return `SGX_ERROR_FEATURE_NOT_SUPPORTED`:
            get_launch_token()
@@ -25,13 +32,13 @@ libsgx-uae-service (9.9.9.9-1) unstable; urgency=low
            sgx_register_wl_cert_chain()
        - The following dev header has been deprecated: sgx_uae_launch.h
 
-    3. The following parameters of sgx_create_enclave() URTS API: *launch_token and *launch_token_updated
+    3. [BREAKING] The following parameters of sgx_create_enclave() URTS API: *launch_token and *launch_token_updated
        are now RESERVED and ignored by the implementation. Implementers may choose to continue passing an empty/initialized
        launch_token_t placeholder or pass a nullptr in their place.
 
-    4. The corresponding libraries (libsgx_epid.so, libsgx_launch.so, ...) are removed, including their _SIM counterparts in the SGX SDK.
+    4. [BREAKING] The corresponding libraries (libsgx_epid.so, libsgx_launch.so, ...) are removed, including their _SIM counterparts in the SGX SDK.
 
- -- Intel Confidential Computing Team <confidential.computing@intel.com>  Fri, 01 Jan 2100 00:00:00 +0000
+ -- Intel Confidential Computing Team <confidential.computing@intel.com>  Tue, 03 Mar 2026 10:17:52 +0000
 
 libsgx-uae-service (2.27.100.1-all1) unstable; urgency=low
 

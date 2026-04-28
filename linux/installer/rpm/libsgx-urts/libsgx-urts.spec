@@ -37,6 +37,10 @@ done
 
 %changelog
 * @date@ Intel Confidential Computing Team <confidential.computing@intel.com> - @version@-1
+- Release v2.29
+  See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.29 for full release notes.
+
+* Tue Mar 03 2026 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.28.100.1-1
 - Release v2.28
   See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 

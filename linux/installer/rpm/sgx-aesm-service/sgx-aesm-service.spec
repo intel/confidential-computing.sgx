@@ -51,11 +51,15 @@ if [ -x %{_install_path}/cleanup.sh ]; then %{_install_path}/cleanup.sh; fi
 
 %changelog
 * @date@ Intel Confidential Computing Team <confidential.computing@intel.com> - @version@-1
+- Release v2.29
+  See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.29 for full release notes.
+
+* Tue Mar 03 2026 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.28.100.1-1
 - Release v2.28
   See https://github.com/intel/confidential-computing.sgx/releases/tag/sgx_2.28 for full release notes.
 
-- Breaking changes:
-  1. Removed deprecated functionality based on EPID (Enhanced Privacy ID):
+- Key changes:
+  1. [BREAKING] Removed deprecated functionality based on EPID (Enhanced Privacy ID):
        Removed code supporting EPID-based attestation, including remote attestation.
        The `libsgx-aesm-epid-plugin` as well as the `epid_quote_service_bundle` are removed.
        Note ECDSA-based attestation and universal quoting APIs (i.e. sgx_get_quote_ex())
@@ -63,11 +67,11 @@ if [ -x %{_install_path}/cleanup.sh ]; then %{_install_path}/cleanup.sh; fi
 
        Deprecated `sgx_quote_t` (v1, EPID-based). ECDSA-based Quote version 3+ remains supported.
 
-  2. Removed code supporting the deprecated Launch Enclave, whitelist management and the supporting "out-of-tree" Linux SGX driver.
+  2. [BREAKING] Removed code supporting the deprecated Launch Enclave, whitelist management and the supporting "out-of-tree" Linux SGX driver.
      Recommended launch mechanism continues to be the Flexible Launch Control via the in-kernel SGX driver.
         The `libsgx-aesm-launch-plugin` as well as the `le_launch_service_bundle` are removed.
 
-  3. Supporting architectural enclaves: Launch Enclave (LE), EPID-based Provisioning Enclave (PVE), EPID-based Quoting Enclave (QE)
+  3. [BREAKING] Supporting architectural enclaves: Launch Enclave (LE), EPID-based Provisioning Enclave (PVE), EPID-based Quoting Enclave (QE)
      are no longer distributed. Launch Whitelist files (white_list_cert*.bin) and signature files (le_prod_css.bin) are removed as well.
 
 * Thu Dec 18 2025 Intel Confidential Computing Team <confidential.computing@intel.com> - 2.27.100.1-1
