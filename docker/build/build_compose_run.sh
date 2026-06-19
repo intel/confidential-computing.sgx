@@ -30,11 +30,60 @@
 #
 
 set -e
-docker build  --target aesm --build-arg https_proxy=$https_proxy \
-              --build-arg http_proxy=$http_proxy -t sgx_aesm -f ./Dockerfile ../../
 
-docker build --target sample --build-arg https_proxy=$https_proxy \
-             --build-arg http_proxy=$http_proxy -t sgx_sample -f ./Dockerfile ../../
+# Check if docker-compose exists, otherwise use docker compose
+check_docker_compose() {
+    if command -v docker-compose &> /dev/null; then
+        DOCKER_COMPOSE_CMD="docker-compose"
+    elif docker compose version &> /dev/null; then
+        DOCKER_COMPOSE_CMD="docker compose"
+    else
+        echo "Error: Neither docker-compose nor docker compose command found"
+        exit 1
+    fi
+    echo "Using command: $DOCKER_COMPOSE_CMD"
+}
 
-docker volume create --driver local --opt type=tmpfs --opt device=tmpfs --opt o=rw aesmd-socket
-docker-compose --verbose up
+# Build Docker images
+build_images() {
+    echo "Building AESM image..."
+    docker build --target aesm \
+                 --build-arg https_proxy="$https_proxy" \
+                 --build-arg http_proxy="$http_proxy" \
+                 -t sgx_aesm \
+                 -f ./Dockerfile ../../
+
+    echo "Building Sample image..."
+    docker build --target sample \
+                 --build-arg https_proxy="$https_proxy" \
+                 --build-arg http_proxy="$http_proxy" \
+                 -t sgx_sample \
+                 -f ./Dockerfile ../../
+}
+
+# Create volume
+create_volume() {
+    echo "Creating AESMD Socket volume..."
+    docker volume create --driver local \
+                         --opt type=tmpfs \
+                         --opt device=tmpfs \
+                         --opt o=rw \
+                         aesmd-socket || true
+}
+
+# Start services
+start_services() {
+    echo "Starting services..."
+    $DOCKER_COMPOSE_CMD --verbose up
+}
+
+# Main function
+main() {
+    check_docker_compose
+    build_images
+    create_volume
+    start_services
+}
+
+# Execute main function
+main
