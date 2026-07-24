@@ -76,7 +76,7 @@ typedef pid_t (*waitpid_t)(pid_t pid, int *status, int options);
 
 static ptrace_t g_sys_ptrace = NULL;
 static waitpid_t g_sys_waitpid = NULL;
-__attribute__((constructor)) void init()
+__attribute__((constructor)) void init(void)
 {
     g_sys_ptrace = (ptrace_t)dlsym(RTLD_NEXT, "ptrace");
     g_sys_waitpid = (waitpid_t)dlsym(RTLD_NEXT, "waitpid");

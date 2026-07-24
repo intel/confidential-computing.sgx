@@ -94,7 +94,7 @@
 
 #define SGX_ACCESS_VERSION(libname, num)                    \
     MY_EXTERN char sgx_##libname##_version[];          \
-    MY_EXTERN char * __attribute__((destructor)) libname##_access_version_dummy##num()      \
+    MY_EXTERN char * __attribute__((destructor)) libname##_access_version_dummy##num(void)  \
     {                                                                                       \
         sgx_##libname##_version[0] = 's';                                                   \
         return sgx_##libname##_version;                                                     \
