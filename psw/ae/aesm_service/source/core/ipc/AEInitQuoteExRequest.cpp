@@ -107,9 +107,6 @@ bool AEInitQuoteExRequest::check()
         m_request->att_key_id().size() != sizeof(sgx_att_key_id_t))
         return false;
 
-    if (!m_request->has_buf_size())
-        return false;
-
     if (m_request->b_pub_key_id())
     {
         if (m_request->buf_size() > MAX_PUB_KEY_ID_BUF_SIZE)

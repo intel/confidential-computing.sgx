@@ -45,7 +45,7 @@ message Request{
     message InitQuoteExRequest{
         optional    bytes  att_key_id              = 1;
         required    bool   b_pub_key_id            = 3;
-        required    uint64 buf_size                = 4;
+        optional    uint64 buf_size                = 4;
         optional    uint32 timeout                 = 9;
     }
 
